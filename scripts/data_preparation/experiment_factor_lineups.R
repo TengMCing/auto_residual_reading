@@ -2,9 +2,11 @@ library(visage)
 library(here)
 library(glue)
 library(tidyverse)
-# OSX doesn't like `foreach` for some reasons, so we use furrr instead. 
-library(furrr)
-plan(multisession)
+library(doMC)
+library(foreach)
+
+registerDoMC()
+print(glue("{getDoParWorkers()} workers is used by `doMC`!"))
 
 set.seed(10086)
 
@@ -63,10 +65,8 @@ all_dat <- map(1:NUM_PLOTS_PER_MODEL, function(i) {
                          sigma = e_sigma_)
   
   list(row = this_row, 
-       not_null_dat = not_null_mod$gen_lineup(n_) %>%
-         select(.fitted, .resid, k), 
-       null_dat = null_mod$gen_lineup(n_) %>%
-         select(.fitted, .resid, k))
+       not_null_dat = not_null_mod$gen_lineup(n_), 
+       null_dat = null_mod$gen_lineup(n_))
 })
 
 poly_metadata <- map_df(1:NUM_PLOTS_PER_MODEL, function(i) {
@@ -82,22 +82,20 @@ null_dat <- map(1:NUM_PLOTS_PER_MODEL, function(i) {
 })
 
 plot_dat <- append(not_null_dat, null_dat)
-rm(all_dat)
-rm(not_null_dat)
-rm(null_dat)
 
-future_map2(plot_dat, 1:length(plot_dat), function(this_dat, this_id, proj_dir) {
-  this_plot <- this_dat %>%
-    VI_MODEL$plot_lineup(theme = theme_light(), 
-                         remove_axis = TRUE, 
-                         remove_legend = TRUE, 
-                         remove_grid_line = TRUE)
-  
-  ggsave(glue("{proj_dir}/data/source/experiment_factor/lineups/poly_{this_id}.png"),
-         this_plot,
-         width = 7,
-         height = 7)
-}, proj_dir, .progress = TRUE)
+foreach(this_dat = plot_dat,
+        this_id = 1:length(plot_dat)) %dopar% {
+          this_plot <- this_dat %>%
+            VI_MODEL$plot_lineup(theme = theme_light(), 
+                                 remove_axis = TRUE, 
+                                 remove_legend = TRUE, 
+                                 remove_grid_line = TRUE)
+          
+          ggsave(glue("{proj_dir}/data/source/experiment_factor/residual_plots/poly_{this_id}.png"), 
+                 this_plot, 
+                 width = 7, 
+                 height = 7)
+        }
 
 
 # heter -------------------------------------------------------------------
@@ -126,10 +124,8 @@ all_dat <- map(1:NUM_PLOTS_PER_MODEL, function(i) {
                           x = get_x_var(x_dist_))
   
   list(row = this_row, 
-       not_null_dat = not_null_mod$gen_lineup(n_) %>%
-         select(.fitted, .resid, k), 
-       null_dat = null_mod$gen_lineup(n_) %>%
-         select(.fitted, .resid, k))
+       not_null_dat = not_null_mod$gen_lineup(n_), 
+       null_dat = null_mod$gen_lineup(n_))
 })
 
 heter_metadata <- map_df(1:NUM_PLOTS_PER_MODEL, function(i) {
@@ -145,23 +141,20 @@ null_dat <- map(1:NUM_PLOTS_PER_MODEL, function(i) {
 })
 
 plot_dat <- append(not_null_dat, null_dat)
-rm(all_dat)
-rm(not_null_dat)
-rm(null_dat)
 
-
-future_map2(plot_dat, 1:length(plot_dat), function(this_dat, this_id, proj_dir) {
-  this_plot <- this_dat %>%
-    VI_MODEL$plot_lineup(theme = theme_light(), 
-                         remove_axis = TRUE, 
-                         remove_legend = TRUE, 
-                         remove_grid_line = TRUE)
-  
-  ggsave(glue("{proj_dir}/data/source/experiment_factor/lineups/heter_{this_id}.png"),
-         this_plot,
-         width = 7,
-         height = 7)
-}, proj_dir, .progress = TRUE)
+foreach(this_dat = plot_dat,
+        this_id = 1:length(plot_dat)) %dopar% {
+          this_plot <- this_dat %>%
+            VI_MODEL$plot_lineup(theme = theme_light(base_size = 11/5), 
+                                 remove_axis = TRUE, 
+                                 remove_legend = TRUE, 
+                                 remove_grid_line = TRUE)
+          
+          ggsave(glue("{proj_dir}/data/source/experiment_factor/residual_plots/heter_{this_id}.png"), 
+                 this_plot, 
+                 width = 7, 
+                 height = 7)
+        }
 
 
 # metadata ----------------------------------------------------------------
@@ -181,19 +174,19 @@ bind_rows(poly_metadata %>%
           heter_metadata %>%
             mutate(plot_id = glue("heter_{1:NUM_PLOTS_PER_MODEL}")) %>%
             mutate(data_type = c(rep("train", num_of_train), rep("test", num_of_test)))) %>%
-  write_csv(glue("{proj_dir}/data/metadata/experiment_factor/lineups.csv"))
+  write_csv(glue("{proj_dir}/data/metadata/experiment_factor/residual_plots.csv"))
 
 
 # low_res -----------------------------------------------------------------
 
 PIL <- reticulate::import("PIL")
 
-for (filename in list.files(glue("{proj_dir}/data/source/experiment_factor/lineups"))) {
-  im <- PIL$Image$open(glue("{proj_dir}/data/source/experiment_factor/lineups/{filename}"))
+for (filename in list.files(glue("{proj_dir}/data/source/experiment_factor/residual_plots"))) {
+  im <- PIL$Image$open(glue("{proj_dir}/data/source/experiment_factor/residual_plots/{filename}"))
   for (res in c(32L, 64L, 128L, 256L)) {
     new_im <- im$resize(c(res, res))
-    create_dir(glue("{proj_dir}/data/{res}/experiment_factor/lineups"))
-    new_im$save(glue("{proj_dir}/data/{res}/experiment_factor/lineups/{filename}"))
+    create_dir(glue("{proj_dir}/data/{res}/experiment_factor/residual_plots"))
+    new_im$save(glue("{proj_dir}/data/{res}/experiment_factor/residual_plots/{filename}"))
   }
   im$close()
 }

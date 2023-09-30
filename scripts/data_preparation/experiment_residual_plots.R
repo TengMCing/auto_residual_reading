@@ -16,7 +16,7 @@ map(vi_lineup, function(lineup) {
                     remove_axis = TRUE, 
                     remove_legend = TRUE, 
                     remove_grid_line = TRUE)
-    ggsave(glue("{proj_dir}/data/source/experiment/residual_plots/{lineup$metadata$name}_{i}.png"), 
+    ggsave(glue("{proj_dir}/data/experiment/residual_plots/native/{lineup$metadata$name}_{i}.png"), 
           this_plot, 
           width = 7/5, 
           height = 7/4)
@@ -33,13 +33,12 @@ create_dir <- function(path) {
   if (!dir.exists(path)) dir.create(path, recursive = TRUE)
 }
 
-for (filename in list.files(glue("{proj_dir}/data/source/experiment/residual_plots"))) {
-  im <- PIL$Image$open(glue("{proj_dir}/data/source/experiment/residual_plots/{filename}"))
+for (filename in list.files(glue("{proj_dir}/data/experiment/residual_plots/native/"))) {
+  im <- PIL$Image$open(glue("{proj_dir}/data/experiment/residual_plots/native/{filename}"))
   for (res in c(32L, 64L, 128L, 256L)) {
     new_im <- im$resize(c(res, res))
-    create_dir(glue("{proj_dir}/data/{res}/experiment/residual_plots"))
-    new_im$save(glue("{proj_dir}/data/{res}/experiment/residual_plots/{filename}"))
+    create_dir(glue("{proj_dir}/data/experiment/residual_plots/{res}"))
+    new_im$save(glue("{proj_dir}/data/experiment/residual_plots/{res}/{filename}"))
   }
   im$close()
 }
-

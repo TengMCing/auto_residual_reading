@@ -1,26 +1,90 @@
+
+# library -----------------------------------------------------------------
+
+library(tidyverse)
 library(visage)
 library(here)
 library(glue)
-library(tidyverse)
+
+
+# multicore ---------------------------------------------------------------
+
 library(doMC)
 library(foreach)
 
 registerDoMC()
-print(glue("{getDoParWorkers()} workers is used by `doMC`!"))
+
+cat(glue("{getDoParWorkers()} workers is used by `doMC`!"))
 
 set.seed(10086)
 
-proj_dir <- here()
+# Global setting ----------------------------------------------------------
 
-# Number of plots per model
-NUM_PLOTS_PER_MODEL <- 20000
+# Number of samples per parameter
+SAMPLE_PER_PARAMETER <- list(train = 10, test = 1)
 
-# Define the x variable
+# Number of parameter sets per model
+TOTAL_NUM_PARAMETER <- 2000
+
+# Data folder for saving plots
+DATA_FOLDER <- "data/experiment_factor/lineups"
+
+# draw_plots --------------------------------------------------------------
+
+# The global uid for plots
+PLOT_UID <- 0
+
+# The global meta data for plots
+PLOT_META <- data.frame()
+
+# Draw plots for a violation model
+draw_plots <- function(violation, not_null, null, n, meta_vector) {
+  mod <- list()
+  mod$not_null <- not_null
+  mod$null <- null
+  
+  for (response in c("not_null", "null")) {
+    for (data_type in c("train", "test")) {
+      plot_dat <- map(1:SAMPLE_PER_PARAMETER[[data_type]], 
+                      ~mod[[response]]$gen_lineup(n))
+      
+      # Speed up the plot drawing
+      num_plots <- length(plot_dat)
+      foreach(this_dat = plot_dat, 
+              this_plot_id = (PLOT_UID + 1):(PLOT_UID + num_plots)) %dopar% {
+                this_plot <- this_dat %>%
+                  VI_MODEL$plot(theme = theme_light(), 
+                                remove_axis = TRUE, 
+                                remove_legend = TRUE, 
+                                remove_grid_line = TRUE)
+                
+                # The lineup layout contains 4 rows and 5 cols
+                ggsave(glue(here("{DATA_FOLDER}/native/{violation}/{data_type}/{response}/{this_plot_id}.png")), 
+                       this_plot, 
+                       width = 7, 
+                       height = 7)
+              }
+      
+      for (.unused in 1:num_plots) {
+        PLOT_UID <<- PLOT_UID + 1
+        PLOT_META <<- PLOT_META %>%
+          bind_rows(c(plot_uid = PLOT_UID, 
+                      meta_vector, 
+                      data_type = data_type, 
+                      response = response))
+      }
+    }
+  }
+}
+
+# get_x_var ---------------------------------------------------------------
+
+# Ensure the support of the predictor is [-1, 1]
+stand_dist <- function(x) (x - min(x))/max(x - min(x)) * 2 - 1
+
 get_x_var <- function(dist_name) {
   
-  # Ensure the support of the predictor is [-1, 1]
-  stand_dist <- function(x) (x - min(x))/max(x - min(x)) * 2 - 1
-  
+  # Define the x variable
   rand_uniform_x <- rand_uniform(-1, 1)
   rand_normal_raw_x <- rand_normal(sigma = 0.3)
   rand_normal_x <- closed_form(~stand_dist(rand_normal_raw_x))
@@ -33,161 +97,122 @@ get_x_var <- function(dist_name) {
          normal = rand_normal_x,
          lognormal = rand_lognormal_x,
          even_discrete = rand_discrete_x)
+} 
+
+# parameter_range ---------------------------------------------------------
+
+parameter_choice <- function(choices, transformer = NULL) {
+  function() {
+    if (!is.null(transformer)) 
+      transformer(sample(choices, 1)) 
+    else 
+      sample(choices, 1)
+  }
+}
+
+parameter_discrete <- function(low, high, transformer = NULL) {
+  function() {
+    if (!is.null(transformer)) 
+      transformer(sample(low:high, 1)) 
+    else 
+      sample(low:high, 1)
+  }
+}
+
+parameter_continuous <- function(low, high, transformer = NULL) {
+  function() {
+    if (!is.null(transformer)) 
+      transformer((high - low) * runif(1) + low) 
+    else 
+      (high - low) * runif(1) + low
+  }
+}
+
+# poly_data ---------------------------------------------------------------
+
+poly_parameter_range <- list(shape = parameter_discrete(1, 4), 
+                             e_sigma = parameter_choice(c(0.5, 1, 2, 4)),
+                             x_dist = parameter_choice(c("uniform", "normal", "lognormal", "even_discrete")),
+                             n = parameter_choice(c(50, 100, 300)))
+
+for (i in 1:TOTAL_NUM_PARAMETER) {
+  
+  this_parameter <- map(poly_parameter_range, ~.x())
+  
+  draw_plots(violation = "poly",
+             not_null = poly_model(shape = this_parameter$shape,
+                                   x = get_x_var(this_parameter$x_dist),
+                                   sigma = this_parameter$e_sigma),
+             null = poly_model(shape = this_parameter$shape,
+                               x = get_x_var(this_parameter$x_dist),
+                               include_z = FALSE,
+                               sigma = this_parameter$e_sigma),
+             n = this_parameter$n,
+             meta_vector = this_parameter)
+}
+
+# heter_data --------------------------------------------------------------
+
+heter_parameter_range <- list(a = parameter_choice(c(-1, 0, 1)), 
+                              b = parameter_choice(c(0.25, 1, 4, 16, 64)),
+                              x_dist = parameter_choice(c("uniform", "normal", "lognormal", "even_discrete")),
+                              n = parameter_choice(c(50, 100, 300)))
+
+for (i in 1:TOTAL_NUM_PARAMETER) {
+  
+  this_parameter <- map(heter_parameter_range, ~.x())
+  
+  draw_plots(violation = "heter",
+             not_null = heter_model(a = this_parameter$a,
+                                    b = this_parameter$b,
+                                    x = get_x_var(this_parameter$x_dist)),
+             null = heter_model(a = this_parameter$a,
+                                b = 0,
+                                x = get_x_var(this_parameter$x_dist)),
+             n = this_parameter$n,
+             meta_vector = this_parameter)
+  
 }
 
 
-# poly --------------------------------------------------------------------
+# save_meta_data ----------------------------------------------------------
+
+saveRDS(PLOT_META, here(glue("{DATA_FOLDER}/meta.rds")))
+
+# mixed_data --------------------------------------------------------------
+
+if (!dir.exists(here(glue("{DATA_FOLDER}/native/mixed")))) dir.create(here(glue("{DATA_FOLDER}/native/mixed")))
+if (!dir.exists(here(glue("{DATA_FOLDER}/native/mixed/train")))) dir.create(here(glue("{DATA_FOLDER}/native/mixed/train")))
+if (!dir.exists(here(glue("{DATA_FOLDER}/native/mixed/test")))) dir.create(here(glue("{DATA_FOLDER}/native/mixed/test")))
+
+mixed_train_dest <- here(glue("{DATA_FOLDER}/native/mixed/train"))
+mixed_test_dest <- here(glue("{DATA_FOLDER}/native/mixed/test"))
+for (violation in c("poly", "heter")) {
+  train_from <- here(glue("{DATA_FOLDER}/native/{violation}/train/."))
+  test_from <- here(glue("{DATA_FOLDER}/native/{violation}/test/."))
+  system(glue("cp -r {train_from} {mixed_train_dest}"))
+  system(glue("cp -r {test_from} {mixed_test_dest}"))
+}
 
 
-poly_model_parameters <- expand.grid(shape = 1:4,
-                                     e_sigma = c(0.5, 1, 2, 4),
-                                     x_dist = c("uniform", 
-                                                "normal", 
-                                                "lognormal", 
-                                                "even_discrete"),
-                                     n = c(50, 100, 300))
+# mixed_low_res -----------------------------------------------------------
 
-all_dat <- map(1:NUM_PLOTS_PER_MODEL, function(i) {
-  this_row <- sample(nrow(poly_model_parameters), 1)
-  shape_ <- poly_model_parameters$shape[this_row]
-  e_sigma_ <- poly_model_parameters$e_sigma[this_row]
-  x_dist_ <- poly_model_parameters$x_dist[this_row]
-  n_ <- poly_model_parameters$n[this_row]
-  
-  not_null_mod <- poly_model(shape = shape_,
-                             x = get_x_var(x_dist_),
-                             include_z = TRUE,
-                             sigma = e_sigma_)
-  
-  null_mod <- poly_model(shape = shape_,
-                         x = get_x_var(x_dist_),
-                         include_z = FALSE,
-                         sigma = e_sigma_)
-  
-  list(row = this_row, 
-       not_null_dat = not_null_mod$gen_lineup(n_), 
-       null_dat = null_mod$gen_lineup(n_))
-})
-
-poly_metadata <- map_df(1:NUM_PLOTS_PER_MODEL, function(i) {
-  poly_model_parameters[all_dat[[i]]$row, ]
-})
-
-not_null_dat <- map(1:NUM_PLOTS_PER_MODEL, function(i) {
-  all_dat[[i]]$not_null_dat
-})
-
-null_dat <- map(1:NUM_PLOTS_PER_MODEL, function(i) {
-  all_dat[[i]]$null_dat
-})
-
-plot_dat <- append(not_null_dat, null_dat)
-
-foreach(this_dat = plot_dat,
-        this_id = 1:length(plot_dat)) %dopar% {
-          this_plot <- this_dat %>%
-            VI_MODEL$plot_lineup(theme = theme_light(), 
-                                 remove_axis = TRUE, 
-                                 remove_legend = TRUE, 
-                                 remove_grid_line = TRUE)
-          
-          ggsave(glue("{proj_dir}/data/source/experiment_factor/residual_plots/poly_{this_id}.png"), 
-                 this_plot, 
-                 width = 7, 
-                 height = 7)
-        }
-
-
-# heter -------------------------------------------------------------------
-
-heter_model_parameters <- expand.grid(a = c(-1, 0, 1),
-                                      b = c(0.25, 1, 4, 16, 64),
-                                      x_dist = c("uniform", 
-                                                 "normal", 
-                                                 "lognormal", 
-                                                 "even_discrete"),
-                                      n = c(50, 100, 300))
-
-all_dat <- map(1:NUM_PLOTS_PER_MODEL, function(i) {
-  this_row <- sample(nrow(heter_model_parameters), 1)
-  a_ <- heter_model_parameters$a[this_row]
-  b_ <- heter_model_parameters$b[this_row]
-  x_dist_ <- heter_model_parameters$x_dist[this_row]
-  n_ <- heter_model_parameters$n[this_row]
-  
-  not_null_mod <- heter_model(a = a_,
-                              b = b_,
-                              x = get_x_var(x_dist_))
-  
-  null_mod <- heter_model(a = a_,
-                          b = 0,
-                          x = get_x_var(x_dist_))
-  
-  list(row = this_row, 
-       not_null_dat = not_null_mod$gen_lineup(n_), 
-       null_dat = null_mod$gen_lineup(n_))
-})
-
-heter_metadata <- map_df(1:NUM_PLOTS_PER_MODEL, function(i) {
-  heter_model_parameters[all_dat[[i]]$row, ]
-})
-
-not_null_dat <- map(1:NUM_PLOTS_PER_MODEL, function(i) {
-  all_dat[[i]]$not_null_dat
-})
-
-null_dat <- map(1:NUM_PLOTS_PER_MODEL, function(i) {
-  all_dat[[i]]$null_dat
-})
-
-plot_dat <- append(not_null_dat, null_dat)
-
-foreach(this_dat = plot_dat,
-        this_id = 1:length(plot_dat)) %dopar% {
-          this_plot <- this_dat %>%
-            VI_MODEL$plot_lineup(theme = theme_light(base_size = 11/5), 
-                                 remove_axis = TRUE, 
-                                 remove_legend = TRUE, 
-                                 remove_grid_line = TRUE)
-          
-          ggsave(glue("{proj_dir}/data/source/experiment_factor/residual_plots/heter_{this_id}.png"), 
-                 this_plot, 
-                 width = 7, 
-                 height = 7)
-        }
-
-
-# metadata ----------------------------------------------------------------
+PIL <- reticulate::import("PIL")
 
 create_dir <- function(path) {
   if (!dir.exists(path)) dir.create(path, recursive = TRUE)
 }
 
-create_dir(glue("{proj_dir}/data/metadata/experiment_factor"))
-
-num_of_train <- floor(NUM_PLOTS_PER_MODEL * 0.9)
-num_of_test <- NUM_PLOTS_PER_MODEL - num_of_train
-
-bind_rows(poly_metadata %>%
-            mutate(plot_id = glue("poly_{1:NUM_PLOTS_PER_MODEL}")) %>%
-            mutate(data_type = c(rep("train", num_of_train), rep("test", num_of_test))),
-          heter_metadata %>%
-            mutate(plot_id = glue("heter_{1:NUM_PLOTS_PER_MODEL}")) %>%
-            mutate(data_type = c(rep("train", num_of_train), rep("test", num_of_test)))) %>%
-  write_csv(glue("{proj_dir}/data/metadata/experiment_factor/residual_plots.csv"))
-
-
-# low_res -----------------------------------------------------------------
-
-PIL <- reticulate::import("PIL")
-
-for (filename in list.files(glue("{proj_dir}/data/source/experiment_factor/residual_plots"))) {
-  im <- PIL$Image$open(glue("{proj_dir}/data/source/experiment_factor/residual_plots/{filename}"))
-  for (res in c(32L, 64L, 128L, 256L)) {
-    new_im <- im$resize(c(res, res))
-    create_dir(glue("{proj_dir}/data/{res}/experiment_factor/residual_plots"))
-    new_im$save(glue("{proj_dir}/data/{res}/experiment_factor/residual_plots/{filename}"))
+for (data_type in c("train", "test")) {
+  for (response in c("null", "not_null")) {
+    for (filename in list.files(here(glue("{DATA_FOLDER}/native/mixed/{data_type}/{response}")))) {
+      im <- PIL$Image$open(glue("{DATA_FOLDER}/native/mixed/{data_type}/{response}/{filename}"))
+      for (res in c(32L, 64L, 128L, 256L)) {
+        new_im <- im$resize(c(res, res))
+        create_dir(glue("{DATA_FOLDER}/{res}/mixed/{data_type}/{response}"))
+        new_im$save(glue("{DATA_FOLDER}/{res}/mixed/{data_type}/{response}/{filename}"))
+      }
+      im$close()
+    }
   }
-  im$close()
 }
-

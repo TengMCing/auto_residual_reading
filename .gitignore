@@ -1,0 +1,10 @@
+# data should be directly downloaded from HPC
+data/
+# models should be directly downloaded from HPC
+keras_tuner/best_models
+# slurm output can sometimes be quite large
+scripts/slurm
+
+.Rproj.user/
+.Rhistory
+.DS_Store

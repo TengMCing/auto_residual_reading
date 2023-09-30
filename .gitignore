@@ -3,7 +3,7 @@ data/
 # models should be directly downloaded from HPC
 keras_tuner/best_models
 # slurm output can sometimes be quite large
-scripts/slurm
+scripts/slurm/*.out
 
 .Rproj.user/
 .Rhistory

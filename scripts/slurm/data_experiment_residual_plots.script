@@ -1,0 +1,17 @@
+#!/bin/bash
+#SBATCH --job-name=data_experiment
+#SBATCH --account=sk54
+#SBATCH --time=12:00:00
+#SBATCH --partition=m3i
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=48G
+
+#SBATCH --mail-user=weihao.li@monash.edu
+#SBATCH --mail-type=BEGIN,END,FAIL
+
+module load R/4.0.5
+cd ~/sk54/patrickli/auto_residual_reading
+
+Rscript scripts/data_preparation/experiment_residual_plots.R
+Rscript scripts/data_preparation/experiment_lineups.R

@@ -24,10 +24,10 @@ set.seed(10086)
 SAMPLE_PER_PARAMETER <- list(train = 10, test = 1)
 
 # Number of parameter sets per model
-TOTAL_NUM_PARAMETER <- 2000
+TOTAL_NUM_PARAMETER <- 20000
 
 # Data folder for saving plots
-DATA_FOLDER <- "data/experiment_factor/lineups"
+DATA_FOLDER <- "data/experiment_factor/position"
 
 # draw_plots --------------------------------------------------------------
 
@@ -50,8 +50,11 @@ draw_plots <- function(violation, not_null, null, n, meta_vector) {
       
       # Speed up the plot drawing
       num_plots <- length(plot_dat)
+      positions <- map_dbl(plot_dat, ~.x %>% filter(null == FALSE) %>% pull(k) %>% .[1])
+      
       foreach(this_dat = plot_dat, 
-              this_plot_id = (PLOT_UID + 1):(PLOT_UID + num_plots)) %dopar% {
+              this_plot_id = (PLOT_UID + 1):(PLOT_UID + num_plots),
+              position = positions) %dopar% {
                 this_plot <- this_dat %>%
                   VI_MODEL$plot_lineup(theme = theme_light(), 
                                        remove_axis = TRUE, 
@@ -59,19 +62,20 @@ draw_plots <- function(violation, not_null, null, n, meta_vector) {
                                        remove_grid_line = TRUE)
                 
                 # The lineup layout contains 4 rows and 5 cols
-                ggsave(glue(here("{DATA_FOLDER}/native/{violation}/{data_type}/{response}/{this_plot_id}.png")), 
+                ggsave(glue(here("{DATA_FOLDER}/native/{violation}/{data_type}/{position}/{this_plot_id}.png")), 
                        this_plot, 
                        width = 7, 
                        height = 7)
               }
       
-      for (.unused in 1:num_plots) {
+      for (i in 1:num_plots) {
         PLOT_UID <<- PLOT_UID + 1
         PLOT_META <<- PLOT_META %>%
           bind_rows(c(plot_uid = PLOT_UID, 
                       meta_vector, 
                       data_type = data_type, 
-                      response = response))
+                      response = response,
+                      position = positions[i]))
       }
     }
   }
@@ -204,13 +208,13 @@ create_dir <- function(path) {
 }
 
 for (data_type in c("train", "test")) {
-  for (response in c("null", "not_null")) {
-    for (filename in list.files(here(glue("{DATA_FOLDER}/native/mixed/{data_type}/{response}")))) {
-      im <- PIL$Image$open(glue("{DATA_FOLDER}/native/mixed/{data_type}/{response}/{filename}"))
+  for (position in 1:20) {
+    for (filename in list.files(here(glue("{DATA_FOLDER}/native/mixed/{data_type}/{position}")))) {
+      im <- PIL$Image$open(glue("{DATA_FOLDER}/native/mixed/{data_type}/{position}/{filename}"))
       for (res in c(32L, 64L, 128L, 256L)) {
         new_im <- im$resize(c(res, res))
-        create_dir(glue("{DATA_FOLDER}/{res}/mixed/{data_type}/{response}"))
-        new_im$save(glue("{DATA_FOLDER}/{res}/mixed/{data_type}/{response}/{filename}"))
+        create_dir(glue("{DATA_FOLDER}/{res}/mixed/{data_type}/{position}"))
+        new_im$save(glue("{DATA_FOLDER}/{res}/mixed/{data_type}/{position}/{filename}"))
       }
       im$close()
     }

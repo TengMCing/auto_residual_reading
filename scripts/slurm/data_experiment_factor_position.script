@@ -1,7 +1,7 @@
 #!/bin/bash
-#SBATCH --job-name=data_experiment_position
+#SBATCH --job-name=data_experiment_factor_position
 #SBATCH --account=sk54
-#SBATCH --time=12:00:00
+#SBATCH --time=48:00:00
 #SBATCH --partition=m3i
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=16
@@ -13,4 +13,4 @@
 module load R/4.0.5
 cd ~/sk54/patrickli/auto_residual_reading
 
-Rscript scripts/data_preparation/experiment_position.R
+Rscript scripts/data_preparation/experiment_factor_position.R

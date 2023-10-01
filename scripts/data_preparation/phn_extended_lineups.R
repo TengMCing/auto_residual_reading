@@ -24,7 +24,7 @@ set.seed(10086)
 SAMPLE_PER_PARAMETER <- list(train = 10, test = 1)
 
 # Number of parameter sets per model
-TOTAL_NUM_PARAMETER <- 20
+TOTAL_NUM_PARAMETER <- 20000
 
 # Data folder for saving plots
 DATA_FOLDER <- "data/phn_extended/lineups"

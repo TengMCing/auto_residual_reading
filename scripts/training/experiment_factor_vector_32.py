@@ -19,13 +19,14 @@ train_dir = os.path.join(project_dir,
                          'data', 
                          'experiment_factor',
                          'vector',
+                         f'VECTOR_LEN',
                          'train.csv')
                          
 train_dat = pd.read_csv(train_dir, keep_default_na = False)
 
 train_y = train_dat.pop('response')
 train_y = train_y == "not_null"
-train_x = np.array(train_dat.iloc[:, 0:32])
+train_x = np.array(train_dat.iloc[:, 0:VECTOR_LEN])
 train_x = np.reshape(train_x, (train_x.shape[0], VECTOR_LEN, 1))
 
 def build_model(hp):
@@ -126,14 +127,15 @@ tuner = keras_tuner.BayesianOptimization(hypermodel=build_model,
                                          max_trials=30,
                                          executions_per_trial=1,
                                          overwrite=False,
-                                         directory="keras_tuner/tuner/experiment_factor",
-                                         project_name=f'vector_{VECTOR_LEN}')
+                                         directory="keras_tuner/tuner/experiment_factor/vector",
+                                         project_name=f'{VECTOR_LEN}')
 
 log_dir = os.path.join(project_dir,
                        "keras_tuner",
                        "logs",
                        "experiment_factor",
-                       f'vector_{VECTOR_LEN}')
+                       "vector",
+                       f'{VECTOR_LEN}')
                        
 callbacks = []
 callbacks.append(keras.callbacks.EarlyStopping(
@@ -163,3 +165,15 @@ tuner.search(x=train_x,
              validation_split=0.2,
              shuffle=False,
              callbacks=callbacks)
+
+tuner.results_summary()
+
+best_model = tuner.get_best_models(num_models=1)[0]
+best_model.summary()
+model_dir = os.path.join(project_dir,
+                         "keras_tuner",
+                         "best_models",
+                         "experiment_factor",
+                         "vector",
+                         f'{VECTOR_LEN}')
+best_model.save(model_dir)

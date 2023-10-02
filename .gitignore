@@ -2,6 +2,7 @@
 data/
 # models should be directly downloaded from HPC
 keras_tuner/best_models
+keras_tuner/tuner
 # slurm output can sometimes be quite large
 scripts/slurm/*.out
 

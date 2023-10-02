@@ -19,7 +19,7 @@ train_dir = os.path.join(project_dir,
                          'data', 
                          'experiment_factor',
                          'vector',
-                         f'VECTOR_LEN',
+                         f'{VECTOR_LEN}',
                          'train.csv')
                          
 train_dat = pd.read_csv(train_dir, keep_default_na = False)

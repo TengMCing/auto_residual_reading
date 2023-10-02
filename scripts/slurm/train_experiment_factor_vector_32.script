@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=train_experiment_factor_vector
+#SBATCH --job-name=train_experiment_factor_vector_32
 #SBATCH --account=sk54
 #SBATCH --time=144:00:00
 #SBATCH --partition=gpu
@@ -15,6 +15,6 @@ conda activate tf
 module load R/4.0.5
 
 cd ~/sk54/patrickli/auto_residual_reading
-python scripts/training/experiment_factor_vector.py
+python scripts/training/experiment_factor_vector_32.py
 
 

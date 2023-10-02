@@ -123,7 +123,7 @@ def build_model(hp):
 
 tuner = keras_tuner.BayesianOptimization(hypermodel=build_model,
                                          objective='val_binary_accuracy',
-                                         max_trials=10,
+                                         max_trials=30,
                                          executions_per_trial=1,
                                          overwrite=False,
                                          directory="keras_tuner/tuner/experiment_factor",

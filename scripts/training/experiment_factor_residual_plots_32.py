@@ -187,7 +187,8 @@ callbacks.append(keras.callbacks.ReduceLROnPlateau(
                        
 tuner.search_space_summary()
 
-tuner.search(x=train_dat, 
+tuner.search(x=train_dat,
+             validation_data=val_dat,
              epochs=100, 
              callbacks=callbacks)
 

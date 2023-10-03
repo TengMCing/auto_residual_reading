@@ -24,6 +24,7 @@ train_dir = os.path.join(project_dir,
                          f'{DATA_CLASS}',
                          f'{INPUT_TYPE}',
                          f'{RES}',
+                         'mixed',
                          'train')
                          
                          

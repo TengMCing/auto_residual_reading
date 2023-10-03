@@ -1,0 +1,201 @@
+% interactcadsample.tex
+% v1.03 - April 2017
+
+\documentclass[]{interact}
+
+\usepackage{epstopdf}% To incorporate .eps illustrations using PDFLaTeX, etc.
+\usepackage{subfigure}% Support for small, `sub' figures and tables
+%\usepackage[nolists,tablesfirst]{endfloat}% To `separate' figures and tables from text if required
+
+\usepackage{natbib}% Citation support using natbib.sty
+\bibpunct[, ]{(}{)}{;}{a}{}{,}% Citation support using natbib.sty
+\renewcommand\bibfont{\fontsize{10}{12}\selectfont}% Bibliography support using natbib.sty
+
+\theoremstyle{plain}% Theorem-like structures provided by amsthm.sty
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+\newtheorem{notation}{Notation}
+
+
+% tightlist command for lists without linebreak
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+
+
+\usepackage{lscape}
+\usepackage{hyperref}
+\usepackage[utf8]{inputenc}
+\def\tightlist{}
+\usepackage{setspace}
+
+
+\begin{document}
+
+
+\articletype{ARTICLE TEMPLATE}
+
+\title{Automated reading of residual plot with computer vision models}
+
+
+\author{\name{Weihao Li$^{a}$}
+\affil{$^{a}$Department of Econometrics and Business Statistics, Monash
+University, Clayton, VIC, Australia}
+}
+
+\thanks{CONTACT Weihao
+Li. Email: \href{mailto:weihao.li@monash.edu}{\nolinkurl{weihao.li@monash.edu}}}
+
+\maketitle
+
+\begin{abstract}
+TBD.
+\end{abstract}
+
+\begin{keywords}
+TBD
+\end{keywords}
+
+\hypertarget{introduction}{%
+\section{Introduction}\label{introduction}}
+
+\hypertarget{methods-for-training-computer-vision-models-to-analyze-residual-plots}{%
+\section{Methods for training computer vision models to analyze residual
+plots}\label{methods-for-training-computer-vision-models-to-analyze-residual-plots}}
+
+In the field of statistical modeling and data analysis, interpreting
+residual plots plays a pivotal role in assessing the validity of our
+models. These plots can reveal deviations from modeling assumptions,
+including non-linearity, heteroskedasticity, and non-normality. The
+automation of residual plot analysis through computer vision provides a
+valuable tool for model validation and informed decision-making.
+
+This section discusses various methodologies for training computer
+vision models to effectively read and interpret residual plots. We
+explore three distinct approaches, each with its unique characteristics
+and strengths.
+
+\hypertarget{method-1-single-plot-model}{%
+\subsection{Method 1: Single Plot
+Model}\label{method-1-single-plot-model}}
+
+The first method involves training a computer vision model to analyze a
+single residual plot and determine the probability that it was generated
+from a model without any violations. This method aligns with the
+principles of traditional deep learning classification problem, making
+it an intuitive and straightforward approach.
+
+To implement the Single Plot Model effectively, we utilize established
+neural network architectures like VGG16. The model is trained on a
+diverse dataset containing both ``not null'' plots (generated from model
+with violations) and ``null'' plots (generated from model without
+violations).
+
+This approach provides the model with certain capabilities:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \textbf{Distinguishing null and not null plots}: Through training, the
+  model is expected to be able to distinguish between null plots and not
+  null plots. This distinction forms the foundation for identifying
+  model violations in new residual plots.
+\item
+  \textbf{Capturing variance in null plots}: Null plots often exhibit
+  varying shapes and outliers due to the randomness of the error term
+  and the distribution of fitted values. The model learns to recognize
+  and characterize this variance, aiding in the detection of violations.
+\item
+  \textbf{Recognizing patterns in not null plots}: The model would
+  develop the ability to identify common patterns in not null plots
+  generated through simulations.
+\item
+  \textbf{Analyzing Aesthetic Elements}: Beyond content, the model takes
+  into account aesthetic elements within the residual plot, including
+  point size, auxiliary lines, layers, background colors, and other
+  visual attributes. This is an undesired capability but it is
+  unavoidable if only a single design of plot is used as inputs.
+\end{enumerate}
+
+training sample:
+
+improvements: 1. enrich the factors in simulation 2. sigma same, shape
+same, same fitted value distribution, stack residual plots\\
+3. test other residual plots generated from factors not seen by the
+model 4. replace the output with the effect size
+
+what the function tries to approximate?
+
+\hypertarget{lineup-model}{%
+\subsection{Lineup model}\label{lineup-model}}
+
+The second method involves training a computer vision model to analyze a
+lineup of residual plots, typically consisting of around 20 plots. It
+then determines whether the data plot within the lineup is a null plot
+or a not null plot. This method closely resembles a visual test, where
+the input is a lineup, and the output is a decision indicating whether
+the data plot exhibits visual features corresponding to model
+violations. This method still adheres to the standard classification
+scheme, allowing for the utilization of the same model architecture.
+
+This approach enable the model to learn all four points detailed in
+subsection 1 and three additional key points:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \textbf{Locating the data plot}: It learns to identify and locate the
+  data plot within a lineup of residual plots.
+\item
+  \textbf{Comparing data plot and null plots}: The model may potentially
+  compare the data plot with null plots within the lineup. This provide
+  additional information for decision making.
+\item
+  \textbf{Understanding variance within a lineup}: It may also
+  understand the variance among null plots within a lineup.
+\end{enumerate}
+
+training sample:
+
+improvement: 1. similarly, other lineups generated from factors not seen
+by the model 2. multiple lineups from each data plot, different
+positions
+
+\hypertarget{position-model}{%
+\subsection{Position model}\label{position-model}}
+
+The third method shares similarities to the second method, but with a
+different output objective: determining the position of the data plot
+within the lineup. Essentially, this approach asks the model to locate
+the data plot within a set of residual plots. It resembles a visual
+testing procedure where an individual is asked to identify the most
+distinct plot from a lineup. Even though the data plot may not always be
+the most distinct, training the model exclusively on lineups with
+substantial effect sizes can yield effective results.
+
+The Position Model can potentially learn all the aspects mentioned in
+method 2 while providing extra predictive information: the probability
+that the data plot resides in a position different from the true one.
+This information is valuable as it can be utilized to calculate the
+p-value of a visual test.
+
+training sample:
+
+\hypertarget{effect-size-model}{%
+\subsection{Effect size model}\label{effect-size-model}}
+
+
+
+
+
+
+\end{document}

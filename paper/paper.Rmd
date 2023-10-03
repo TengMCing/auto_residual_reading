@@ -1,0 +1,118 @@
+---
+title: |
+  Automated reading of residual plot with computer vision models
+type: ARTICLE TEMPLATE
+author:
+  - name: Weihao Li
+    affil: a
+    email: weihao.li@monash.edu
+affiliation:
+  - num: a
+    address: |
+      Department of Econometrics and Business Statistics, Monash University, Clayton, VIC, Australia
+# bibliography: ref.bib
+abstract: |
+  TBD.
+keywords: |
+  TBD
+header-includes: |
+  \usepackage{lscape}
+  \usepackage{hyperref}
+  \usepackage[utf8]{inputenc}
+  \def\tightlist{}
+  \usepackage{setspace}
+output: rticles::tf_article
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  message = FALSE, 
+  warning = FALSE, 
+  echo = FALSE,
+  fig.width = 8,
+  fig.height = 6,
+  out.width = "100%",
+  fig.align = "center")
+```
+
+```{r}
+# OOP supports needed by `visage`
+# remotes::install_github("TengMCing/bandicoot")
+# 
+# Visual inference models and p-value calculation
+# remotes::install_url("https://github.com/TengMCing/visage/raw/master/built/visage_0.1.0.tar.gz")
+
+library(tidyverse)
+library(visage)
+
+# To control the simulation in this file
+set.seed(10086)
+```
+
+# Introduction
+
+# Methods for training computer vision models to analyze residual plots
+
+In the field of statistical modeling and data analysis, interpreting residual plots plays a pivotal role in assessing the validity of our models. These plots can reveal deviations from modeling assumptions, including non-linearity, heteroskedasticity, and non-normality. The automation of residual plot analysis through computer vision provides a valuable tool for model validation and informed decision-making.
+
+This section discusses various methodologies for training computer vision models to effectively read and interpret residual plots. We explore three distinct approaches, each with its unique characteristics and strengths.
+
+## Method 1: Single Plot Model
+
+The first method involves training a computer vision model to analyze a single residual plot and determine the probability that it was generated from a model without any violations. This method aligns with the principles of traditional deep learning classification problem, making it an intuitive and straightforward approach.
+
+To implement the Single Plot Model effectively, we utilize established neural network architectures like VGG16. The model is trained on a diverse dataset containing both "not null" plots (generated from model with violations) and "null" plots (generated from model without violations). 
+
+This approach provides the model with certain capabilities:
+
+1. **Distinguishing null and not null plots**: Through training, the model is expected to be able to distinguish between null plots and not null plots. This distinction forms the foundation for identifying model violations in new residual plots.
+
+2. **Capturing variance in null plots**: Null plots often exhibit varying shapes and outliers due to the randomness of the error term and the distribution of fitted values. The model learns to recognize and characterize this variance, aiding in the detection of violations.
+
+3. **Recognizing patterns in not null plots**: The model would develop the ability to identify common patterns in not null plots generated through simulations.
+
+4. **Analyzing Aesthetic Elements**: Beyond content, the model takes into account aesthetic elements within the residual plot, including point size, auxiliary lines, layers, background colors, and other visual attributes. This is an undesired capability but it is unavoidable if only a single design of plot is used as inputs.
+
+training sample:
+
+improvements:
+1. enrich the factors in simulation
+2. sigma same, shape same, same fitted value distribution, stack residual plots  
+3. test other residual plots generated from factors not seen by the model
+4. replace the output with the effect size
+
+what the function tries to approximate?
+
+## Lineup model
+
+The second method involves training a computer vision model to analyze a lineup of residual plots, typically consisting of around 20 plots. It then determines whether the data plot within the lineup is a null plot or a not null plot. This method closely resembles a visual test, where the input is a lineup, and the output is a decision indicating whether the data plot exhibits visual features corresponding to model violations. This method still adheres to the standard classification scheme, allowing for the utilization of the same model architecture.
+
+This approach enable the model to learn all four points detailed in subsection 1 and three additional key points:
+
+1. **Locating the data plot**: It learns to identify and locate the data plot within a lineup of residual plots.
+
+2. **Comparing data plot and null plots**: The model may potentially compare the data plot with null plots within the lineup. This provide additional information for decision making.
+
+3. **Understanding variance within a lineup**: It may also understand the variance among null plots within a lineup. 
+
+training sample:
+
+improvement:
+1. similarly, other lineups generated from factors not seen by the model
+2. multiple lineups from each data plot, different positions
+
+
+## Position model
+
+The third method shares similarities to the second method, but with a different output objective: determining the position of the data plot within the lineup. Essentially, this approach asks the model to locate the data plot within a set of residual plots. It resembles a visual testing procedure where an individual is asked to identify the most distinct plot from a lineup. Even though the data plot may not always be the most distinct, training the model exclusively on lineups with substantial effect sizes can yield effective results.
+
+The Position Model can potentially learn all the aspects mentioned in method 2 while providing extra predictive information: the probability that the data plot resides in a position different from the true one. This information is valuable as it can be utilized to calculate the p-value of a visual test.
+
+training sample:
+
+## Effect size model
+
+
+## 

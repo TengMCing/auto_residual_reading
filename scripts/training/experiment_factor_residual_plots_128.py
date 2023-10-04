@@ -201,5 +201,5 @@ model_dir = os.path.join(project_dir,
                          "best_models",
                          f"{DATA_CLASS}",
                          f"{INPUT_TYPE}",
-                         f'{VECTOR_LEN}')
+                         f'{RES}')
 best_model.save(model_dir)

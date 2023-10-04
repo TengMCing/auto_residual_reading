@@ -1,0 +1,20 @@
+#!/bin/bash
+#SBATCH --job-name=train_experiment_factor_residual_plots_256
+#SBATCH --account=sk54
+#SBATCH --time=144:00:00
+#SBATCH --partition=gpu
+#SBATCH --ntasks=6
+#SBATCH --gres=gpu:1
+#SBATCH --mem=60G
+
+#SBATCH --mail-user=weihao.li@monash.edu
+#SBATCH --mail-type=BEGIN,END,FAIL
+
+source ~/.bashrc
+conda activate tf
+module load R/4.0.5
+
+cd ~/sk54/patrickli/auto_residual_reading
+python scripts/training/experiment_factor_residual_plots_256.py
+
+

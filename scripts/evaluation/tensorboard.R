@@ -1,3 +1,3 @@
 library(tensorflow)
-tensorboard("keras_tuner/logs/residual_plots/32", "start")
-tensorboard("keras_tuner/logs/residual_plots/32", "stop")
+tensorboard("keras_tuner/logs/residual_plots/64", "start")
+tensorboard("keras_tuner/logs/residual_plots/64", "stop")

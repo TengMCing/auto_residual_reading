@@ -1,0 +1,118 @@
+---
+title: "Analysis of residual plot model"
+output: html_document
+date: "2023-10-08"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+```
+
+```{r load_packages}
+library(tensorflow)
+library(keras)
+library(tidyverse)
+library(yardstick)
+library(visage)
+library(glue)
+library(here)
+```
+
+```{r set_global_variables}
+ALL_RES <- c(32L, 64L)
+```
+
+
+```{r load_model_and_test_set}
+mod <- list()
+test <- list()
+for (res in ALL_RES) {
+  mod[[res]] <- load_model_tf(here(glue("keras_tuner/best_models/experiment_factor/residual_plots/{res}")))
+  test[[res]] <- flow_images_from_directory(here(glue("data/experiment_factor/residual_plots/{res}/mixed/test")),
+                                            target_size = c(res, res),
+                                            shuffle = FALSE)
+}
+```
+
+```{r get_predictions}
+pred <- list()
+for (res in ALL_RES) {
+  pred[[res]] <- mod[[res]]$predict(test[[res]]) %>%
+    as.data.frame() %>%
+    mutate(truth = test[[res]]$classes + 1) %>%
+    mutate(truth = names(test[[res]]$class_indices)[truth]) %>%
+    mutate(filenames = test[[res]]$filenames) %>%
+    mutate(plot_uid = gsub(".*/(.*).png", "\\1", filenames)) %>%
+    mutate(plot_uid = as.integer(plot_uid)) %>%
+    mutate(pred = V1 > 0.5) %>%
+    mutate(pred = ifelse(pred, "not_null", "null")) %>%
+    mutate(pred = factor(pred)) %>%
+    mutate(truth = factor(truth)) %>%
+    mutate(res = res)
+}
+```
+
+```{r get_meta}
+meta <- readRDS(here("data/experiment_factor/residual_plots/meta.rds"))
+
+effect_size_ref <- vi_survey %>%
+  group_by(unique_lineup_id) %>%
+  summarise(across(everything(), first)) %>%
+  select(shape, e_sigma, a, b, n, x_dist, effect_size) %>%
+  group_by(shape, e_sigma, a, b, n, x_dist) %>%
+  summarise(effect_size = first(effect_size))
+```
+
+```{r merge_meta}
+for (res in ALL_RES) {
+  pred[[res]] <- pred[[res]] %>%
+    left_join(meta) %>%
+    left_join(effect_size_ref) %>%
+    mutate(type = ifelse(!is.na(shape), "polynomial", "heteroskedasticity")) %>%
+    mutate(x_dist = ifelse(x_dist == "even_discrete", "discrete", x_dist))
+}
+```
+
+# Basic summary
+
+```{r basic_summary}
+
+basic_summary <- function(dat, res = 32L) {
+  dat %>%
+  ggplot() +
+  geom_bar(aes(pred, fill = type), position = "dodge") +
+  geom_text(data = dat %>%
+              group_by(truth, type, pred) %>%
+              summarise(prop = n()/2000) %>%
+              filter(type == "heteroskedasticity"),
+  aes(pred, prop * 2000, label = format(prop, digits = 3)),
+  nudge_x = -0.25, nudge_y = 30) +
+  geom_text(data = dat %>%
+              group_by(truth, type, pred) %>%
+              summarise(prop = n()/2000) %>%
+              filter(type == "polynomial"),
+  aes(pred, prop * 2000, label = format(prop, digits = 3)),
+  nudge_x = 0.25, nudge_y = 30) +
+  xlab("Prediction") +
+  theme_light() +
+  facet_wrap(~truth, labeller = label_both) +
+  ylab("Count") +
+  scale_fill_brewer(palette = "Set2") +
+  ggtitle("Summary of prediction", subtitle = glue("Image size {res} * {res}"))
+}
+
+for (res in ALL_RES) {
+  print(basic_summary(pred[[res]], res))
+}
+
+```
+
+```{r balance_accuracy}
+pred %>%
+  reduce(bind_rows) %>%
+  group_by(res) %>%
+  bal_accuracy(truth, pred) %>%
+  kableExtra::kable(col.names = c("Input size", "Metric", "Estimator", "Estimate")) %>%
+  kableExtra::kable_material()
+```
+

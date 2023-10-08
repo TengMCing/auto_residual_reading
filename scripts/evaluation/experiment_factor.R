@@ -3,6 +3,7 @@ library(keras)
 library(tidyverse)
 library(yardstick)
 library(visage)
+library(glue)
 
 mod_32 <- load_model_tf("keras_tuner/best_models/experiment_factor/residual_plots/32")
 mod_64 <- load_model_tf("keras_tuner/best_models/experiment_factor/residual_plots/64")
@@ -83,30 +84,54 @@ bind_rows(mutate(pred_32, res = 32),
   autoplot()
 
 
-# check 32 ----------------------------------------------------------------
+
+# check model -------------------------------------------------------------
+
+check_model <- list()
 
 # Distribution of predicted probability on the test set
-pred_32 %>%
-  ggplot() +
-  geom_histogram(aes(V1)) +
-  ggtitle(quote("Distribution of " ~ hat(P)(y == not_null) ~ "on the test set"), 
-          subtitle = "Input size 32 * 32") +
-  xlab(quote(hat(P)(y == not_null))) +
-  facet_grid(type ~ truth, labeller = label_both) +
-  theme_light()
+check_model$p_hat$distribution <- function(dat, res = 32) {
+  dat %>%
+    ggplot() +
+    geom_histogram(aes(V1)) +
+    ggtitle(quote("Distribution of " ~ hat(P)(y == not_null) ~ "on the test set"), 
+            subtitle = glue("Input size {res} * {res}")) +
+    xlab(quote(hat(P)(y == not_null))) +
+    facet_grid(type ~ truth, labeller = label_both) +
+    theme_light()
+}
 
 # Boxplot of predicted probability conditional on factors
-# x_dist | null
-pred_32 %>%
-  filter(truth == "null") %>%
-  ggplot() +
-  geom_boxplot(aes(factor(x_dist), V1)) +
-  ylab(quote(hat(P)(y == not_null))) +
-  xlab(quote(distribution ~ "of fitted values")) +
-  scale_x_discrete(labels = c("discrete uniform", "lognormal", "normal", "uniform")) +
-  ggtitle(quote("Distribution of " ~ hat(P)(y == not_null ~"|"~ truth == null) ~ "on the test set"), 
-          subtitle = "Input size 32 * 32") +
-  theme_light()
+check_model$p_hat$null$x_dist$distribution <- function(dat, res = 32) {
+  dat %>%
+    filter(truth == "null") %>%
+    ggplot() +
+    geom_boxplot(aes(factor(x_dist), V1)) +
+    ylab(quote(hat(P)(y == not_null))) +
+    xlab("Distribution of fitted values") +
+    scale_x_discrete(labels = c("discrete uniform", "lognormal", "normal", "uniform")) +
+    ggtitle(quote("Distribution of " ~ hat(P)(y == not_null ~"|"~ truth == null) ~ "on the test set"), 
+            subtitle = glue("Input size {res} * {res}")) +
+    theme_light()
+}
+
+check_model$p_hat$null$n$distribution <- function(dat, res = 32) {
+  dat %>%
+    filter(truth == "null") %>%
+    ggplot() +
+    geom_boxplot(aes(factor(n), V1)) +
+    xlab("Number of observations") +
+    ggtitle(quote("Distribution of " ~ hat(P)(y == not_null ~"|"~ truth == null) ~ "on the test set"), 
+            subtitle = glue("Input size {res} * {res}")) +
+    theme_light()
+}
+
+
+# check 32 ----------------------------------------------------------------
+
+check_model$p_hat$distribution(pred_32, 32)
+check_model$p_hat$null$x_dist$distribution(pred_32, 32)
+check_model$p_hat$null$n$distribution(pred_32, 32)
 
 # Boxplot of predicted probability conditional on factors
 # n | null

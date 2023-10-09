@@ -19,7 +19,7 @@ library(here)
 ```
 
 ```{r set_global_variables}
-ALL_RES <- c(32L, 64L)
+ALL_RES <- c(32L, 64L, 128L)
 ```
 
 
@@ -75,37 +75,19 @@ for (res in ALL_RES) {
 
 # Basic summary
 
-```{r basic_summary}
-
-basic_summary <- function(dat, res = 32L) {
-  dat %>%
-  ggplot() +
-  geom_bar(aes(pred, fill = type), position = "dodge") +
-  geom_text(data = dat %>%
-              group_by(truth, type, pred) %>%
-              summarise(prop = n()/2000) %>%
-              filter(type == "heteroskedasticity"),
-  aes(pred, prop * 2000, label = format(prop, digits = 3)),
-  nudge_x = -0.25, nudge_y = 30) +
-  geom_text(data = dat %>%
-              group_by(truth, type, pred) %>%
-              summarise(prop = n()/2000) %>%
-              filter(type == "polynomial"),
-  aes(pred, prop * 2000, label = format(prop, digits = 3)),
-  nudge_x = 0.25, nudge_y = 30) +
-  xlab("Prediction") +
-  theme_light() +
-  facet_wrap(~truth, labeller = label_both) +
-  ylab("Count") +
-  scale_fill_brewer(palette = "Set2") +
-  ggtitle("Summary of prediction", subtitle = glue("Image size {res} * {res}"))
-}
-
-for (res in ALL_RES) {
-  print(basic_summary(pred[[res]], res))
-}
-
+```{r}
+pred %>%
+  reduce(bind_rows) %>%
+  group_by(res, truth, type, pred) %>%
+  summarise(prop = n()/2000)  %>%
+  filter(truth == pred) %>%
+  select(-pred) %>%
+  pivot_wider(names_from = truth, values_from = prop) %>%
+  arrange(type, res) %>%
+  kableExtra::kable(col.names = c("Input size", "Violation", "Accuracy: not_null", "Accuracy: null")) %>%
+  kableExtra::kable_material()
 ```
+
 
 ```{r balance_accuracy}
 pred %>%
@@ -114,5 +96,59 @@ pred %>%
   bal_accuracy(truth, pred) %>%
   kableExtra::kable(col.names = c("Input size", "Metric", "Estimator", "Estimate")) %>%
   kableExtra::kable_material()
+```
+
+# ROC
+
+```{r roc}
+pred %>%
+  reduce(bind_rows) %>%
+  group_by(res) %>%
+  roc_curve(truth, V1) %>%
+  autoplot() +
+  labs(col = "Input size") +
+  ggtitle("ROC")
+```
+
+# Distribution of predicted probability
+
+```{r p_hat_distribution}
+p_hat_distribution <- function(dat, res = 32) {
+  dat %>%
+    ggplot() +
+    geom_histogram(aes(V1)) +
+    ggtitle(quote("Distribution of " ~ hat(P)(y == not_null) ~ "on the test set"), 
+            subtitle = glue("Input size {res} * {res}")) +
+    xlab(quote(hat(P)(y == not_null))) +
+    facet_grid(type ~ truth, labeller = label_both) +
+    theme_light()
+}
+
+for (res in ALL_RES) {
+  p_hat_distribution(pred[[res]], res) %>%
+    print()
+}
+```
+
+# Distribution of predicted probability on null set
+
+```{r p_hat_null_shape}
+p_hat_null_shape <- function(dat, res = 32) {
+  dat %>%
+    filter(truth == "null") %>%
+    ggplot() +
+    geom_boxplot(aes(factor(x_dist), V1)) +
+    ylab(quote(hat(P)(y == not_null))) +
+    xlab("Distribution of fitted values") +
+    scale_x_discrete(labels = c("discrete uniform", "lognormal", "normal", "uniform")) +
+    ggtitle(quote("Distribution of " ~ hat(P)(y == not_null ~"|"~ truth == null) ~ "on the test set"), 
+            subtitle = glue("Input size {res} * {res}")) +
+    theme_light()
+}
+
+for (res in ALL_RES) {
+  p_hat_null_shape(pred[[res]], res) %>%
+    print()
+}
 ```
 

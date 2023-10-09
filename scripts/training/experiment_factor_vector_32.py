@@ -144,7 +144,7 @@ callbacks.append(keras.callbacks.EarlyStopping(
                  verbose=1))
                  
 if os.path.exists(os.path.dirname(log_dir)) is False:
-    os.mkdir(os.path.dirname(log_dir))
+    os.makedirs(os.path.dirname(log_dir))
 callbacks.append(keras.callbacks.TensorBoard(
                  log_dir=log_dir,
                  histogram_freq=0,

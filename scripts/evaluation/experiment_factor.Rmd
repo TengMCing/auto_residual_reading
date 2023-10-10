@@ -1,12 +1,23 @@
 ---
 title: "Analysis of residual plot model"
-output: html_document
+output: 
+  html_document:
+    toc: true
+    theme: united
+    toc_float: true
 date: "2023-10-08"
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 ```
+
+```{css}
+body {
+  font-size: 18px;
+}
+```
+
 
 ```{r load_packages}
 library(tensorflow)
@@ -30,7 +41,8 @@ for (res in ALL_RES) {
   mod[[res]] <- load_model_tf(here(glue("keras_tuner/best_models/experiment_factor/residual_plots/{res}")))
   test[[res]] <- flow_images_from_directory(here(glue("data/experiment_factor/residual_plots/{res}/mixed/test")),
                                             target_size = c(res, res),
-                                            shuffle = FALSE)
+                                            shuffle = FALSE,
+                                            batch_size = 1000L)
 }
 ```
 
@@ -60,20 +72,120 @@ effect_size_ref <- vi_survey %>%
   summarise(across(everything(), first)) %>%
   select(shape, e_sigma, a, b, n, x_dist, effect_size) %>%
   group_by(shape, e_sigma, a, b, n, x_dist) %>%
-  summarise(effect_size = first(effect_size))
+  summarise(effect_size = first(effect_size)) %>%
+  ungroup()
 ```
 
 ```{r merge_meta}
 for (res in ALL_RES) {
   pred[[res]] <- pred[[res]] %>%
-    left_join(meta) %>%
-    left_join(effect_size_ref) %>%
+    left_join(meta)
+  
+  pred[[res]] <- bind_rows(pred[[res]] %>%
+     filter(!is.na(shape)) %>%
+     left_join(select(filter(effect_size_ref, !is.na(shape)), 
+                      shape, e_sigma, x_dist, n, effect_size)),
+     pred[[res]] %>%
+     filter(!is.na(a)) %>%
+     left_join(select(filter(effect_size_ref, !is.na(a)), 
+                      a, b, x_dist, n, effect_size))) %>%
     mutate(type = ifelse(!is.na(shape), "polynomial", "heteroskedasticity")) %>%
-    mutate(x_dist = ifelse(x_dist == "even_discrete", "discrete", x_dist))
+    mutate(x_dist = ifelse(x_dist == "even_discrete", "discrete", x_dist)) %>%
+    mutate(effect_size = ifelse(response == "null", 0, effect_size))
 }
 ```
 
+# Introduction
+
+This report presents an analysis of computer vision models designed to take as input a residual plot image and produce a numeric value between 0 and 1, indicating whether the input residual plot represents a null plot or a non-null plot.
+
+Currently, we have trained three such models, each with a distinct input size: 32, 64, and 128.
+
+## Training data
+
+The training data is generated using the same discrete factors utilized in the human subject experiment. This dataset encompasses two specific violations: non-linearity and heteroskedasticity. For each violation, we sample 2000 sets of experimental factors, which are subsequently employed to construct linear models. For each set of experimental factors, we fit 11 null linear models and 11 non-null linear models. Out of these, 10 are used to generate residual plots for the training dataset, while 1 is used to generate residual plots for the test dataset. Consequently, we have a total of 80,000 training images (2 violations x 2,000 sets x 2 types x 10 models) and 8,000 test images (2 violations x 2,000 sets x 2 types x 1 model).
+
+## Model architecture
+
+For the model architecture, we have adopted the existing VGG16 framework provided by `keras`, and we've employed the `keras-tuner` package for hyperparameter tuning. The hyperparameters under consideration for tuning include:
+
+1. The number of convolutional blocks. (1 to 5)
+2. The base factor determining the number of convolutional filters. (4, 8, 16, 32, 64)
+3. The choice between max pooling and average pooling for processing the output of the final convolutional layers.
+4. The number of units in the single-layer classifier. (8, 16, 32, 64, 128, 256, 512, 1024)
+5. Values for L1 and L2 regularization for the classifier. ($1^{-6}$ to $1^{-1}$)
+6. The dropout rate applied to the classifier. (0.1 to 0.8)
+7. Additionally, we are also exploring the tuning of the learning rate during the training process. ($1^{-6}$ to $1^{-2}$)
+
+The input for our models consists of RGB images with three color channels. To prepare the data for processing, we add a `grey_scale` layer, which transforms the input image into a grayscale image. This transformation is achieved using the luma formula, adhering to the CCIR 601 standard.
+
+Subsequently, we incorporate multiple convolutional blocks into the model architecture. Increasing the number of blocks and filters within the convolutional layers leads to a higher number of tunable parameters in the model, allowing for more complex feature extraction.
+
+The output from the final convolutional block serves as the input to a 2D global pooling layer, which is responsible for reshaping the tensor and reducing its dimensionality.
+
+Additionally, we employ a batch normalization layer to adjust the output of the dense layer. This normalization process helps address issues such as feature shift and can contribute to improved model performance.
+
+## Model training
+
+We employ Bayesian optimization tuning from `keras-tuner` with 30 trials for each model to find the best-performing model. The best epoch from the best trial will be restored at the end of the tuning process.
+
+In the validation process, we allocate 20 percent of the training data, which amounts to $20\% \times 80,000 = 16,000$ images.
+
+Furthermore, we implement early stopping for each trial. If the validation loss fails to improve over a span of 10 epochs, the training process is halted. Additionally, we incorporate a learning rate reduction strategy: if the validation loss shows no improvement for 3 consecutive epochs, the learning rate is reduced to half of its original value.
+
+To control training time and avoid lengthy computations, we cap the maximum number of epochs for each trial at 100. It's noteworthy that none of the trials actually require this many epochs to converge effectively.
+
+# Summary of the architectures of best models
+
+The models with input sizes of 32 and 64 are configured with 4 convolutional blocks, whereas the model with an input size of 128 utilizes 5 convolutional blocks. Across all three models, there are 16 base convolutional filters applied.
+
+In terms of the dense layer, the model with an input size of 32 and the model with an input size of 128 both incorporate 64 units. However, the model with an input size of 64 employs a denser layer with 512 units.
+
+```{r}
+for (res in ALL_RES) {
+  cat(glue("Input size: {res}\n\n"))
+  print(mod[[res]])
+  cat("\n\n\n")
+}
+```
+
+
+Among the top five best models, it's notable that all of them consistently feature a minimum of 4 convolutional blocks. Additionally, they tend to share the use of 16 filters in their convolutional layers, suggesting this as a common and effective choice.
+
+Interestingly, the number of units in the dense layers appears to have less impact on performance, as it varies significantly across these top models. In most cases, a range of 64 to 256 units seems to be sufficient.
+
+Furthermore, it's observed that dropout rates between 0.1 to 0.4 are commonly chosen within these high-performing models. This indicates that moderate dropout rates within this range can effectively contribute to model robustness and generalization.
+
+
+Input size 32 five best models:
+
+- Blocks: 4, 5, 4, 5, 5
+- Filters: 16, 16, 8, 16, 4
+- Units: 64, 256, 8, 32, 8
+- Dropout: 0.4, 0.5, 0.2, 0.3, 0.1
+- Learning rate: 0.000512, 0.001024, 0.001024, 0.000512, 0.002048
+
+
+Input size 64 five best models:
+
+- Blocks: 4, 5, 4, 4, 5
+- Filters: 16, 4, 64, 32, 8
+- Units: 512, 16, 8, 64, 32
+- Dropout: 0.1, 0.1, 0.4, 0.4, 0.4
+- Learning rate: 0.002048, 0.002048, 0.000064, 0.001024, 0.008192
+
+Input size 128 five best models:
+
+- Blocks: 5, 5, 5, 5, 5
+- Filters: 16, 16, 8, 16, 64
+- Units: 64, 8, 128, 1024, 8
+- Dropout: 0.4, 0.1, 0.4, 0.5, 0.2
+- Learning rate: 0.000016, 0.008192, 0.000064, 0.000512, 0.000256
+
+
 # Basic summary
+
+The models with varying input sizes exhibit similar performance, with a balanced accuracy score of approximately 0.83. However, the model with an input size of 64 performs better at predicting null plots but performs worse in detecting both heteroskedasticity and polynomial structures.
 
 ```{r}
 pred %>%
@@ -84,10 +196,15 @@ pred %>%
   select(-pred) %>%
   pivot_wider(names_from = truth, values_from = prop) %>%
   arrange(type, res) %>%
-  kableExtra::kable(col.names = c("Input size", "Violation", "Accuracy: not_null", "Accuracy: null")) %>%
-  kableExtra::kable_material()
+  ungroup() %>%
+  select(-type) %>%
+  kableExtra::kable(col.names = c("Input size", "Accuracy: not_null", "Accuracy: null")) %>%
+  kableExtra::kable_material() %>%
+  kableExtra::pack_rows("Heteroskedasticity", 1, 3, 
+                        label_row_css = "background-color: #666; color: #fff;") %>%
+  kableExtra::pack_rows("Polynomial", 4, 6, 
+                        label_row_css = "background-color: #666; color: #fff;")
 ```
-
 
 ```{r balance_accuracy}
 pred %>%
@@ -98,7 +215,18 @@ pred %>%
   kableExtra::kable_material()
 ```
 
+This outcome may come as somewhat surprising, as one might expect that a smaller input size could have a negative impact on the model's performance. However, it appears that even the smallest resolution we used in the test set is still sufficient for the model to perceive the visual patterns within the plots. This can be seen in one of the example test plots we provided, where, despite the image being only 32x32 pixels in size, the non-linear patterns are still easily noticeable.
+
+The situation may vary when plot details play a critical role in distinguishing between null and non-null plots. This can be especially relevant when dealing with plots containing a significant number of observations.
+
+```{r out.height="300px", out.width="300px"}
+knitr::include_graphics(here::here("data/experiment_factor/residual_plots/32/mixed/test/not_null/6743.png"))
+```
+
+
 # ROC
+
+The receiver operating characteristic (ROC) curve indicates that all three models perform almost identically when making predictions on the test set. 
 
 ```{r roc}
 pred %>%
@@ -112,16 +240,20 @@ pred %>%
 
 # Distribution of predicted probability
 
+Based on the distribution of predicted probabilities, it is evident that in the majority of cases, all three models express high confidence in their predictions regarding non-null plots, with predicted probabilities very close to 1. Conversely, when it comes to null plots, all three models exhibit long-tail empirical distributions, with the peak of these distributions centered around 0.1. Additionally, it's worth noting that the distribution of predicted probabilities for the model with an input size of 32 shows a notable rightward shift.
+
 ```{r p_hat_distribution}
 p_hat_distribution <- function(dat, res = 32) {
   dat %>%
     ggplot() +
+    geom_vline(xintercept = 0.5, col = "red") +
     geom_histogram(aes(V1)) +
     ggtitle(quote("Distribution of " ~ hat(P)(y == not_null) ~ "on the test set"), 
             subtitle = glue("Input size {res} * {res}")) +
     xlab(quote(hat(P)(y == not_null))) +
     facet_grid(type ~ truth, labeller = label_both) +
-    theme_light()
+    theme_light() +
+    ylim(0, 1200)
 }
 
 for (res in ALL_RES) {
@@ -132,23 +264,668 @@ for (res in ALL_RES) {
 
 # Distribution of predicted probability on null set
 
+It's evident that all three models exhibit a higher likelihood of being triggered by lognormal and normal fitted value distributions.
+
 ```{r p_hat_null_shape}
-p_hat_null_shape <- function(dat, res = 32) {
-  dat %>%
-    filter(truth == "null") %>%
-    ggplot() +
-    geom_boxplot(aes(factor(x_dist), V1)) +
-    ylab(quote(hat(P)(y == not_null))) +
-    xlab("Distribution of fitted values") +
-    scale_x_discrete(labels = c("discrete uniform", "lognormal", "normal", "uniform")) +
-    ggtitle(quote("Distribution of " ~ hat(P)(y == not_null ~"|"~ truth == null) ~ "on the test set"), 
-            subtitle = glue("Input size {res} * {res}")) +
-    theme_light()
+pred %>%
+  reduce(bind_rows) %>%
+  filter(truth == "null") %>%
+  mutate(`Input size` = res) %>%
+  ggplot() +
+  geom_boxplot(aes(factor(x_dist), V1)) +
+  facet_wrap(~`Input size`, labeller = label_both) +
+  ylab(quote(hat(P)(y == not_null))) +
+  xlab("Distribution of fitted values") +
+  scale_x_discrete(labels = c("discrete", "lognormal", "normal", "uniform")) +
+  ggtitle(quote("Distribution of " ~ hat(P)(y == not_null ~"|"~ truth == null) ~ "on the test set")) +
+  theme_light()
+```
+
+With fewer observations in a plot, the models are easier to incorrectly reject null residual plots.
+
+```{r}
+pred %>%
+  reduce(bind_rows) %>%
+  filter(truth == "null") %>%
+  mutate(`Input size` = res) %>%
+  ggplot() +
+  geom_boxplot(aes(factor(n), V1)) +
+  facet_wrap(~`Input size`, labeller = label_both) +
+  xlab("Number of observations") +
+  ggtitle(quote("Distribution of " ~ hat(P)(y == not_null ~"|"~ truth == null) ~ "on the test set")) +
+  theme_light()
+
+```
+
+# Null plot examples
+
+Let's have a look at those null plots that being predicted as not null plots with small effect size.
+
+```{r}
+
+shap_plot <- function(plot_uids, save_path, res = 32L, response = "not_null", nsamples = 1000L, label = TRUE, width = 300) {
+  shap <- reticulate::import("shap")
+  np <- reticulate::import("numpy")
+  matplotlib <- reticulate::import("matplotlib")
+  matplotlib$pyplot$clf()
+  matplotlib$pyplot$cla()
+  matplotlib$pyplot$close()
+  
+  background <- reticulate::iter_next(test[[res]])[[1]]
+  
+  e <- shap$GradientExplainer(mod[[res]], background)
+  
+  images <- list()
+  j <- 0
+  for (plot_uid in plot_uids) {
+    j <- j + 1
+    images[[j]] <- image_load(here(glue("data/experiment_factor/residual_plots/{res}/mixed/test/{response}/{plot_uid}.png")),
+                   target_size = c(res, res)) %>%
+      image_to_array()
+  }
+  
+  if (length(images) == 1) 
+    im_arr <- array_reshape(images[[1]], c(1L, res, res, 3L))
+  else
+    im_arr <- np$stack(images)
+
+  shap_values <- e$shap_values(im_arr, nsamples = nsamples)
+  
+  true_labels <- map(1:length(plot_uids), ~response)
+  if (length(images) == 1)
+    labels <- list("not_null", "null")
+  else
+    labels <- np$array(rep(c("not_null", "null"), length(images))) %>%
+      array_reshape(c(length(images), 2L))
+  
+  if (label)
+    shap$image_plot(shap_values, 
+                    im_arr/255, 
+                    true_labels = true_labels, 
+                    labels = labels, 
+                    width = width, 
+                    show = FALSE)
+  else
+    shap$image_plot(shap_values, 
+                    im_arr/255, 
+                    width = width,
+                    show = FALSE)
+  
+  if (!dir.exists(dirname(save_path))) 
+    dir.create(dirname(save_path), recursive = TRUE, showWarnings = FALSE)
+  
+  matplotlib$pyplot$savefig(save_path, dpi = 300L)
+  matplotlib$pyplot$clf()
+  matplotlib$pyplot$cla()
+  matplotlib$pyplot$close()
 }
 
+```
+
+Let's have a look at those null plots that being predicted as not null plots with high confidence.
+
+
+```{r eval=FALSE}
 for (res in ALL_RES) {
-  p_hat_null_shape(pred[[res]], res) %>%
-    print()
+  pred[[res]] %>%
+    filter(truth == "null", pred == "not_null") %>%
+    slice_max(order_by = V1, n = 3) %>%
+    pull(plot_uid) %>%
+    map(~shap_plot(.x, here(glue("scripts/evaluation/temp_plots/{res}/{.x}.png")), res = res, response = "null", label = TRUE, nsamples = 100L))
 }
 ```
 
+- Input size 32
+
+```{r}
+pred[[32]] %>% 
+  filter(truth == "null", pred == "not_null") %>% 
+  slice_max(order_by = V1, n = 3) %>%
+  mutate(log_effect_size = log(effect_size)) %>%
+  rename(prob = V1) %>%
+  select(prob, truth, plot_uid, pred, x_dist, n, log_effect_size) %>%
+  kableExtra::kable() %>%
+  kableExtra::kable_material()
+```
+
+
+
+```{r}
+pred[[32]] %>%
+  filter(truth == "null", pred == "not_null") %>%
+  slice_max(order_by = V1, n = 3) %>%
+  pull(plot_uid) %>%
+  {here(glue("scripts/evaluation/temp_plots/32/{.}.png"))} %>%
+  knitr::include_graphics()
+```
+
+- Input size 64
+
+```{r}
+pred[[64]] %>% 
+  filter(truth == "null", pred == "not_null") %>% 
+  slice_max(order_by = V1, n = 3) %>%
+  mutate(log_effect_size = log(effect_size)) %>%
+  rename(prob = V1) %>%
+  select(prob, truth, plot_uid, pred, x_dist, n, log_effect_size) %>%
+  kableExtra::kable() %>%
+  kableExtra::kable_material()
+```
+
+```{r}
+pred[[64]] %>%
+  filter(truth == "null", pred == "not_null") %>%
+  slice_max(order_by = V1, n = 3) %>%
+  pull(plot_uid) %>%
+  {here(glue("scripts/evaluation/temp_plots/64/{.}.png"))} %>%
+  knitr::include_graphics()
+```
+
+
+- Input size 128
+
+```{r}
+pred[[128]] %>% 
+  filter(truth == "null", pred == "not_null") %>% 
+  slice_max(order_by = V1, n = 3) %>%
+  mutate(log_effect_size = log(effect_size)) %>%
+  rename(prob = V1) %>%
+  select(prob, truth, plot_uid, pred, x_dist, n, log_effect_size) %>%
+  kableExtra::kable() %>%
+  kableExtra::kable_material()
+```
+
+```{r}
+pred[[128]] %>%
+  filter(truth == "null", pred == "not_null") %>%
+  slice_max(order_by = V1, n = 3) %>%
+  pull(plot_uid) %>%
+  {here(glue("scripts/evaluation/temp_plots/128/{.}.png"))} %>%
+  knitr::include_graphics()
+```
+
+
+# Distribution of predicted probability on not null set
+
+Conditioning on the `shape`, `n` and `e_sigma` parameter.
+
+```{r}
+for (res in ALL_RES) {
+  p <- pred[[res]] %>%
+    filter(truth == "not_null") %>%
+    filter(type == "polynomial") %>%
+    mutate(e_sigma = factor(e_sigma, levels = c(4, 2, 1, 0.5))) %>%
+    ggplot() +
+    geom_hline(yintercept = 0.5, col = "red") +
+    geom_boxplot(aes(factor(shape), V1, fill = factor(n))) +
+    ylab(quote(hat(P)(y == not_null))) +
+    xlab("shape") +
+    scale_x_discrete(labels = c("U", "S", "M", "Triple-U")) +
+    ggtitle(quote("Distribution of " ~ hat(P)(y == not_null ~"|"~ truth == not_null) ~ "on the polynomial test set"), 
+            subtitle = glue("Input size {res} * {res}")) +
+    facet_grid(~e_sigma, labeller = label_both) +
+    scale_fill_brewer(palette = "YlOrRd") +
+    labs(fill = "n") +
+    theme_light()
+  print(p)
+}
+
+
+```
+
+Conditioning on the `shape`, `x_dist` and `e_sigma` parameter.
+
+```{r}
+for (res in ALL_RES) {
+  p <- pred[[32]] %>%
+    filter(truth == "not_null") %>%
+    filter(type == "polynomial") %>%
+    mutate(e_sigma = factor(e_sigma, levels = c(4, 2, 1, 0.5))) %>%
+    ggplot() +
+    geom_hline(yintercept = 0.5, col = "red") +
+    geom_boxplot(aes(factor(shape), V1, fill = factor(e_sigma))) +
+    ylab(quote(hat(P)(y == not_null))) +
+    xlab("Shape") +
+    scale_x_discrete(labels = c("U", "S", "M", "Triple-U")) +
+    ggtitle(quote("Distribution of " ~ hat(P)(y == not_null ~"|"~ truth == not_null) ~ "on the polynomial test set"), 
+            subtitle = glue("Input size {res} * {res}")) +
+    facet_grid(~x_dist, labeller = label_both) +
+    scale_fill_brewer(palette = "YlOrRd") +
+    labs(fill = quote(sigma)) +
+    theme_light()
+  print(p)
+}  
+```
+
+```{r}
+pred[[32]] %>%
+  filter(truth == "not_null") %>%
+  filter(type == "heteroskedasticity") %>%
+  ggplot() +
+  geom_hline(yintercept = 0.5, color = "red") +
+  geom_boxplot(aes(factor(a), V1, fill = factor(n))) +
+  facet_grid(x_dist~b, labeller = label_both) +
+  xlab("a") +
+  ggtitle(quote("Distribution of " ~ hat(P)(y == not_null ~"|"~ truth == null) ~ "on the heteroskedasticity test set")) +
+  theme_light() +
+  scale_fill_brewer(palette = "YlOrRd")
+```
+
+# Not null examples
+
+We are surprised by the model's performance in detecting violations. Here, we present residual with smallest effect size but get rejected.
+
+```{r eval=FALSE}
+for (res in ALL_RES) {
+  pred[[res]] %>%
+    filter(truth == "not_null", pred == "not_null") %>%
+    slice_min(order_by = effect_size, n = 3) %>%
+    pull(plot_uid) %>%
+    map(~shap_plot(.x, here(glue("scripts/evaluation/temp_plots/{res}/{.x}.png")), res = res, response = "not_null", label = TRUE, nsamples = 100L))
+}
+```
+
+- Input size 32
+
+```{r}
+pred[[32]] %>% 
+  filter(truth == "not_null", pred == "not_null") %>% 
+  slice_min(order_by = effect_size, n = 3) %>%
+  filter(V1 > 0.6) %>%
+  mutate(log_effect_size = log(effect_size)) %>%
+  rename(prob = V1) %>%
+  select(prob, truth, plot_uid, pred, x_dist, n, type, log_effect_size) %>%
+  kableExtra::kable() %>%
+  kableExtra::kable_material()
+```
+
+
+
+```{r}
+pred[[32]] %>%
+  filter(truth == "not_null", pred == "not_null") %>% 
+  slice_min(order_by = effect_size, n = 3) %>%
+  filter(V1 > 0.6) %>%
+  pull(plot_uid) %>%
+  {here(glue("scripts/evaluation/temp_plots/32/{.}.png"))} %>%
+  knitr::include_graphics()
+```
+
+- Input size 64
+
+```{r}
+pred[[64]] %>% 
+  filter(truth == "not_null", pred == "not_null") %>% 
+  slice_min(order_by = effect_size, n = 3) %>%
+  filter(V1 > 0.6) %>%
+  mutate(log_effect_size = log(effect_size)) %>%
+  rename(prob = V1) %>%
+  select(prob, truth, plot_uid, pred, x_dist, n, type, log_effect_size) %>%
+  kableExtra::kable() %>%
+  kableExtra::kable_material()
+```
+
+```{r}
+pred[[64]] %>%
+  filter(truth == "not_null", pred == "not_null") %>% 
+  slice_min(order_by = effect_size, n = 3) %>%
+  filter(V1 > 0.6) %>%
+  pull(plot_uid) %>%
+  {here(glue("scripts/evaluation/temp_plots/64/{.}.png"))} %>%
+  knitr::include_graphics()
+```
+
+
+- Input size 128
+
+```{r}
+pred[[128]] %>% 
+  filter(truth == "not_null", pred == "not_null") %>% 
+  slice_min(order_by = effect_size, n = 3) %>%
+  filter(V1 > 0.6) %>%
+  mutate(log_effect_size = log(effect_size)) %>%
+  rename(prob = V1) %>%
+  select(prob, truth, plot_uid, pred, x_dist, n, type, log_effect_size) %>%
+  kableExtra::kable() %>%
+  kableExtra::kable_material()
+```
+
+```{r}
+pred[[128]] %>%
+  filter(truth == "not_null", pred == "not_null") %>% 
+  slice_min(order_by = effect_size, n = 3) %>%
+  filter(V1 > 0.6) %>%
+  pull(plot_uid) %>%
+  {here(glue("scripts/evaluation/temp_plots/128/{.}.png"))} %>%
+  knitr::include_graphics()
+```
+
+# Performance on the extended test set
+
+```{r}
+ex_test <- list()
+for (res in ALL_RES) {
+  ex_test[[res]] <- flow_images_from_directory(here(glue("data/phn_extended/residual_plots/{res}/mixed/test")),
+                                            target_size = c(res, res),
+                                            shuffle = FALSE,
+                                            batch_size = 1000L)
+}
+```
+
+```{r}
+ex_meta <- readRDS(here(glue("data/phn_extended/residual_plots/meta.rds")))
+```
+
+```{r}
+ex_pred <- list()
+for (res in ALL_RES) {
+  ex_pred[[res]] <- mod[[res]]$predict(ex_test[[res]]) %>%
+    as.data.frame() %>%
+    mutate(truth = ex_test[[res]]$classes + 1) %>%
+    mutate(truth = names(ex_test[[res]]$class_indices)[truth]) %>%
+    mutate(filenames = ex_test[[res]]$filenames) %>%
+    mutate(plot_uid = gsub(".*/(.*).png", "\\1", filenames)) %>%
+    mutate(plot_uid = as.integer(plot_uid)) %>%
+    mutate(pred = V1 > 0.5) %>%
+    mutate(pred = ifelse(pred, "not_null", "null")) %>%
+    mutate(pred = factor(pred)) %>%
+    mutate(truth = factor(truth)) %>%
+    mutate(res = res)
+}
+```
+
+```{r}
+for (res in ALL_RES) {
+  ex_pred[[res]] <- ex_pred[[res]] %>%
+    left_join(ex_meta)
+  
+  ex_pred[[res]] <- ex_pred[[res]] %>%
+    mutate(type = ifelse(!is.na(shape), "polynomial", "heteroskedasticity")) %>%
+    mutate(type = ifelse(!is.na(a), "heteroskedasticity", type)) %>%
+    mutate(type = ifelse(!is.na(e_dist), "non-normal", type)) %>%
+    mutate(x_dist = ifelse(x_dist == "even_discrete", "discrete", x_dist))
+}
+```
+
+```{r}
+ex_pred %>%
+  reduce(bind_rows) %>%
+  group_by(res, truth, type, pred) %>%
+  summarise(prop = n()/2000)  %>%
+  filter(truth == pred) %>%
+  select(-pred) %>%
+  pivot_wider(names_from = truth, values_from = prop) %>%
+  arrange(type, res) %>%
+  ungroup() %>%
+  select(-type) %>%
+  kableExtra::kable(col.names = c("Input size", "Accuracy: not_null", "Accuracy: null")) %>%
+  kableExtra::kable_material() %>%
+  kableExtra::pack_rows("Heteroskedasticity", 1, 3, 
+                        label_row_css = "background-color: #666; color: #fff;") %>%
+  kableExtra::pack_rows("Non-normal", 4, 6, 
+                        label_row_css = "background-color: #666; color: #fff;") %>%
+  kableExtra::pack_rows("Polynomial", 7, 8, 
+                        label_row_css = "background-color: #666; color: #fff;")
+```
+
+```{r}
+ex_pred %>%
+  reduce(bind_rows) %>%
+  group_by(res) %>%
+  bal_accuracy(truth, pred) %>%
+  kableExtra::kable(col.names = c("Input size", "Metric", "Estimator", "Estimate")) %>%
+  kableExtra::kable_material()
+```
+
+# Not null examples on the extened test set
+
+## Polynomial
+
+We check residual plots that are predicted as "null plots" with smallest $\sigma$ and ($\hat{p}(y=\text{null}|\text{not_null}) > 0.7$).
+
+```{r}
+
+ex_shap_plot <- function(plot_uids, save_path, res = 32L, response = "not_null", nsamples = 1000L, label = TRUE, width = 300) {
+  shap <- reticulate::import("shap")
+  np <- reticulate::import("numpy")
+  matplotlib <- reticulate::import("matplotlib")
+  matplotlib$pyplot$clf()
+  matplotlib$pyplot$cla()
+  matplotlib$pyplot$close()
+  
+  background <- reticulate::iter_next(test[[res]])[[1]]
+  
+  e <- shap$GradientExplainer(mod[[res]], background)
+  
+  images <- list()
+  j <- 0
+  for (plot_uid in plot_uids) {
+    j <- j + 1
+    images[[j]] <- image_load(here(glue("data/phn_extended/residual_plots/{res}/mixed/test/{response}/{plot_uid}.png")),
+                   target_size = c(res, res)) %>%
+      image_to_array()
+  }
+  
+  if (length(images) == 1) 
+    im_arr <- array_reshape(images[[1]], c(1L, res, res, 3L))
+  else
+    im_arr <- np$stack(images)
+
+  shap_values <- e$shap_values(im_arr, nsamples = nsamples)
+  
+  true_labels <- map(1:length(plot_uids), ~response)
+  if (length(images) == 1)
+    labels <- list("not_null", "null")
+  else
+    labels <- np$array(rep(c("not_null", "null"), length(images))) %>%
+      array_reshape(c(length(images), 2L))
+  
+  if (label)
+    shap$image_plot(shap_values, 
+                    im_arr/255, 
+                    true_labels = true_labels, 
+                    labels = labels, 
+                    width = width, 
+                    show = FALSE)
+  else
+    shap$image_plot(shap_values, 
+                    im_arr/255, 
+                    width = width,
+                    show = FALSE)
+  
+  if (!dir.exists(dirname(save_path))) 
+    dir.create(dirname(save_path), recursive = TRUE, showWarnings = FALSE)
+  
+  matplotlib$pyplot$savefig(save_path, dpi = 300L)
+  matplotlib$pyplot$clf()
+  matplotlib$pyplot$cla()
+  matplotlib$pyplot$close()
+}
+
+```
+
+
+```{r eval=FALSE}
+for (res in ALL_RES) {
+  ex_pred[[res]] %>%
+    filter(type == "polynomial") %>%
+    filter(truth == "not_null", pred == "null") %>%
+    filter(V2 > 0.7) %>%
+    slice_min(order_by = e_sigma, n = 3) %>%
+    pull(plot_uid) %>%
+    map(~ex_shap_plot(.x, here(glue("scripts/evaluation/temp_plots/{res}/ex/{.x}.png")), res = res, response = "not_null", label = TRUE, nsamples = 100L))
+}
+```
+
+- Input size 32
+
+```{r}
+ex_pred[[32]] %>% 
+  filter(type == "polynomial") %>%
+  filter(truth == "not_null", pred == "null") %>%
+  filter(V2 > 0.7) %>%
+  slice_min(order_by = e_sigma, n = 3) %>%
+  rename(prob = V2) %>%
+  select(prob, truth, plot_uid, pred, j, e_sigma, x_dist, x_sigma, x_k, x_even, n, type) %>%
+  kableExtra::kable() %>%
+  kableExtra::kable_material()
+```
+
+
+
+```{r}
+ex_pred[[32]] %>% 
+  filter(type == "polynomial") %>%
+  filter(truth == "not_null", pred == "null") %>%
+  filter(V2 > 0.7) %>%
+  slice_min(order_by = e_sigma, n = 3) %>%
+  pull(plot_uid) %>%
+  {here(glue("scripts/evaluation/temp_plots/32/ex/{.}.png"))} %>%
+  knitr::include_graphics()
+```
+
+- Input size 64
+
+```{r}
+ex_pred[[64]] %>% 
+  filter(type == "polynomial") %>%
+  filter(truth == "not_null", pred == "null") %>%
+  filter(V2 > 0.7) %>%
+  slice_min(order_by = e_sigma, n = 3) %>%
+  rename(prob = V2) %>%
+  select(prob, truth, plot_uid, pred, j, e_sigma, x_dist, x_sigma, x_k, x_even, n, type) %>%
+  kableExtra::kable() %>%
+  kableExtra::kable_material()
+```
+
+```{r}
+ex_pred[[64]] %>% 
+  filter(type == "polynomial") %>%
+  filter(truth == "not_null", pred == "null") %>%
+  filter(V2 > 0.7) %>%
+  slice_min(order_by = e_sigma, n = 3) %>%
+  pull(plot_uid) %>%
+  {here(glue("scripts/evaluation/temp_plots/64/ex/{.}.png"))} %>%
+  knitr::include_graphics()
+```
+
+
+- Input size 128
+
+```{r}
+ex_pred[[128]] %>% 
+  filter(type == "polynomial") %>%
+  filter(truth == "not_null", pred == "null") %>%
+  filter(V2 > 0.7) %>%
+  slice_min(order_by = e_sigma, n = 3) %>%
+  rename(prob = V2) %>%
+  select(prob, truth, plot_uid, pred, j, e_sigma, x_dist, x_sigma, x_k, x_even, n, type) %>%
+  kableExtra::kable() %>%
+  kableExtra::kable_material()
+```
+
+```{r}
+ex_pred[[128]] %>% 
+  filter(type == "polynomial") %>%
+  filter(truth == "not_null", pred == "null") %>%
+  filter(V2 > 0.7) %>%
+  slice_min(order_by = e_sigma, n = 3) %>%
+  pull(plot_uid) %>%
+  {here(glue("scripts/evaluation/temp_plots/128/ex/{.}.png"))} %>%
+  knitr::include_graphics()
+```
+
+## Heteroskedasticity
+
+We check residual plots that are predicted as "null plots" with greatest $b$ and ($\hat{p}(y=\text{null}|\text{not_null}) > 0.7$).
+
+
+```{r eval=FALSE}
+for (res in ALL_RES) {
+  ex_pred[[res]] %>%
+    filter(type == "heteroskedasticity") %>%
+    filter(truth == "not_null", pred == "null") %>%
+    filter(V2 > 0.7) %>%
+    slice_max(order_by = b, n = 3) %>%
+    pull(plot_uid) %>%
+    map(~ex_shap_plot(.x, here(glue("scripts/evaluation/temp_plots/{res}/ex/{.x}.png")), res = res, response = "not_null", label = TRUE, nsamples = 100L))
+}
+```
+
+- Input size 32
+
+```{r}
+ex_pred[[32]] %>% 
+  filter(type == "heteroskedasticity") %>%
+  filter(truth == "not_null", pred == "null") %>%
+  filter(V2 > 0.7) %>%
+  slice_max(order_by = b, n = 3) %>%
+  rename(prob = V2) %>%
+  select(prob, truth, plot_uid, pred, , x_dist, x_sigma, x_k, x_even, a, b, n, type) %>%
+  kableExtra::kable() %>%
+  kableExtra::kable_material()
+```
+
+
+
+```{r}
+ex_pred[[32]] %>% 
+  filter(type == "heteroskedasticity") %>%
+  filter(truth == "not_null", pred == "null") %>%
+  filter(V2 > 0.7) %>%
+  slice_max(order_by = b, n = 3) %>%
+  pull(plot_uid) %>%
+  {here(glue("scripts/evaluation/temp_plots/32/ex/{.}.png"))} %>%
+  knitr::include_graphics()
+```
+
+- Input size 64
+
+```{r}
+ex_pred[[64]] %>% 
+  filter(type == "heteroskedasticity") %>%
+  filter(truth == "not_null", pred == "null") %>%
+  filter(V2 > 0.7) %>%
+  slice_max(order_by = b, n = 3) %>%
+  rename(prob = V2) %>%
+  select(prob, truth, plot_uid, pred, , x_dist, x_sigma, x_k, x_even, a, b, n, type) %>%
+  kableExtra::kable() %>%
+  kableExtra::kable_material()
+```
+
+```{r}
+ex_pred[[64]] %>% 
+  filter(type == "heteroskedasticity") %>%
+  filter(truth == "not_null", pred == "null") %>%
+  filter(V2 > 0.7) %>%
+  slice_max(order_by = b, n = 3) %>%
+  pull(plot_uid) %>%
+  {here(glue("scripts/evaluation/temp_plots/64/ex/{.}.png"))} %>%
+  knitr::include_graphics()
+```
+
+
+- Input size 128
+
+```{r}
+ex_pred[[128]] %>% 
+  filter(type == "heteroskedasticity") %>%
+  filter(truth == "not_null", pred == "null") %>%
+  filter(V2 > 0.7) %>%
+  slice_max(order_by = b, n = 3) %>%
+  rename(prob = V2) %>%
+  select(prob, truth, plot_uid, pred, , x_dist, x_sigma, x_k, x_even, a, b, n, type) %>%
+  kableExtra::kable() %>%
+  kableExtra::kable_material()
+```
+
+```{r}
+ex_pred[[128]] %>% 
+  filter(type == "heteroskedasticity") %>%
+  filter(truth == "not_null", pred == "null") %>%
+  filter(V2 > 0.7) %>%
+  slice_max(order_by = b, n = 3) %>%
+  pull(plot_uid) %>%
+  {here(glue("scripts/evaluation/temp_plots/128/ex/{.}.png"))} %>%
+  knitr::include_graphics()
+```

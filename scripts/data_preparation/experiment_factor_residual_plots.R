@@ -43,10 +43,16 @@ draw_plots <- function(violation, not_null, null, n, meta_vector) {
   mod$not_null <- not_null
   mod$null <- null
   
+  result <- vector("list", length = 4)
+  result_counter <- 1
+  
   for (response in c("not_null", "null")) {
     for (data_type in c("train", "test")) {
       plot_dat <- map(1:SAMPLE_PER_PARAMETER[[data_type]], 
                       ~mod[[response]]$gen(n))
+      
+      result[[result_counter]] <- plot_dat
+      result_counter <- result_counter + 1
       
       # Speed up the plot drawing
       num_plots <- length(plot_dat)
@@ -75,6 +81,8 @@ draw_plots <- function(violation, not_null, null, n, meta_vector) {
       }
     }
   }
+  
+  return(list_flatten(result))
 }
 
 # get_x_var ---------------------------------------------------------------
@@ -135,21 +143,26 @@ poly_parameter_range <- list(shape = parameter_discrete(1, 4),
                              x_dist = parameter_choice(c("uniform", "normal", "lognormal", "even_discrete")),
                              n = parameter_choice(c(50, 100, 300)))
 
+poly_result <- vector("list", length = TOTAL_NUM_PARAMETER)
+
 for (i in 1:TOTAL_NUM_PARAMETER) {
   
   this_parameter <- map(poly_parameter_range, ~.x())
   
-  draw_plots(violation = "poly",
-             not_null = poly_model(shape = this_parameter$shape,
-                                   x = get_x_var(this_parameter$x_dist),
-                                   sigma = this_parameter$e_sigma),
-             null = poly_model(shape = this_parameter$shape,
-                               x = get_x_var(this_parameter$x_dist),
-                               include_z = FALSE,
-                               sigma = this_parameter$e_sigma),
-             n = this_parameter$n,
-             meta_vector = this_parameter)
+  poly_result[[i]] <- gen_plot_dat(violation = "poly",
+                                   not_null = poly_model(shape = this_parameter$shape,
+                                                         x = get_x_var(this_parameter$x_dist),
+                                                         sigma = this_parameter$e_sigma),
+                                   null = poly_model(shape = this_parameter$shape,
+                                                     x = get_x_var(this_parameter$x_dist),
+                                                     include_z = FALSE,
+                                                     sigma = this_parameter$e_sigma),
+                                   n = this_parameter$n,
+                                   meta_vector = this_parameter)
 }
+
+poly_result <- poly_result %>%
+  list_flatten()
 
 # heter_data --------------------------------------------------------------
 
@@ -158,25 +171,31 @@ heter_parameter_range <- list(a = parameter_choice(c(-1, 0, 1)),
                               x_dist = parameter_choice(c("uniform", "normal", "lognormal", "even_discrete")),
                               n = parameter_choice(c(50, 100, 300)))
 
+heter_result <- vector("list", length = TOTAL_NUM_PARAMETER)
+
 for (i in 1:TOTAL_NUM_PARAMETER) {
   
   this_parameter <- map(heter_parameter_range, ~.x())
   
-  draw_plots(violation = "heter",
-             not_null = heter_model(a = this_parameter$a,
-                                    b = this_parameter$b,
-                                    x = get_x_var(this_parameter$x_dist)),
-             null = heter_model(a = this_parameter$a,
-                                b = 0,
-                                x = get_x_var(this_parameter$x_dist)),
-             n = this_parameter$n,
-             meta_vector = this_parameter)
-  
+  heter_result[[i]] <- gen_plot_dat(violation = "heter",
+                                    not_null = heter_model(a = this_parameter$a,
+                                                           b = this_parameter$b,
+                                                           x = get_x_var(this_parameter$x_dist)),
+                                    null = heter_model(a = this_parameter$a,
+                                                       b = 0,
+                                                       x = get_x_var(this_parameter$x_dist)),
+                                    n = this_parameter$n,
+                                    meta_vector = this_parameter)
 }
+
+heter_result <- heter_result %>%
+  list_flatten()
 
 
 # save_meta_data ----------------------------------------------------------
 
+mixed_result <- append(poly_result, heter_result)
+mixed_result %>% saveRDS(file = here("{DATA_FOLDER}/raw.rds"))
 saveRDS(PLOT_META, here(glue("{DATA_FOLDER}/meta.rds")))
 
 # mixed_data --------------------------------------------------------------

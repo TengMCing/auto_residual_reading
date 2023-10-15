@@ -54,6 +54,8 @@ draw_plots <- function(violation, not_null, null, n, meta_vector) {
       result[[result_counter]] <- plot_dat
       result_counter <- result_counter + 1
       
+      es <- map_dbl(plot_dat, ~mod[[response]]$sample_effect_size(.x, type = "kl"))
+      
       # Speed up the plot drawing
       num_plots <- length(plot_dat)
       foreach(this_dat = plot_dat, 
@@ -71,13 +73,14 @@ draw_plots <- function(violation, not_null, null, n, meta_vector) {
                        height = 7/4)
               }
       
-      for (.unused in 1:num_plots) {
+      for (i in 1:num_plots) {
         PLOT_UID <<- PLOT_UID + 1
         PLOT_META <<- PLOT_META %>%
           bind_rows(c(plot_uid = PLOT_UID, 
                       meta_vector, 
                       data_type = data_type, 
-                      response = response))
+                      response = response,
+                      effect_size = es[i]))
       }
     }
   }
@@ -196,7 +199,7 @@ heter_result <- heter_result %>%
 
 mixed_result <- append(poly_result, heter_result)
 mixed_result %>% saveRDS(file = here(glue("{DATA_FOLDER}/raw.rds")))
-saveRDS(PLOT_META, here(glue("{DATA_FOLDER}/meta.rds")))
+write_csv(PLOT_META, here(glue("{DATA_FOLDER}/meta.csv")))
 
 # mixed_data --------------------------------------------------------------
 

@@ -188,7 +188,8 @@ def build_model(hp):
   
 
 tuner = keras_tuner.BayesianOptimization(hypermodel=build_model,
-                                         objective='val_root_mean_squared_error',
+                                         objective=keras_tuner.Objective("val_root_mean_squared_error", direction="min"),
+                                         direction
                                          max_trials=30,
                                          executions_per_trial=1,
                                          overwrite=False,

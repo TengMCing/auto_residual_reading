@@ -149,16 +149,16 @@ for (i in 1:TOTAL_NUM_PARAMETER) {
   
   this_parameter <- map(poly_parameter_range, ~.x())
   
-  poly_result[[i]] <- gen_plot_dat(violation = "poly",
-                                   not_null = poly_model(shape = this_parameter$shape,
-                                                         x = get_x_var(this_parameter$x_dist),
-                                                         sigma = this_parameter$e_sigma),
-                                   null = poly_model(shape = this_parameter$shape,
-                                                     x = get_x_var(this_parameter$x_dist),
-                                                     include_z = FALSE,
-                                                     sigma = this_parameter$e_sigma),
-                                   n = this_parameter$n,
-                                   meta_vector = this_parameter)
+  poly_result[[i]] <- draw_plots(violation = "poly",
+                                 not_null = poly_model(shape = this_parameter$shape,
+                                                       x = get_x_var(this_parameter$x_dist),
+                                                       sigma = this_parameter$e_sigma),
+                                 null = poly_model(shape = this_parameter$shape,
+                                                   x = get_x_var(this_parameter$x_dist),
+                                                   include_z = FALSE,
+                                                   sigma = this_parameter$e_sigma),
+                                 n = this_parameter$n,
+                                 meta_vector = this_parameter)
 }
 
 poly_result <- poly_result %>%
@@ -177,15 +177,15 @@ for (i in 1:TOTAL_NUM_PARAMETER) {
   
   this_parameter <- map(heter_parameter_range, ~.x())
   
-  heter_result[[i]] <- gen_plot_dat(violation = "heter",
-                                    not_null = heter_model(a = this_parameter$a,
-                                                           b = this_parameter$b,
-                                                           x = get_x_var(this_parameter$x_dist)),
-                                    null = heter_model(a = this_parameter$a,
-                                                       b = 0,
-                                                       x = get_x_var(this_parameter$x_dist)),
-                                    n = this_parameter$n,
-                                    meta_vector = this_parameter)
+  heter_result[[i]] <- draw_plots(violation = "heter",
+                                  not_null = heter_model(a = this_parameter$a,
+                                                         b = this_parameter$b,
+                                                         x = get_x_var(this_parameter$x_dist)),
+                                  null = heter_model(a = this_parameter$a,
+                                                     b = 0,
+                                                     x = get_x_var(this_parameter$x_dist)),
+                                  n = this_parameter$n,
+                                  meta_vector = this_parameter)
 }
 
 heter_result <- heter_result %>%
@@ -195,7 +195,7 @@ heter_result <- heter_result %>%
 # save_meta_data ----------------------------------------------------------
 
 mixed_result <- append(poly_result, heter_result)
-mixed_result %>% saveRDS(file = here("{DATA_FOLDER}/raw.rds"))
+mixed_result %>% saveRDS(file = here(glue("{DATA_FOLDER}/raw.rds")))
 saveRDS(PLOT_META, here(glue("{DATA_FOLDER}/meta.rds")))
 
 # mixed_data --------------------------------------------------------------

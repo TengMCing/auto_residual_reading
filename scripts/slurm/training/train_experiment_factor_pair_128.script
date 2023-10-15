@@ -5,7 +5,7 @@
 #SBATCH --partition=gpu
 #SBATCH --ntasks=6
 #SBATCH --gres=gpu:1
-#SBATCH --mem=60G
+#SBATCH --mem=120G
 
 #SBATCH --mail-user=weihao.li@monash.edu
 #SBATCH --mail-type=BEGIN,END,FAIL

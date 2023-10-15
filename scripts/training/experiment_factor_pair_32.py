@@ -4,6 +4,7 @@ import os
 import tensorflow as tf
 from tensorflow import keras
 import keras_tuner
+import numpy as np
 
 # Global setttings
 DATA_CLASS = 'experiment_factor'
@@ -27,7 +28,6 @@ train_dir = os.path.join(project_dir,
                          'mixed',
                          'train')
                          
-                         
 data_gen = keras.preprocessing.image.ImageDataGenerator(validation_split=0.2)
 train_dat = data_gen.flow_from_directory(directory=train_dir,
                                          target_size=(RES * 2, RES),
@@ -39,15 +39,41 @@ train_dat = data_gen.flow_from_directory(directory=train_dir,
                                          seed=10086,
                                          subset="training")
 val_dat = data_gen.flow_from_directory(directory=train_dir,
-                                         target_size=(RES * 2, RES),
-                                         color_mode=COLOR_MODE,
-                                         classes=CLASS_NAMES,
-                                         class_mode='categorical',
-                                         batch_size=BATCH_SIZE,
-                                         shuffle=True,
-                                         seed=10086,
-                                         subset="validation")
-                             
+                                       target_size=(RES * 2, RES),
+                                       color_mode=COLOR_MODE,
+                                       classes=CLASS_NAMES,
+                                       class_mode='categorical',
+                                       batch_size=BATCH_SIZE,
+                                       shuffle=True,
+                                       seed=10086,
+                                       subset="validation")
+                                         
+num_train_dat = len(train_dat.classes)
+num_val_dat = len(val_dat.classes)
+
+train_x = list()
+train_y = list()
+
+for i in range(num_train_dat // BATCH_SIZE + (num_train_dat % BATCH_SIZE > 0)):
+  this_batch = next(train_dat)
+  train_x.append(this_batch[0])
+  train_y.append(this_batch[1])
+
+train_x = np.concatenate(train_x)
+train_y = np.concatenate(train_y)
+
+val_x = list()
+val_y = list()
+
+for i in range(num_val_dat // BATCH_SIZE + (num_val_dat % BATCH_SIZE > 0)):
+  this_batch = next(val_dat)
+  val_x.append(this_batch[0])
+  val_y.append(this_batch[1])
+
+val_x = np.concatenate(val_x)
+val_y = np.concatenate(val_y)
+
+
 def build_model(hp):
     
     # Preprocess the input image
@@ -152,7 +178,7 @@ def build_model(hp):
 
 tuner = keras_tuner.BayesianOptimization(hypermodel=build_model,
                                          objective='val_categorical_accuracy',
-                                         max_trials=5,
+                                         max_trials=30,
                                          executions_per_trial=1,
                                          overwrite=False,
                                          directory=f"keras_tuner/tuner/{DATA_CLASS}/{INPUT_TYPE}",
@@ -187,8 +213,10 @@ callbacks.append(keras.callbacks.ReduceLROnPlateau(
                        
 tuner.search_space_summary()
 
-tuner.search(x=train_dat,
-             validation_data=val_dat,
+tuner.search(x=train_x,
+             y=train_y,
+             validation_data=(val_x, val_y),
+             batch_size=BATCH_SIZE,
              epochs=100, 
              callbacks=callbacks)
 

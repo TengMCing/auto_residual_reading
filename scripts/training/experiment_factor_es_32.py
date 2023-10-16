@@ -58,16 +58,6 @@ val_dat = data_gen.flow_from_directory(directory=train_dir,
 num_train_dat = len(train_dat.classes)
 num_val_dat = len(val_dat.classes)
 
-train_plot_uid = [int(filename.split('/')[1].split('.')[0]) for filename in train_dat.filenames]
-val_plot_uid = [int(filename.split('/')[1].split('.')[0]) for filename in val_dat.filenames]
-
-meta = pd.read_csv(meta_dir, keep_default_na = False)
-
-train_y = pd.merge(pd.DataFrame({'plot_uid': train_plot_uid}), meta, on='plot_uid', how='left')['effect_size'].values
-val_y = pd.merge(pd.DataFrame({'plot_uid': val_plot_uid}), meta, on='plot_uid', how='left')['effect_size'].values
-train_y = np.log(train_y + 1)
-val_y = np.log(val_y + 1)
-
 train_x = list()
 
 for i in range(num_train_dat // BATCH_SIZE + (num_train_dat % BATCH_SIZE > 0)):
@@ -84,6 +74,15 @@ for i in range(num_val_dat // BATCH_SIZE + (num_val_dat % BATCH_SIZE > 0)):
 
 val_x = np.concatenate(val_x)
 
+train_plot_uid = [int(train_dat.filenames[index].split('/')[1].split('.')[0]) for index in train_dat.index_array]
+val_plot_uid = [int(val_dat.filenames[index].split('/')[1].split('.')[0]) for index in val_dat.index_array]
+
+meta = pd.read_csv(meta_dir, keep_default_na = False)
+
+train_y = pd.merge(pd.DataFrame({'plot_uid': train_plot_uid}), meta, on='plot_uid', how='left')['effect_size'].values
+val_y = pd.merge(pd.DataFrame({'plot_uid': val_plot_uid}), meta, on='plot_uid', how='left')['effect_size'].values
+train_y = np.log(train_y + 1)
+val_y = np.log(val_y + 1)
 
 def build_model(hp):
     

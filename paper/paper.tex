@@ -44,7 +44,7 @@
 
 \articletype{ARTICLE TEMPLATE}
 
-\title{Automated reading of residual plot with computer vision models}
+\title{Automated reading of residual plots with computer vision models}
 
 
 \author{\name{Weihao Li$^{a}$}
@@ -68,131 +68,140 @@ TBD
 \hypertarget{introduction}{%
 \section{Introduction}\label{introduction}}
 
-\hypertarget{methods-for-training-computer-vision-models-to-analyze-residual-plots}{%
-\section{Methods for training computer vision models to analyze residual
-plots}\label{methods-for-training-computer-vision-models-to-analyze-residual-plots}}
+Residuals, within regression analysis, represent the differences between
+fitted values and observed data points, capturing the unexplained
+elements in the regression model. The practice of plotting residuals,
+advocated by influential regression literature
+\citep{cook1982residuals, draper1998applied, belsley1980regression, montgomery1982introduction},
+serves as a standard procedure in regression diagnostics. This visual
+examination is crucial for identifying deviations from the model
+assumptions like linearity, homoscedasticity, and normality.
 
-In the field of statistical modeling and data analysis, interpreting
-residual plots plays a pivotal role in assessing the validity of our
-models. These plots can reveal deviations from modeling assumptions,
-including non-linearity, heteroskedasticity, and non-normality. The
-automation of residual plot analysis through computer vision provides a
-valuable tool for model validation and informed decision-making.
+Generating a residual plot in most statistical software is often as
+straightforward as executing a line of code or clicking a button.
+However, accurately interpreting a residual plot can be challenging.
+Consider Figure \ref{fig:false-finding} as an example, the residuals
+display a triangular shape pointing to the left. While this might
+suggest heteroskedasticity, it's important to avoid over-interpreting
+the visual pattern. In this case, the fitted model is correctly
+specified, and the triangular shape is actually a result of the skewed
+distribution of the predictors, rather than indicating a flaw in the
+model.
 
-This section discusses various methodologies for training computer
-vision models to effectively read and interpret residual plots. We
-explore three distinct approaches, each with its unique characteristics
-and strengths.
+A residual plot can exhibit various visual features, but it's crucial to
+recognize that some may arise from the characteristics of predictors and
+the inherent randomness of the error, rather than indicating a violation
+of model assumptions \citep{li2023plot}. The concept of visual
+inference, as proposed by \citet{buja2009statistical}, provides an
+inferential framework to assess whether residual plots indeed contain
+visual patterns inconsistent with the model assumptions. The fundamental
+idea involves testing whether the actual residual plot significantly
+differs visually from null plots, which are created using residuals
+generated from the null distribution. Typically, this is accomplished
+through the lineup protocol. In this approach, the real residual plot is
+embedded within a lineup alongside several null plots. If the real
+residual plot can be distinguished from the lineup, it provides evidence
+for rejecting the null hypothesis.
 
-\hypertarget{method-1-single-plot-model}{%
-\subsection{Method 1: Single Plot
-Model}\label{method-1-single-plot-model}}
+Delivering a residual plot as a lineup is generally considered a good
+practice. However, as pointed out by \citet{li2023plot}, a primary
+limitation of the lineup protocol is its reliance on human judgments.
+Unlike conventional statistical tests that can be performed numerically
+and automatically in statistical software, the lineup protocol requires
+human evaluation of images. This characteristic makes it less suitable
+for large-scale applications, given the associated high labour costs and
+time requirements.
 
-The first method involves training a computer vision model to analyze a
-single residual plot and determine the probability that it was generated
-from a model without any violations. This method aligns with the
-principles of traditional deep learning classification problem, making
-it an intuitive and straightforward approach.
+In this paper, we attempt to address this issue by integrating computer
+vision models into residual plot diagnostics. The paper is structured as
+follows: \ldots{}
 
-To implement the Single Plot Model effectively, we utilize established
-neural network architectures like VGG16. The model is trained on a
-diverse dataset containing both ``not null'' plots (generated from model
-with violations) and ``null'' plots (generated from model without
-violations).
+\begin{figure}
 
-This approach provides the model with certain capabilities:
+{\centering \includegraphics[width=1\linewidth]{paper_files/figure-latex/false-finding-1} 
 
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
+}
+
+\caption{An example residual vs fitted values plot (red line indicates 0). The vertical spread of the data points varies with the fitted values. This often indicates the existence of heteroskedasticity.}\label{fig:false-finding}
+\end{figure}
+
+\hypertarget{methodogology}{%
+\section{Methodogology}\label{methodogology}}
+
+\hypertarget{generation-of-simulated-training-data}{%
+\subsection{Generation of simulated training
+data}\label{generation-of-simulated-training-data}}
+
+\hypertarget{architecture-of-the-computer-vision-model}{%
+\subsection{Architecture of the computer vision
+model}\label{architecture-of-the-computer-vision-model}}
+
+\hypertarget{training-process-and-hyperparameter-tuning}{%
+\subsection{Training process and hyperparameter
+tuning}\label{training-process-and-hyperparameter-tuning}}
+
+\hypertarget{results}{%
+\section{Results}\label{results}}
+
+\hypertarget{model-evaluation}{%
+\subsection{Model evaluation}\label{model-evaluation}}
+
+\begin{itemize}
+\tightlist
 \item
-  \textbf{Distinguishing null and not null plots}: Through training, the
-  model is expected to be able to distinguish between null plots and not
-  null plots. This distinction forms the foundation for identifying
-  model violations in new residual plots.
+  Metrics for model performance
 \item
-  \textbf{Capturing variance in null plots}: Null plots often exhibit
-  varying shapes and outliers due to the randomness of the error term
-  and the distribution of fitted values. The model learns to recognize
-  and characterize this variance, aiding in the detection of violations.
+  Shap values
 \item
-  \textbf{Recognizing patterns in not null plots}: The model would
-  develop the ability to identify common patterns in not null plots
-  generated through simulations.
+  Heatmap
+\end{itemize}
+
+\hypertarget{comparison-with-human-visual-inference}{%
+\subsection{Comparison with human visual
+inference}\label{comparison-with-human-visual-inference}}
+
+\hypertarget{overview-of-the-human-subject-experiment}{%
+\subsubsection{Overview of the human subject
+experiment}\label{overview-of-the-human-subject-experiment}}
+
+\hypertarget{comparison}{%
+\subsubsection{Comparison}\label{comparison}}
+
+\begin{itemize}
+\tightlist
 \item
-  \textbf{Analyzing Aesthetic Elements}: Beyond content, the model takes
-  into account aesthetic elements within the residual plot, including
-  point size, auxiliary lines, layers, background colors, and other
-  visual attributes. This is an undesired capability but it is
-  unavoidable if only a single design of plot is used as inputs.
-\end{enumerate}
-
-training sample:
-
-improvements: 1. enrich the factors in simulation 2. sigma same, shape
-same, same fitted value distribution, stack residual plots\\
-3. test other residual plots generated from factors not seen by the
-model 4. replace the output with the effect size
-
-what the function tries to approximate?
-
-\hypertarget{lineup-model}{%
-\subsection{Lineup model}\label{lineup-model}}
-
-The second method involves training a computer vision model to analyze a
-lineup of residual plots, typically consisting of around 20 plots. It
-then determines whether the data plot within the lineup is a null plot
-or a not null plot. This method closely resembles a visual test, where
-the input is a lineup, and the output is a decision indicating whether
-the data plot exhibits visual features corresponding to model
-violations. This method still adheres to the standard classification
-scheme, allowing for the utilization of the same model architecture.
-
-This approach enable the model to learn all four points detailed in
-subsection 1 and three additional key points:
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
+  power comparison
 \item
-  \textbf{Locating the data plot}: It learns to identify and locate the
-  data plot within a lineup of residual plots.
+  decisions
+\end{itemize}
+
+\hypertarget{case-study-1}{%
+\subsection{Case study 1: \ldots{}}\label{case-study-1}}
+
+\hypertarget{case-study-2}{%
+\subsection{Case study 2: \ldots{}}\label{case-study-2}}
+
+\hypertarget{case-study-3-datasaurus}{%
+\subsection{Case study 3: datasaurus}\label{case-study-3-datasaurus}}
+
+\hypertarget{dicussion}{%
+\section{Dicussion}\label{dicussion}}
+
+\hypertarget{conclusion}{%
+\section{Conclusion}\label{conclusion}}
+
+\begin{itemize}
+\tightlist
 \item
-  \textbf{Comparing data plot and null plots}: The model may potentially
-  compare the data plot with null plots within the lineup. This provide
-  additional information for decision making.
+  Summary of findings
 \item
-  \textbf{Understanding variance within a lineup}: It may also
-  understand the variance among null plots within a lineup.
-\end{enumerate}
+  Contributions to the field
+\item
+  Future directions for research
+\end{itemize}
 
-training sample:
-
-improvement: 1. similarly, other lineups generated from factors not seen
-by the model 2. multiple lineups from each data plot, different
-positions
-
-\hypertarget{position-model}{%
-\subsection{Position model}\label{position-model}}
-
-The third method shares similarities to the second method, but with a
-different output objective: determining the position of the data plot
-within the lineup. Essentially, this approach asks the model to locate
-the data plot within a set of residual plots. It resembles a visual
-testing procedure where an individual is asked to identify the most
-distinct plot from a lineup. Even though the data plot may not always be
-the most distinct, training the model exclusively on lineups with
-substantial effect sizes can yield effective results.
-
-The Position Model can potentially learn all the aspects mentioned in
-method 2 while providing extra predictive information: the probability
-that the data plot resides in a position different from the true one.
-This information is valuable as it can be utilized to calculate the
-p-value of a visual test.
-
-training sample:
-
-\hypertarget{effect-size-model}{%
-\subsection{Effect size model}\label{effect-size-model}}
-
+\bibliographystyle{tfcad}
+\bibliography{ref.bib}
 
 
 

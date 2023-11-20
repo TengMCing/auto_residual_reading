@@ -21,6 +21,7 @@ header-includes: |
   \usepackage[utf8]{inputenc}
   \def\tightlist{}
   \usepackage{setspace}
+  \doublespacing
 output: rticles::tf_article
 editor_options: 
   chunk_output_type: console
@@ -57,10 +58,21 @@ Generating a residual plot in most statistical software is often as straightforw
 
 A residual plot can exhibit various visual features, but it's crucial to recognize that some may arise from the characteristics of predictors and the inherent randomness of the error, rather than indicating a violation of model assumptions [@li2023plot]. The concept of visual inference, as proposed by @buja2009statistical, provides an inferential framework to assess whether residual plots indeed contain visual patterns inconsistent with the model assumptions. The fundamental idea involves testing whether the actual residual plot significantly differs visually from null plots, which are created using residuals generated from the null distribution. Typically, this is accomplished through the lineup protocol. In this approach, the real residual plot is embedded within a lineup alongside several null plots. If the real residual plot can be distinguished from the lineup, it provides evidence for rejecting the null hypothesis.
 
-Delivering a residual plot as a lineup is generally considered a good practice. However, as pointed out by @li2023plot, a primary limitation of the lineup protocol is its reliance on human judgments. Unlike conventional statistical tests that can be performed numerically and automatically in statistical software, the lineup protocol requires human evaluation of images. This characteristic makes it less suitable for large-scale applications, given the associated high labour costs and time requirements.
+The practice of delivering a residual plot as a lineup is generally regarded as a valuable approach. Beyond its application in residual diagnostics, the lineup protocol has  integrated into the analysis of diverse subjects. For instance, \cite{loy2013diagnostic, loy2014hlmdiag, loy2015you} illustrate its applicability in diagnosing hierarchical linear models. Additionally, @widen2016graphical demonstrates its utility in geographical research, while @krishnan2021hierarchical explores its effectiveness in forensic examinations.
 
-In this paper, we attempt to address this issue by integrating computer vision models into residual plot diagnostics. The paper is structured as follows: ...
+However, as pointed out by @li2023plot, a primary limitation of the lineup protocol lies in its reliance on human judgments. Unlike conventional statistical tests that can be performed numerically and automatically in statistical software, the lineup protocol requires human evaluation of images. This characteristic makes it less suitable for large-scale applications, given the associated high labour costs and time requirements.
 
+There is a compelling need to develop an approach that alleviates people's workload by automating repetitive tasks and providing standardized results in a controlled environment. The large-scale evaluation of lineups is impractical without the use of technology and machines.
+
+The utilization of computers to interpret data plots has a rich history, with early efforts such as "Scagnostics" by @tukey1985computer, focusing on scatterplot diagnostics. @wilkinson2005graph expanded on this work in 2005, introducing graph theoretic scagnostics, which encompassed nine computable measures applied to planar proximity graphs. These measures, including "Outlying," "Skinny," "Stringy," "Straight," "Monotonic," "Skewed," "Clumpy," and "Striated," aimed to characterize outliers, shape, density, trend, and coherence of the data.
+
+While this approach has been inspiring, there is a recognition that it may not capture all the necessary visual features distinguishing actual residual plots from null plots. An alternative, more promising approach involves allowing computers to learn the visual feature extraction function. In essence, this means enabling computers to discern which visual features are significant for residual diagnostics and how to extract them. Modern computer vision models, a subset of artificial intelligence, present a compelling solution to this challenge.
+
+Modern computer vision models often rely on deep neural networks with convolutional layers [@fukushima1982neocognitron]. These layers leverage hierarchical patterns in data, downsizing and transforming images by summarizing information in a small space. Numerous studies have demonstrated the efficacy of convolutional layers in addressing various vision tasks, including image recognition [@rawat2017deep].
+
+Despite the widespread use of computer vision models in fields like computer-aided diagnosis [@lee2015image], pedestrian detection [@brunetti2018computer], and facial recognition [@emami2012facial], their application in reading data plots remains limited. While some studies have explored the use of computer vision models for tasks such as reading recurrence plots for time series regression [@ojeda2020multivariate], time series classification [@chu2019automatic; @hailesilassie2019financial; @hatami2018classification; @zhang2020encoding], anomaly detection [@chen2020convolutional], and pairwise causality analysis [@singh2017deep], the application of reading residual plots with computer vision models represents a relatively new field of study.
+
+In this paper, we develop computer vision models and integrate them into the residual plots diagnostics workflow, filling the gap of.... The paper is structured as follows: ...
 
 
 ```{r false-finding, fig.cap="An example residual vs fitted values plot (red line indicates 0). The vertical spread of the data points varies with the fitted values. This often indicates the existence of heteroskedasticity."}
@@ -76,22 +88,11 @@ ori_dat %>%
 ```
 
 
-
-<!-- # Related works? -->
-
-<!-- # Literature review -->
-
-<!-- ## Visual inference in residual diagnostics -->
-
-<!-- ## Existing approaches to automated plot analysis -->
-
-<!-- ### Computer vision approaches -->
-
-<!-- ### Other approaches -->
-
 # Methodogology
 
 ## Generation of simulated training data
+
+
 
 ## Architecture of the computer vision model
 

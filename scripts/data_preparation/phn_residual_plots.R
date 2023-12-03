@@ -95,7 +95,7 @@ draw_plots <- function(not_null, null, n, meta_vector) {
       # Speed up the plot drawing
       num_plots <- length(plot_dat)
       foreach(this_dat = plot_dat, 
-              this_plot_id = (PLOT_UID + 1):(PLOT_UID + num_plots)) %dopar% {
+              this_plot_id = (PLOT_UID + 1):(PLOT_UID + num_plots)) %do% {
                 this_plot <- this_dat %>%
                   VI_MODEL$plot(theme = theme_light(base_size = 11/5), 
                                 remove_axis = TRUE, 

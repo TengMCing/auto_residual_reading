@@ -10,12 +10,11 @@ library(cassowaryr)
 
 # multicore ---------------------------------------------------------------
 
-library(doMC)
 library(foreach)
 
-registerDoMC()
-
-cat(glue("{getDoParWorkers()} workers is used by `doMC`!"))
+# registerDoMC()
+# 
+# cat(glue("{getDoParWorkers()} workers is used by `doMC`!"))
 
 set.seed(2023)
 
@@ -64,48 +63,51 @@ draw_plots <- function(not_null, null, n, meta_vector) {
       # }
       
       try_or_zero <- function(fn, ...) {
+        print(as.character(substitute(fn)))
         try_result <- try(fn(...), silent = TRUE)
         if (inherits(try_result, "try-error")) return(0)
         return(try_result)
       }
       
-      measure_clumpy <- map_dbl(plot_dat, ~try_or_zero(sc_clumpy2, .x$.fitted, .x$.resid)) %>% 
-        {ifelse(is.na(.), 0, .)}
-      measure_dcor <- map_dbl(plot_dat, ~try_or_zero(sc_dcor, .x$.fitted, .x$.resid)) %>% 
-        {ifelse(is.na(.), 0, .)}
+      # imap(plot_dat, ~write_csv(data.frame(.x$.fitted, .x$.resid), paste0(.y, "_crash.csv")))
+      
+      # measure_clumpy <- map_dbl(plot_dat, ~try_or_zero(sc_clumpy2, .x$.fitted, .x$.resid)) %>% 
+      #   {ifelse(is.na(.), 0, .)}
+      # measure_dcor <- map_dbl(plot_dat, ~try_or_zero(sc_dcor, .x$.fitted, .x$.resid)) %>% 
+      #   {ifelse(is.na(.), 0, .)}
       measure_monotonic <- map_dbl(plot_dat, ~try_or_zero(sc_monotonic, .x$.fitted, .x$.resid)) %>% 
         {ifelse(is.na(.), 0, .)}
-      measure_outlying <- map_dbl(plot_dat, ~try_or_zero(sc_outlying, .x$.fitted, .x$.resid)) %>% 
-        {ifelse(is.na(.), 0, .)}
-      measure_skewed <- map_dbl(plot_dat, ~try_or_zero(sc_skewed, .x$.fitted, .x$.resid)) %>% 
-        {ifelse(is.na(.), 0, .)}
-      measure_skinny <- map_dbl(plot_dat, ~try_or_zero(sc_skinny, .x$.fitted, .x$.resid)) %>% 
-        {ifelse(is.na(.), 0, .)}
+      # measure_outlying <- map_dbl(plot_dat, ~try_or_zero(sc_outlying, .x$.fitted, .x$.resid)) %>% 
+      #   {ifelse(is.na(.), 0, .)}
+      # measure_skewed <- map_dbl(plot_dat, ~try_or_zero(sc_skewed, .x$.fitted, .x$.resid)) %>% 
+      #   {ifelse(is.na(.), 0, .)}
+      # measure_skinny <- map_dbl(plot_dat, ~try_or_zero(sc_skinny, .x$.fitted, .x$.resid)) %>% 
+      #   {ifelse(is.na(.), 0, .)}
       measure_sparse <- map_dbl(plot_dat, ~try_or_zero(sc_sparse2, .x$.fitted, .x$.resid)) %>% 
         {ifelse(is.na(.), 0, .)}
       measure_splines <- map_dbl(plot_dat, ~try_or_zero(sc_splines, .x$.fitted, .x$.resid)) %>% 
         {ifelse(is.na(.), 0, .)}
-      measure_striated <- map_dbl(plot_dat, ~try_or_zero(sc_striated2, .x$.fitted, .x$.resid)) %>% 
-        {ifelse(is.na(.), 0, .)}
-      measure_stringy <- map_dbl(plot_dat, ~try_or_zero(sc_stringy, .x$.fitted, .x$.resid)) %>% 
-        {ifelse(is.na(.), 0, .)}
+      # measure_striated <- map_dbl(plot_dat, ~try_or_zero(sc_striated2, .x$.fitted, .x$.resid)) %>% 
+      #   {ifelse(is.na(.), 0, .)}
+      # measure_stringy <- map_dbl(plot_dat, ~try_or_zero(sc_stringy, .x$.fitted, .x$.resid)) %>% 
+      #   {ifelse(is.na(.), 0, .)}
       measure_striped <- map_dbl(plot_dat, ~try_or_zero(sc_striped, .x$.fitted, .x$.resid)) %>% 
         {ifelse(is.na(.), 0, .)}
       
       # Speed up the plot drawing
       num_plots <- length(plot_dat)
-      foreach(this_dat = plot_dat, 
+      foreach(this_dat = plot_dat,
               this_plot_id = (PLOT_UID + 1):(PLOT_UID + num_plots)) %do% {
                 this_plot <- this_dat %>%
-                  VI_MODEL$plot(theme = theme_light(base_size = 11/5), 
-                                remove_axis = TRUE, 
-                                remove_legend = TRUE, 
+                  VI_MODEL$plot(theme = theme_light(base_size = 11/5),
+                                remove_axis = TRUE,
+                                remove_legend = TRUE,
                                 remove_grid_line = TRUE)
-                
+
                 # The lineup layout contains 4 rows and 5 cols
-                ggsave(glue(here("{DATA_FOLDER}/native/{data_type}/{response}/{this_plot_id}.png")), 
-                       this_plot, 
-                       width = 7/5, 
+                ggsave(glue(here("{DATA_FOLDER}/native/{data_type}/{response}/{this_plot_id}.png")),
+                       this_plot,
+                       width = 7/5,
                        height = 7/4)
               }
       
@@ -117,16 +119,16 @@ draw_plots <- function(not_null, null, n, meta_vector) {
                       data_type = data_type, 
                       response = response,
                       effect_size = es[i],
-                      measure_clumpy = measure_clumpy[i],
-                      measure_dcor = measure_dcor[i],
+                      # measure_clumpy = measure_clumpy[i],
+                      # measure_dcor = measure_dcor[i],
                       measure_monotonic = measure_monotonic[i],
-                      measure_outlying = measure_outlying[i],
-                      measure_skewed = measure_skewed[i],
-                      measure_skinny = measure_skinny[i],
+                      # measure_outlying = measure_outlying[i],
+                      # measure_skewed = measure_skewed[i],
+                      # measure_skinny = measure_skinny[i],
                       measure_sparse = measure_sparse[i],
                       measure_splines = measure_splines[i],
-                      measure_striated = measure_striated[i],
-                      measure_stringy = measure_stringy[i],
+                      # measure_striated = measure_striated[i],
+                      # measure_stringy = measure_stringy[i],
                       measure_striped = measure_striped[i]))
       }
     }
@@ -272,6 +274,8 @@ for (i in 1:TOTAL_NUM_PARAMETER) {
     this_parameter <- map(phn_parameter_range, ~.x())
     if (!(this_parameter$include_z == FALSE && this_parameter$include_heter == FALSE && this_parameter$include_non_normal == FALSE)) break
   }
+  
+  print(i)
   
   draw_plots(not_null = phn_model(j = this_parameter$j,
                                   a = this_parameter$a,

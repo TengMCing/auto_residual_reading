@@ -211,7 +211,8 @@ tuner = keras_tuner.BayesianOptimization(hypermodel=build_model,
                                          executions_per_trial=1,
                                          overwrite=False,
                                          directory=f"keras_tuner/tuner/{DATA_CLASS}/{INPUT_TYPE}",
-                                         project_name=f'{RES}')
+                                         project_name=f'{RES}',
+                                         max_consecutive_failed_trials=10)
 
 log_dir = os.path.join(project_dir,
                        "keras_tuner",

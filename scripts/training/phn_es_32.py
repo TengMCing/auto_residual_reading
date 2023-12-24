@@ -119,6 +119,7 @@ def build_model(hp):
         num_filters, (3, 3), activation="relu", padding="same", name="block1_conv2"
     )(x)
     x = keras.layers.MaxPooling2D((2, 2), strides=(2, 2), name="block1_pool")(x)
+    x = keras.layers.Dropout(hp.Float('cnn_dropout', min_value=0.1, max_value=0.8, step=0.1))(x)
     
     if num_blocks >= 2:
         # Block 2
@@ -129,6 +130,7 @@ def build_model(hp):
             num_filters * 2, (3, 3), activation="relu", padding="same", name="block2_conv2"
         )(x)
         x = keras.layers.MaxPooling2D((2, 2), strides=(2, 2), name="block2_pool")(x)
+        x = keras.layers.Dropout(hp.Float('cnn_dropout', min_value=0.1, max_value=0.8, step=0.1))(x)
     
     if num_blocks >= 3:
         # Block 3
@@ -142,6 +144,7 @@ def build_model(hp):
             num_filters * 4, (3, 3), activation="relu", padding="same", name="block3_conv3"
         )(x)
         x = keras.layers.MaxPooling2D((2, 2), strides=(2, 2), name="block3_pool")(x)
+        x = keras.layers.Dropout(hp.Float('cnn_dropout', min_value=0.1, max_value=0.8, step=0.1))(x)
     
     if num_blocks >= 4:
         # Block 4
@@ -155,6 +158,7 @@ def build_model(hp):
             num_filters * 8, (3, 3), activation="relu", padding="same", name="block4_conv3"
         )(x)
         x = keras.layers.MaxPooling2D((2, 2), strides=(2, 2), name="block4_pool")(x)
+        x = keras.layers.Dropout(hp.Float('cnn_dropout', min_value=0.1, max_value=0.8, step=0.1))(x)
     
     if num_blocks >= 5:
         # Block 5
@@ -168,8 +172,9 @@ def build_model(hp):
             num_filters * 8, (3, 3), activation="relu", padding="same", name="block5_conv3"
         )(x)
         x = keras.layers.MaxPooling2D((2, 2), strides=(2, 2), name="block5_pool")(x)
+        x = keras.layers.Dropout(hp.Float('cnn_dropout', min_value=0.1, max_value=0.8, step=0.1))(x)
     
-    # Define the classifier
+    # Get 1D output
     if hp.Boolean('max_pooling'):
         x = keras.layers.GlobalMaxPooling2D()(x)
     else:
@@ -180,13 +185,14 @@ def build_model(hp):
     
     # Merge inputs
     x = keras.layers.concatenate([x, additional_x])
-        
+    
+    # Dense layers    
     x = keras.layers.Dense(
-        hp.Int('units', min_value=8, max_value=1024, step=2, sampling='log'),
+        hp.Int('units', min_value=128, max_value=4096, step=2, sampling='log'),
         kernel_regularizer=keras.regularizers.L1L2(l1=hp.Float('l1', min_value=1e-6, max_value=1e-1, step=2, sampling='log'), 
                                                    l2=hp.Float('l2', min_value=1e-6, max_value=1e-1, step=2, sampling='log')))(x)
     x = keras.layers.BatchNormalization(fused=False)(x)
-    x = keras.layers.Dropout(hp.Float('dropout', min_value=0.1, max_value=0.8, step=0.1))(x)
+    x = keras.layers.Dropout(hp.Float('dense_dropout', min_value=0.1, max_value=0.8, step=0.1))(x)
     x = keras.layers.Activation(activation="relu")(x)
     
     model_output = keras.layers.Dense(1, activation="relu")(x)
@@ -223,7 +229,7 @@ log_dir = os.path.join(project_dir,
                        
 callbacks = []
 callbacks.append(keras.callbacks.EarlyStopping(
-                 patience=10,
+                 patience=20,
                  restore_best_weights=False,
                  verbose=1))
                  
@@ -238,7 +244,7 @@ callbacks.append(keras.callbacks.TensorBoard(
                  update_freq=20))  
 callbacks.append(keras.callbacks.ReduceLROnPlateau(
                  factor=0.5,
-                 patience=3,
+                 patience=10,
                  verbose=1))
                        
 tuner.search_space_summary()

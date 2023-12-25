@@ -191,7 +191,7 @@ def build_model(hp):
         hp.Int('units', min_value=128, max_value=4096, step=2, sampling='log'),
         kernel_regularizer=keras.regularizers.L1L2(l1=hp.Float('l1', min_value=1e-6, max_value=1e-1, step=2, sampling='log'), 
                                                    l2=hp.Float('l2', min_value=1e-6, max_value=1e-1, step=2, sampling='log')))(x)
-    x = keras.layers.BatchNormalization(fused=False)(x)
+    # x = keras.layers.BatchNormalization(fused=False)(x)
     x = keras.layers.Dropout(hp.Float('dense_dropout', min_value=0.1, max_value=0.8, step=0.1))(x)
     x = keras.layers.Activation(activation="relu")(x)
     

@@ -108,79 +108,149 @@ def build_model(hp):
     
     # Define the convoluational layers
     # From VGG16
-    num_blocks = hp.Int("blocks", min_value=1, max_value=5)
-    num_filters = hp.Int("filters", min_value=4, max_value=64, step=2, sampling='log')
+    num_blocks = hp.Int("cnn_blocks", min_value=1, max_value=5)
+    num_filters = hp.Int("base_filters", min_value=4, max_value=64, step=2, sampling='log')
     
     # Block 1
+    # conv 1.1
     x = keras.layers.Conv2D(
-        num_filters, (3, 3), activation="relu", padding="same", name="block1_conv1",
+        num_filters, (3, 3), padding="same", name="block1_conv1",
     )(grey_scale_input)
+    if hp.Boolean('cnn_batch_normalization'):
+        x = keras.layers.BatchNormalization()(x)
+    x = keras.layers.Activation("relu")(x)
+    
+    # conv 1.2
     x = keras.layers.Conv2D(
-        num_filters, (3, 3), activation="relu", padding="same", name="block1_conv2"
+        num_filters, (3, 3), padding="same", name="block1_conv2"
     )(x)
+    if hp.Boolean('cnn_batch_normalization'):
+        x = keras.layers.BatchNormalization()(x)
+    x = keras.layers.Activation("relu")(x)
+    
+    # pool 1    
     x = keras.layers.MaxPooling2D((2, 2), strides=(2, 2), name="block1_pool")(x)
     x = keras.layers.Dropout(hp.Float('cnn_dropout', min_value=0.1, max_value=0.8, step=0.1))(x)
     
     if num_blocks >= 2:
         # Block 2
+        # conv 2.1
         x = keras.layers.Conv2D(
-            num_filters * 2, (3, 3), activation="relu", padding="same", name="block2_conv1"
+            num_filters * 2, (3, 3), padding="same", name="block2_conv1"
         )(x)
+        if hp.Boolean('cnn_batch_normalization'):
+            x = keras.layers.BatchNormalization()(x)
+        x = keras.layers.Activation("relu")(x)
+        
+        # conv 2.2    
         x = keras.layers.Conv2D(
-            num_filters * 2, (3, 3), activation="relu", padding="same", name="block2_conv2"
+            num_filters * 2, (3, 3), padding="same", name="block2_conv2"
         )(x)
+        if hp.Boolean('cnn_batch_normalization'):
+            x = keras.layers.BatchNormalization()(x)
+        x = keras.layers.Activation("relu")(x)
+        
+        # pool 2    
         x = keras.layers.MaxPooling2D((2, 2), strides=(2, 2), name="block2_pool")(x)
         x = keras.layers.Dropout(hp.Float('cnn_dropout', min_value=0.1, max_value=0.8, step=0.1))(x)
     
     if num_blocks >= 3:
         # Block 3
+        # conv 3.1
         x = keras.layers.Conv2D(
-            num_filters * 4, (3, 3), activation="relu", padding="same", name="block3_conv1"
+            num_filters * 4, (3, 3), padding="same", name="block3_conv1"
         )(x)
+        if hp.Boolean('cnn_batch_normalization'):
+            x = keras.layers.BatchNormalization()(x)
+        x = keras.layers.Activation("relu")(x)
+        
+        # conv 3.2    
         x = keras.layers.Conv2D(
-            num_filters * 4, (3, 3), activation="relu", padding="same", name="block3_conv2"
+            num_filters * 4, (3, 3), padding="same", name="block3_conv2"
         )(x)
+        if hp.Boolean('cnn_batch_normalization'):
+            x = keras.layers.BatchNormalization()(x)
+        x = keras.layers.Activation("relu")(x)
+        
+        # conv 3.3
         x = keras.layers.Conv2D(
-            num_filters * 4, (3, 3), activation="relu", padding="same", name="block3_conv3"
+            num_filters * 4, (3, 3), padding="same", name="block3_conv3"
         )(x)
+        if hp.Boolean('cnn_batch_normalization'):
+            x = keras.layers.BatchNormalization()(x)
+        x = keras.layers.Activation("relu")(x)
+        
+        # pool 3
         x = keras.layers.MaxPooling2D((2, 2), strides=(2, 2), name="block3_pool")(x)
         x = keras.layers.Dropout(hp.Float('cnn_dropout', min_value=0.1, max_value=0.8, step=0.1))(x)
     
     if num_blocks >= 4:
         # Block 4
+        # conv 4.1
         x = keras.layers.Conv2D(
-            num_filters * 8, (3, 3), activation="relu", padding="same", name="block4_conv1"
+            num_filters * 8, (3, 3), padding="same", name="block4_conv1"
         )(x)
+        if hp.Boolean('cnn_batch_normalization'):
+            x = keras.layers.BatchNormalization()(x)
+        x = keras.layers.Activation("relu")(x)
+        
+        # conv 4.2
         x = keras.layers.Conv2D(
-            num_filters * 8, (3, 3), activation="relu", padding="same", name="block4_conv2"
+            num_filters * 8, (3, 3), padding="same", name="block4_conv2"
         )(x)
+        if hp.Boolean('cnn_batch_normalization'):
+            x = keras.layers.BatchNormalization()(x)
+        x = keras.layers.Activation("relu")(x)
+        
+        # conv 4.3
         x = keras.layers.Conv2D(
-            num_filters * 8, (3, 3), activation="relu", padding="same", name="block4_conv3"
+            num_filters * 8, (3, 3), padding="same", name="block4_conv3"
         )(x)
+        if hp.Boolean('cnn_batch_normalization'):
+            x = keras.layers.BatchNormalization()(x)
+        x = keras.layers.Activation("relu")(x)
+        
+        # pool 4
         x = keras.layers.MaxPooling2D((2, 2), strides=(2, 2), name="block4_pool")(x)
         x = keras.layers.Dropout(hp.Float('cnn_dropout', min_value=0.1, max_value=0.8, step=0.1))(x)
     
     if num_blocks >= 5:
         # Block 5
+        # conv 5.1
         x = keras.layers.Conv2D(
-            num_filters * 8, (3, 3), activation="relu", padding="same", name="block5_conv1"
+            num_filters * 8, (3, 3), padding="same", name="block5_conv1"
         )(x)
+        if hp.Boolean('cnn_batch_normalization'):
+            x = keras.layers.BatchNormalization()(x)
+        x = keras.layers.Activation("relu")(x)
+        
+        # conv 5.2
         x = keras.layers.Conv2D(
-            num_filters * 8, (3, 3), activation="relu", padding="same", name="block5_conv2"
+            num_filters * 8, (3, 3), padding="same", name="block5_conv2"
         )(x)
+        if hp.Boolean('cnn_batch_normalization'):
+            x = keras.layers.BatchNormalization()(x)
+        x = keras.layers.Activation("relu")(x)
+        
+        # conv 5.3
         x = keras.layers.Conv2D(
-            num_filters * 8, (3, 3), activation="relu", padding="same", name="block5_conv3"
+            num_filters * 8, (3, 3), padding="same", name="block5_conv3"
         )(x)
+        if hp.Boolean('cnn_batch_normalization'):
+            x = keras.layers.BatchNormalization()(x)
+        x = keras.layers.Activation("relu")(x)
+        
+        # pool 5
         x = keras.layers.MaxPooling2D((2, 2), strides=(2, 2), name="block5_pool")(x)
         x = keras.layers.Dropout(hp.Float('cnn_dropout', min_value=0.1, max_value=0.8, step=0.1))(x)
     
     # Get 1D output
-    if hp.Boolean('max_pooling'):
+    if hp.Boolean('global_max_or_ave_pooling'):
         x = keras.layers.GlobalMaxPooling2D()(x)
     else:
         x = keras.layers.GlobalAveragePooling2D()(x)
     
-    # Provide additional information
+    # Get additional information
     additional_x = keras.layers.Input(shape=(5))
     
     # Merge inputs
@@ -188,12 +258,12 @@ def build_model(hp):
     
     # Dense layers    
     x = keras.layers.Dense(
-        hp.Int('units', min_value=128, max_value=4096, step=2, sampling='log'),
-        kernel_regularizer=keras.regularizers.L1L2(l1=hp.Float('l1', min_value=1e-6, max_value=1e-1, step=2, sampling='log'), 
-                                                   l2=hp.Float('l2', min_value=1e-6, max_value=1e-1, step=2, sampling='log')))(x)
-    # x = keras.layers.BatchNormalization(fused=False)(x)
+        hp.Int('dense_units', min_value=128, max_value=4096, step=2, sampling='log'),
+        kernel_regularizer='l1_l2')(x)
+    if hp.Boolean('dense_batch_normalization'):
+        x = keras.layers.BatchNormalization()(x)
     x = keras.layers.Dropout(hp.Float('dense_dropout', min_value=0.1, max_value=0.8, step=0.1))(x)
-    x = keras.layers.Activation(activation="relu")(x)
+    x = keras.layers.Activation("relu")(x)
     
     model_output = keras.layers.Dense(1, activation="relu")(x)
     this_model = keras.Model([model_input, additional_x], model_output)
@@ -201,7 +271,7 @@ def build_model(hp):
     # Compile the model
     this_model.compile(
       keras.optimizers.legacy.Adam(
-        learning_rate=hp.Float('learning_rate', min_value=1e-6, max_value=1e-2, step=2, sampling='log')
+        learning_rate=hp.Float('learning_rate', min_value=1e-6, max_value=1e-1, step=2, sampling='log')
       ),
       loss="mean_squared_error",
       metrics=[keras.metrics.RootMeanSquaredError()]

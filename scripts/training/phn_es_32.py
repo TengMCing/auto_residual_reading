@@ -110,6 +110,7 @@ def build_model(hp):
     # From VGG16
     num_blocks = hp.Int("cnn_blocks", min_value=1, max_value=5)
     num_filters = hp.Int("base_filters", min_value=4, max_value=64, step=2, sampling='log')
+    cnn_dropout = hp.Float('cnn_dropout', min_value=0.01, max_value=0.60, step=0.01)
     
     # Block 1
     # conv 1.1
@@ -130,7 +131,7 @@ def build_model(hp):
     
     # pool 1    
     x = keras.layers.MaxPooling2D((2, 2), strides=(2, 2), name="block1_pool")(x)
-    x = keras.layers.Dropout(hp.Float('cnn_dropout', min_value=0.1, max_value=0.8, step=0.1))(x)
+    x = keras.layers.Dropout(cnn_dropout)(x)
     
     if num_blocks >= 2:
         # Block 2
@@ -152,7 +153,7 @@ def build_model(hp):
         
         # pool 2    
         x = keras.layers.MaxPooling2D((2, 2), strides=(2, 2), name="block2_pool")(x)
-        x = keras.layers.Dropout(hp.Float('cnn_dropout', min_value=0.1, max_value=0.8, step=0.1))(x)
+        x = keras.layers.Dropout(cnn_dropout)(x)
     
     if num_blocks >= 3:
         # Block 3
@@ -182,7 +183,7 @@ def build_model(hp):
         
         # pool 3
         x = keras.layers.MaxPooling2D((2, 2), strides=(2, 2), name="block3_pool")(x)
-        x = keras.layers.Dropout(hp.Float('cnn_dropout', min_value=0.1, max_value=0.8, step=0.1))(x)
+        x = keras.layers.Dropout(cnn_dropout)(x)
     
     if num_blocks >= 4:
         # Block 4
@@ -212,7 +213,7 @@ def build_model(hp):
         
         # pool 4
         x = keras.layers.MaxPooling2D((2, 2), strides=(2, 2), name="block4_pool")(x)
-        x = keras.layers.Dropout(hp.Float('cnn_dropout', min_value=0.1, max_value=0.8, step=0.1))(x)
+        x = keras.layers.Dropout(cnn_dropout)(x)
     
     if num_blocks >= 5:
         # Block 5
@@ -242,7 +243,7 @@ def build_model(hp):
         
         # pool 5
         x = keras.layers.MaxPooling2D((2, 2), strides=(2, 2), name="block5_pool")(x)
-        x = keras.layers.Dropout(hp.Float('cnn_dropout', min_value=0.1, max_value=0.8, step=0.1))(x)
+        x = keras.layers.Dropout(cnn_dropout)(x)
     
     # Get 1D output
     if hp.Boolean('global_max_or_ave_pooling'):
@@ -258,11 +259,10 @@ def build_model(hp):
     
     # Dense layers    
     x = keras.layers.Dense(
-        hp.Int('dense_units', min_value=128, max_value=4096, step=2, sampling='log'),
-        kernel_regularizer='l1_l2')(x)
+        hp.Int('dense_units', min_value=128, max_value=2048, step=2, sampling='log'))(x)
     if hp.Boolean('dense_batch_normalization'):
         x = keras.layers.BatchNormalization()(x)
-    x = keras.layers.Dropout(hp.Float('dense_dropout', min_value=0.1, max_value=0.8, step=0.1))(x)
+    x = keras.layers.Dropout(hp.Float('dense_dropout', min_value=0.01, max_value=0.60, step=0.01))(x)
     x = keras.layers.Activation("relu")(x)
     
     model_output = keras.layers.Dense(1, activation="relu")(x)

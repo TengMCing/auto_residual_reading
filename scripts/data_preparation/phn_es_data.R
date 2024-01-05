@@ -266,7 +266,7 @@ for (i in 1:TOTAL_NUM_PARAMETER) {
     if (current_num_plots >= SAMPLE_PER_PARAMETER$train) break
   }
   
-  print(table(GLOBAL_Y_TRAIN >= BINS))
+  print(table(map_dbl(GLOBAL_Y_TRAIN, ~sum(.x >= BINS))))
   
   current_num_plots <- 0
   
@@ -303,7 +303,7 @@ for (i in 1:TOTAL_NUM_PARAMETER) {
     if (current_num_plots >= SAMPLE_PER_PARAMETER$test) break
   }
   
-  print(table(GLOBAL_Y_TEST >= BINS))
+  print(table(map_dbl(GLOBAL_Y_TEST, ~sum(.x >= BINS))))
 }
 
 

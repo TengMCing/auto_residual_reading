@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=train_phn_v2_es_32
 #SBATCH --account=sk54
-#SBATCH --time=36:00:00
+#SBATCH --time=72:00:00
 #SBATCH --partition=gpu
 #SBATCH --ntasks=6
 #SBATCH --gres=gpu:1

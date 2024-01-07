@@ -274,7 +274,7 @@ def build_model(hp):
     # Compile the model
     this_model.compile(
       keras.optimizers.legacy.Adam(
-        learning_rate=hp.Float('learning_rate', min_value=1e-6, max_value=1e-1, step=2, sampling='log')
+        learning_rate=hp.Float('learning_rate', min_value=1e-8, max_value=1e-1, step=2, sampling='log')
       ),
       loss="mean_squared_error",
       metrics=[keras.metrics.RootMeanSquaredError()]
@@ -302,7 +302,7 @@ log_dir = os.path.join(project_dir,
                        
 callbacks = []
 callbacks.append(keras.callbacks.EarlyStopping(
-                 patience=100,
+                 patience=50,
                  restore_best_weights=False,
                  verbose=1))
                  
@@ -316,7 +316,7 @@ callbacks.append(keras.callbacks.TensorBoard(
                  write_images=False))  
 callbacks.append(keras.callbacks.ReduceLROnPlateau(
                  factor=0.5,
-                 patience=20,
+                 patience=10,
                  verbose=1))
                        
 tuner.search_space_summary()

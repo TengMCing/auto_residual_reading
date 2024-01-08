@@ -301,7 +301,7 @@ for i in range(20):
     callbacks = []
     callbacks.append(keras.callbacks.EarlyStopping(
                      patience=50,
-                     restore_best_weights=False,
+                     restore_best_weights=True,
                      verbose=1))
                      
     callbacks.append(keras.callbacks.ReduceLROnPlateau(

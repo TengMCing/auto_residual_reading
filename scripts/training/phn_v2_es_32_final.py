@@ -327,5 +327,6 @@ for i in range(20):
     print(final_mod.evaluate([train_x, train_x_additional], train_y))
     print(np.mean((final_mod.predict([val_x, val_x_additional]).flatten() - val_y) ** 2))
     print(final_mod.evaluate([val_x, val_x_additional], val_y))
+    print(val_plot_uid)
     final_mod.save(model_dir)
 

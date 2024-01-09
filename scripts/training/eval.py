@@ -110,6 +110,14 @@ model_dir = os.path.join(project_dir,
                          f'final_0.keras')
                          
 test_mod = keras.models.load_model(model_dir)
+
+train_pred = test_mod.predict([train_x, train_x_additional])
+print(train_pred)
+print(train_y)
+val_pred = test_mod.predict([val_x, val_x_additional])
+print(val_pred)
+print(val_y)
+
 print(np.mean((test_mod.predict([train_x, train_x_additional]) - train_y) ** 2))
 print(test_mod.evaluate([train_x, train_x_additional], train_y))
 print(np.mean((test_mod.predict([val_x, val_x_additional]) - val_y) ** 2))

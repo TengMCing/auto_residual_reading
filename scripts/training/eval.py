@@ -26,7 +26,7 @@ train_dir = os.path.join(project_dir,
                          f'{DATA_CLASS}',
                          'residual_plots',
                          f'{RES}',
-                         'train')
+                         'test')
                          
 meta_dir = os.path.join(project_dir, 
                         'data', 

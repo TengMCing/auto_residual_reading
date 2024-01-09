@@ -95,6 +95,13 @@ val_n = pd.merge(pd.DataFrame({'plot_uid': val_plot_uid}), meta, on='plot_uid', 
 train_x_additional = np.column_stack((train_monotonic, train_sparse, train_splines, train_striped, train_n))
 val_x_additional = np.column_stack((val_monotonic, val_sparse, val_splines, val_striped, val_n))
 
+train_x = train_x.astype(np.float32)
+train_x_additional = train_x_additional.astype(np.float32)
+val_x = val_x.astype(np.float32)
+val_x_additional = val_x_additional.astype(np.float32)
+train_y = train_y.astype(np.float32).reshape((-1, 1))
+val_y = val_y.astype(np.float32).reshape((-1, 1))
+
 def build_model(hp):
     
     # Preprocess the input image
@@ -293,7 +300,7 @@ tuner = keras_tuner.BayesianOptimization(hypermodel=build_model,
                                          project_name=f'{RES}',
                                          max_consecutive_failed_trials=20)
 
-for i in range(20):
+for i in range(5):
     final_mod = build_model(tuner.get_best_hyperparameters()[0])
     
     
@@ -323,10 +330,16 @@ for i in range(20):
                   epochs=2000, 
                   callbacks=callbacks)
                   
-    print(np.mean((final_mod.predict([train_x, train_x_additional]).flatten() - train_y) ** 2))
+    print(np.mean((final_mod.predict([train_x, train_x_additional]) - train_y) ** 2))
     print(final_mod.evaluate([train_x, train_x_additional], train_y))
-    print(np.mean((final_mod.predict([val_x, val_x_additional]).flatten() - val_y) ** 2))
+    print(np.mean((final_mod.predict([val_x, val_x_additional]) - val_y) ** 2))
     print(final_mod.evaluate([val_x, val_x_additional], val_y))
-    print(val_plot_uid)
     final_mod.save(model_dir)
+    
+    test_mod = keras.models.load_model(model_dir)
+    print(np.mean((test_mod.predict([train_x, train_x_additional]) - train_y) ** 2))
+    print(test_mod.evaluate([train_x, train_x_additional], train_y))
+    print(np.mean((test_mod.predict([val_x, val_x_additional]) - val_y) ** 2))
+    print(test_mod.evaluate([val_x, val_x_additional], val_y))
+
 

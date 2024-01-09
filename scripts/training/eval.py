@@ -95,12 +95,22 @@ val_n = pd.merge(pd.DataFrame({'plot_uid': val_plot_uid}), meta, on='plot_uid', 
 train_x_additional = np.column_stack((train_monotonic, train_sparse, train_splines, train_striped, train_n))
 val_x_additional = np.column_stack((val_monotonic, val_sparse, val_splines, val_striped, val_n))
 
+train_x = train_x.astype(np.float32)
+train_x_additional = train_x_additional.astype(np.float32)
+val_x = val_x.astype(np.float32)
+val_x_additional = val_x_additional.astype(np.float32)
+train_y = train_y.astype(np.float32).reshape((-1, 1))
+val_y = val_y.astype(np.float32).reshape((-1, 1))
+
 model_dir = os.path.join(project_dir,
                          "keras_tuner",
                          "best_models",
                          f"{DATA_CLASS}",
                          f"{INPUT_TYPE}",
                          f'final_0.keras')
-mod = keras.models.load_model(model_dir)
-print(np.mean((mod.predict([train_x, train_x_additional]) - train_y) ** 2))
-print(np.mean((mod.predict([val_x, val_x_additional]) - val_y) ** 2))
+                         
+test_mod = keras.models.load_model(model_dir)
+print(np.mean((test_mod.predict([train_x, train_x_additional]) - train_y) ** 2))
+print(test_mod.evaluate([train_x, train_x_additional], train_y))
+print(np.mean((test_mod.predict([val_x, val_x_additional]) - val_y) ** 2))
+print(test_mod.evaluate([val_x, val_x_additional], val_y))

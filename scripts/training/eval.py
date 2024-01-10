@@ -118,6 +118,16 @@ weight_dir = os.path.join(project_dir,
                           f"{INPUT_TYPE}",
                           f'final_0.weights.h5')
 test_mod.save_weights(weight_dir)
+
+print("save test images")
+test_im_dir = os.path.join(project_dir,
+                           "keras_tuner",
+                           "best_models",
+                           f"{DATA_CLASS}",
+                           f"{INPUT_TYPE}",
+                           f'test_im.npy')
+np.save(test_im_dir, train_x)
+
 # 
 # for layer in test_mod.layers:
 #     print(layer.get_weights())

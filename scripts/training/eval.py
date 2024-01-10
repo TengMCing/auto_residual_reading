@@ -111,6 +111,31 @@ model_dir = os.path.join(project_dir,
                          
 test_mod = keras.models.load_model(model_dir)
 
+weight_dir = os.path.join(project_dir,
+                          "keras_tuner",
+                          "best_models",
+                          f"{DATA_CLASS}",
+                          f"{INPUT_TYPE}",
+                          f'final_0.weights.h5')
+test_mod.save_weights(weight_dir)
+# 
+# for layer in test_mod.layers:
+#     print(layer.get_weights())
+# 
+train_pred = test_mod.predict([train_x, train_x_additional])
+print(train_pred)
+print(train_y)
+val_pred = test_mod.predict([val_x, val_x_additional])
+print(val_pred)
+print(val_y)
+
+print(np.mean((test_mod.predict([train_x, train_x_additional]) - train_y) ** 2))
+print(test_mod.evaluate([train_x, train_x_additional], train_y))
+print(np.mean((test_mod.predict([val_x, val_x_additional]) - val_y) ** 2))
+print(test_mod.evaluate([val_x, val_x_additional], val_y))
+
+print("load weights")
+test_mod.load_weights(weight_dir)
 train_pred = test_mod.predict([train_x, train_x_additional])
 print(train_pred)
 print(train_y)

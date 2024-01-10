@@ -128,6 +128,15 @@ test_im_dir = os.path.join(project_dir,
                            f'test_im.npy')
 np.save(test_im_dir, train_x)
 
+print("save additional inputs")
+test_additional_dir = os.path.join(project_dir,
+                           "keras_tuner",
+                           "best_models",
+                           f"{DATA_CLASS}",
+                           f"{INPUT_TYPE}",
+                           f'test_additional.npy')
+np.save(test_additional_dir, train_x_additional)
+
 # 
 # for layer in test_mod.layers:
 #     print(layer.get_weights())

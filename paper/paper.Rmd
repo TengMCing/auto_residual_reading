@@ -165,7 +165,7 @@ To evaluate the Kullback-Leibler divergence of non-normal $P$ from $Q$, the fall
 
 In order to evaluate equation \ref{eq:kl-1} in a practically computable manner, the elements of $\boldsymbol{e}$ are assumed to be independent of each other. This assumption solves both of the issues mentioned above. First, we no longer need to integrate over $n$ random variables. The result of equation \ref{eq:kl-1} is now the sum of the Kullback-Leibler divergence evaluated for each individual residual thanks for the independence assumption. Second, it is not required to know the joint probability density $p(\boldsymbol{e})$ any more. Instead, the evaluation of Kullback-Leibler divergence for an individual residual relies on the knowledge of the marginal density $p_i(e_i)$, where $e_i$ is the $i$-th residual for $i = 1, ..., n$. This is much easier to estimate through simulation.
 
-The algorithm for computing equation \ref{eq:kl-1} starts from simulating $m$ sets of $\boldsymbol{\varepsilon}$ according to the error distribution. The simulated errors are stored in a matrix $\boldsymbol{A}$ with $n$ rows and $m$ columns. So each column of $\boldsymbol{A}$ is a set of realization values of $\boldsymbol{\varepsilon}$. Then, we can get $m$ sets of $\boldsymbol{e}$ stored in the matrix $\boldsymbol{B}$ by applying the residual rotation operator $\boldsymbol{B} = \boldsymbol{R}\boldsymbol{A}$. Furthermore, kernel density estimation (KDE) with Gaussian kernel and optimal bandwidth selected by the Sliverman's rule of thumb [@silverman2018density] is applied on each row of $B$ to estimate $p_i(e_i)$ for $i = 1, ..., n$. The KDE computation is done by the `density` function in R. 
+The algorithm for computing equation \ref{eq:kl-1} starts from simulating $m$ sets of $\boldsymbol{\varepsilon}$ according to the error distribution. The simulated errors are stored in a matrix $\boldsymbol{A}$ with $n$ rows and $m$ columns. So each column of $\boldsymbol{A}$ is a set of realization values of $\boldsymbol{\varepsilon}$. Then, we can get $m$ sets of $\boldsymbol{e}$ stored in the matrix $\boldsymbol{B}$ by applying the residual operator $\boldsymbol{B} = \boldsymbol{R}\boldsymbol{A}$. Furthermore, kernel density estimation (KDE) with Gaussian kernel and optimal bandwidth selected by the Sliverman's rule of thumb [@silverman2018density] is applied on each row of $B$ to estimate $p_i(e_i)$ for $i = 1, ..., n$. The KDE computation is done by the `density` function in R. 
 
 Since the Kullback-Leibler divergence can be viewed as the expectation of the log-likelihood ratio between distribution $P$ and distribution $Q$ evaluated on distribution $P$, we can reuse the simulated residuals in matrix $\boldsymbol{B}$ to estimate the expectation by the sample mean. With the independence assumption, for non-normal $P$, $KL$ can be estimated by
 
@@ -188,7 +188,7 @@ What we proposed in this paper is a method to approximate this distance with a r
 \hat{D} = cv(plot_{h\times w}(\boldsymbol{e}, \hat{\boldsymbol{y}})),
 \end{equation}
 
-\noindent where $\boldsymbol{e}$ is a vector of residuals obtained from the fitted model rather than a vector of random variables, $\hat{\boldsymbol{y}}$ is the fitted values also obtained from the fitted model, $plot(.)_{h \times w}$ is a plotting function that generates a residuals vs fitted values plot with fixed aesthetic and then saves it as an image with $h \times w$ pixels and three colour channels, and $cv(.)$ is a computer vision model which takes an $h \times w$ image as input and predicts the distance.
+\noindent where $\boldsymbol{e}$ is a vector of residuals obtained from the fitted model rather than a vector of random variables, $\hat{\boldsymbol{y}}$ is the fitted values also obtained from the fitted model, $plot(.)_{h \times w}$ is a plotting function that generates a residuals vs fitted values plot with fixed aesthetic and then saves it as an image with $h \times w$ pixels and three colour channels, and $cv(.)$ is a computer vision model which takes an $h \times w$ image as input and predicts the distance in the domain $[0, +\infty)$.
 
 With the approximated distance $\hat{D}$, we will be able to know how different the underlying distribution of the residuals is from a good residual distribution. This is meaningful way to check if a residual plot is a good residual plot, and to know the strength of the visual signal embedded in the residual plot. 
 
@@ -198,10 +198,29 @@ The approximated distance $\hat{D}$ is not expected to be the same as the origin
 
 ### Null distribution of the approximated distance
 
+Having a computer vision model $cv$ which gives an approximated distance between $0$ and $+\infty$ is not enough to determine if the null hypothesis that the model is correctly specified should be rejected. Theoretically, the distance $D$ for a correctly specified model is $0$, because $P$ will be the same as $Q$, and $log(1 + 0) = 0$. The computer vision model may not necessary predict $0$ for a null plot. Using \ref{fig:false-finding} as an example, it contains a visual pattern which is an indication of heteroskedasticity. We would not expect the model to be able to magically tell if the suspicious pattern is caused by the skewed distribution of the fitted values or the existence of heteroskedasticity. Assume we only train the model with this single image, while $50$% of the time the label is $0$, and $50$% of the time the label is some constant greater than $0$. Then, a perfect model will predict a value between $0$ and that constant to achieve a minimum loss. So, it is expected that our computer vision models will also predict value greater than $0$ for some null plots. It will make more sense if we interpret the model prediction as the visual signal strength of the residual plot. Some null plots could have outliers or strong visual patterns due to randomness, and the model will try to summarise those information into the prediction.
+
+To align with the principle of visual inference, we need to provide a valid null distribution for the test statistic. If we treat the approximated distance $\hat{D}$ as a test statistic, then the null distribution of this statistic can be approximated by the empirical distribution of $\hat{D}$ for a large amount of null plots of given a fitted model. The procedure involves applying the residual rotation technique [@buja2009statistical] on the fitted model to obtain null residuals. The null residuals are then used to make null plots and fed into the model. The results are used to construct an empirical distribution.
+
 ### Estimation of quantiles of the null distribution
+
+With the null distribution of the test statistic, 
+
+- How many null samples are needed to get stable 95% quantile
+- How do we make decision based on the quantile (reject or not reject)
+- p-value calculation (percentage of null vss > vss)
 
 ### Bootstrapping the approximated distance
 
+- What is the assumption of bootstrapping
+- Any drawback: loss of information
+- For each bootstrapped fitted model, we can get a bootstrapped vss and construct a new 95% quantile for the null distribution, and check if H_0 should be rejected
+- However, it is very expensive to construct a new 95% quantile for each bootstrapped fitted model
+- The 95% quantile constructed using the original fitted model can be considered as an estimate of those new 95% quantiles
+- We borrow information from the original fitted model
+- We can check how many bootstrapped fitted model should be rejected (like the percentage)
+- This gives an overall estimate of how often the assumed regression model are considered to be incorrect if the data can be obtained repetitively from the same data generating process
+- If this percentage is relatively large, it gives the analyst an warning that the regression model is inappropriate to the data 
 
 
 ## Generation of training data
@@ -238,6 +257,7 @@ In equation \ref{eq:data-sim}, predictor $\boldsymbol{x}_1$ and $\boldsymbol{x}_
 Additionally, Scaling factor $\boldsymbol{k}$ directly affects the error distribution and it is correlated with $\boldsymbol{x}_1$ and $\boldsymbol{x}_2$. If $b \neq 0$ and $\boldsymbol{\varepsilon} \sim N(\boldsymbol{0}_n, \sigma^2\boldsymbol{I}_n)$, the constant variance assumption will be violated. Parameter $a$ is a shape parameter controlling the location of the smallest variance in a residual plot.
 
 Non-normality violations are introduced by defining a non-normal distribution for $\boldsymbol{\varepsilon}$. 
+
 - distribution of x1 and x2
 - summary table of all the factor values
 - example plots for the violations
@@ -252,6 +272,7 @@ Other scagnostics are also informative, but unfortunately, they are unavailable 
 
 ### Crafting a balanced training set
 
+In order to train a robust computer vision model, we intentionally control the distribution of the target variable $D$ of the training data. Making it uniform between $0$ and $7$. This is accomplished by preparing $50$ buckets each only accepts training samples with $D$  between $[7(i - 1)/49, 7i/49)$ for $i < 50$, where $i$ is the index of the $i$-th bucket. For the $50$-th bucket, any training samples with $D >= 7$ will be accepted. We have prepared 80000 training images, so each bucket can only contain $80000 \div 50 = 1600$ training samples. The simulator will repeatedly sample parameter values from the parameter sample, generate residuals and fitted values using the data generating process, compute the distance, and check if the sample can be accepted by the corresponding bucket, until all the buckets are full.
 
 ## Architecture of the computer vision model
 

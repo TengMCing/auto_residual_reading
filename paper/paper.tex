@@ -455,13 +455,12 @@ error distribution. The simulated errors are stored in a matrix
 \(\boldsymbol{A}\) is a set of realization values of
 \(\boldsymbol{\varepsilon}\). Then, we can get \(m\) sets of
 \(\boldsymbol{e}\) stored in the matrix \(\boldsymbol{B}\) by applying
-the residual rotation operator
-\(\boldsymbol{B} = \boldsymbol{R}\boldsymbol{A}\). Furthermore, kernel
-density estimation (KDE) with Gaussian kernel and optimal bandwidth
-selected by the Sliverman's rule of thumb \citep{silverman2018density}
-is applied on each row of \(B\) to estimate \(p_i(e_i)\) for
-\(i = 1, ..., n\). The KDE computation is done by the \texttt{density}
-function in R.
+the residual operator \(\boldsymbol{B} = \boldsymbol{R}\boldsymbol{A}\).
+Furthermore, kernel density estimation (KDE) with Gaussian kernel and
+optimal bandwidth selected by the Sliverman's rule of thumb
+\citep{silverman2018density} is applied on each row of \(B\) to estimate
+\(p_i(e_i)\) for \(i = 1, ..., n\). The KDE computation is done by the
+\texttt{density} function in R.
 
 Since the Kullback-Leibler divergence can be viewed as the expectation
 of the log-likelihood ratio between distribution \(P\) and distribution
@@ -516,7 +515,8 @@ fitted model, \(plot(.)_{h \times w}\) is a plotting function that
 generates a residuals vs fitted values plot with fixed aesthetic and
 then saves it as an image with \(h \times w\) pixels and three colour
 channels, and \(cv(.)\) is a computer vision model which takes an
-\(h \times w\) image as input and predicts the distance.
+\(h \times w\) image as input and predicts the distance in the domain
+\([0, +\infty)\).
 
 With the approximated distance \(\hat{D}\), we will be able to know how
 different the underlying distribution of the residuals is from a good
@@ -543,13 +543,87 @@ distance}\label{statistical-testing-based-on-the-approximated-distance}}
 \subsubsection{Null distribution of the approximated
 distance}\label{null-distribution-of-the-approximated-distance}}
 
+Having a computer vision model \(cv\) which gives an approximated
+distance between \(0\) and \(+\infty\) is not enough to determine if the
+null hypothesis that the model is correctly specified should be
+rejected. Theoretically, the distance \(D\) for a correctly specified
+model is \(0\), because \(P\) will be the same as \(Q\), and
+\(log(1 + 0) = 0\). The computer vision model may not necessary predict
+\(0\) for a null plot. Using \ref{fig:false-finding} as an example, it
+contains a visual pattern which is an indication of heteroskedasticity.
+We would not expect the model to be able to magically tell if the
+suspicious pattern is caused by the skewed distribution of the fitted
+values or the existence of heteroskedasticity. Assume we only train the
+model with this single image, while \(50\)\% of the time the label is
+\(0\), and \(50\)\% of the time the label is some constant greater than
+\(0\). Then, a perfect model will predict a value between \(0\) and that
+constant to achieve a minimum loss. So, it is expected that our computer
+vision models will also predict value greater than \(0\) for some null
+plots. It will make more sense if we interpret the model prediction as
+the visual signal strength of the residual plot. Some null plots could
+have outliers or strong visual patterns due to randomness, and the model
+will try to summarise those information into the prediction.
+
+To align with the principle of visual inference, we need to provide a
+valid null distribution for the test statistic. If we treat the
+approximated distance \(\hat{D}\) as a test statistic, then the null
+distribution of this statistic can be approximated by the empirical
+distribution of \(\hat{D}\) for a large amount of null plots of given a
+fitted model. The procedure involves applying the residual rotation
+technique \citep{buja2009statistical} on the fitted model to obtain null
+residuals. The null residuals are then used to make null plots and fed
+into the model. The results are used to construct an empirical
+distribution.
+
 \hypertarget{estimation-of-quantiles-of-the-null-distribution}{%
 \subsubsection{Estimation of quantiles of the null
 distribution}\label{estimation-of-quantiles-of-the-null-distribution}}
 
+With the null distribution of the test statistic,
+
+\begin{itemize}
+\tightlist
+\item
+  How many null samples are needed to get stable 95\% quantile
+\item
+  How do we make decision based on the quantile (reject or not reject)
+\item
+  p-value calculation (percentage of null vss \textgreater{} vss)
+\end{itemize}
+
 \hypertarget{bootstrapping-the-approximated-distance}{%
 \subsubsection{Bootstrapping the approximated
 distance}\label{bootstrapping-the-approximated-distance}}
+
+\begin{itemize}
+\tightlist
+\item
+  What is the assumption of bootstrapping
+\item
+  Any drawback: loss of information
+\item
+  For each bootstrapped fitted model, we can get a bootstrapped vss and
+  construct a new 95\% quantile for the null distribution, and check if
+  H\_0 should be rejected
+\item
+  However, it is very expensive to construct a new 95\% quantile for
+  each bootstrapped fitted model
+\item
+  The 95\% quantile constructed using the original fitted model can be
+  considered as an estimate of those new 95\% quantiles
+\item
+  We borrow information from the original fitted model
+\item
+  We can check how many bootstrapped fitted model should be rejected
+  (like the percentage)
+\item
+  This gives an overall estimate of how often the assumed regression
+  model are considered to be incorrect if the data can be obtained
+  repetitively from the same data generating process
+\item
+  If this percentage is relatively large, it gives the analyst an
+  warning that the regression model is inappropriate to the data
+\end{itemize}
 
 \hypertarget{generation-of-training-data}{%
 \subsection{Generation of training
@@ -622,9 +696,17 @@ shape parameter controlling the location of the smallest variance in a
 residual plot.
 
 Non-normality violations are introduced by defining a non-normal
-distribution for \(\boldsymbol{\varepsilon}\). - distribution of x1 and
-x2 - summary table of all the factor values - example plots for the
-violations
+distribution for \(\boldsymbol{\varepsilon}\).
+
+\begin{itemize}
+\tightlist
+\item
+  distribution of x1 and x2
+\item
+  summary table of all the factor values
+\item
+  example plots for the violations
+\end{itemize}
 
 \hypertarget{computation-of-scagnostics}{%
 \subsubsection{Computation of
@@ -652,6 +734,20 @@ scagnostics in the training data.
 \hypertarget{crafting-a-balanced-training-set}{%
 \subsubsection{Crafting a balanced training
 set}\label{crafting-a-balanced-training-set}}
+
+In order to train a robust computer vision model, we intentionally
+control the distribution of the target variable \(D\) of the training
+data. Making it uniform between \(0\) and \(7\). This is accomplished by
+preparing \(50\) buckets each only accepts training samples with \(D\)
+between \([7(i - 1)/49, 7i/49)\) for \(i < 50\), where \(i\) is the
+index of the \(i\)-th bucket. For the \(50\)-th bucket, any training
+samples with \(D >= 7\) will be accepted. We have prepared 80000
+training images, so each bucket can only contain
+\(80000 \div 50 = 1600\) training samples. The simulator will repeatedly
+sample parameter values from the parameter sample, generate residuals
+and fitted values using the data generating process, compute the
+distance, and check if the sample can be accepted by the corresponding
+bucket, until all the buckets are full.
 
 \hypertarget{architecture-of-the-computer-vision-model}{%
 \subsection{Architecture of the computer vision

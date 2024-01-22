@@ -50,13 +50,9 @@ set.seed(10086)
 ```
 
 
-<!-- Who is the audience? -->
-
-<!-- someone cares about linear regression -> statistics journals -->
-
-<!-- -> explain CNN design -->
-<!-- ->  -->
-
+\newpage
+\tableofcontents
+\newpage
 
 
 # Introduction
@@ -71,23 +67,23 @@ The practice of delivering a residual plot as a lineup is generally regarded as 
 
 However, as pointed out by @li2023plot, a primary limitation of the lineup protocol lies in its reliance on human judgments. Unlike conventional statistical tests that can be performed numerically and automatically in statistical software, the lineup protocol requires human evaluation of images. This characteristic makes it less suitable for large-scale applications, given the associated high labour costs and time requirements.
 
-There is a substantial need to develop an approach that alleviates people's workload by automating repetitive tasks and providing standardized results in a controlled environment. The large-scale evaluation of lineups is impractical without the use of technology and machines.
+There is a substantial need to develop an approach that alleviates people's workload by automating repetitive tasks and providing standardized results in a controlled environment. The large-scale evaluation of lineups ihs impractical without the use of technology and machines.
 
-The utilization of computers to interpret data plots has a rich history, with early efforts such as "Scagnostics" by @tukey1985computer, focusing on scatterplot diagnostics. @wilkinson2005graph expanded on this work, introducing graph theoretic scagnostics, which encompassed nine computable measures applied to planar proximity graphs. These measures, including "Outlying", "Skinny", "Stringy", "Straight", "Monotonic", "Skewed", "Clumpy", and "Striated" aimed to characterize outliers, shape, density, trend, and coherence of the data. While this approach has been inspiring, there is a recognition [@buja2009statistical] that it may not capture all the necessary visual features that differentiate actual residual plots from null plots. A more promising alternative entails enabling computers to learn the function for extracting visual features from residual plots. Essentially, this means empowering computers to discern the crucial visual features for residual diagnostics and determining the method to extract them. Modern computer vision models are well-suited for addressing this challenge.
-
+The utilization of computers to interpret data plots has a rich history, with early efforts such as "Scagnostics" by @tukey1985computer, focusing on scatterplot diagnostics. @wilkinson2005graph expanded on this work, introducing graph theoretic scagnostics, which encompassed nine computable measures applied to planar proximity graphs. These measures, including, but not limited to, "Outlying", "Skinny", "Stringy", "Straight", "Monotonic", "Skewed", "Clumpy", and "Striated" aimed to characterize outliers, shape, density, trend, coherence and other characteristics of the data. While this approach has been inspiring, there is a recognition [@buja2009statistical] that it may not capture all the necessary visual features that differentiate actual residual plots from null plots. A more promising alternative entails enabling computers to learn the function for extracting visual features from residual plots. Essentially, this means empowering computers to discern the crucial visual features for residual diagnostics and determining the method to extract them. Modern computer vision models are well-suited for addressing this challenge.
+ 
 Modern computer vision models often rely on deep neural networks with convolutional layers [@fukushima1982neocognitron]. These layers leverage hierarchical patterns in data, downsizing and transforming images by summarizing information in a small space. Numerous studies have demonstrated the efficacy of convolutional layers in addressing various vision tasks, including image recognition [@rawat2017deep]. Despite the widespread use of computer vision models in fields like computer-aided diagnosis [@lee2015image], pedestrian detection [@brunetti2018computer], and facial recognition [@emami2012facial], their application in reading data plots remains limited. While some studies have explored the use of computer vision models for tasks such as reading recurrence plots for time series regression [@ojeda2020multivariate], time series classification [@chu2019automatic; @hailesilassie2019financial; @hatami2018classification; @zhang2020encoding], anomaly detection [@chen2020convolutional], and pairwise causality analysis [@singh2017deep], the application of reading residual plots with computer vision models represents a relatively new field of study.
 
 In this paper, we develop computer vision models and integrate them into the residual plots diagnostics workflow, filling the gap of.... The paper is structured as follows: ...
 
 
-```{r false-finding, fig.cap="An example residual vs fitted values plot (red line indicates 0). The vertical spread of the data points varies with the fitted values. This often indicates the existence of heteroskedasticity."}
+```{r false-finding, fig.width = 8, fig.height = 6, fig.cap="An example residual vs fitted values plot (red line indicates 0). The vertical spread of the data points varies with the fitted values. This often indicates the existence of heteroskedasticity."}
 set.seed(10131)
 ori_x <- rand_lognormal()
 mod <- heter_model(b = 0, x = closed_form(~-ori_x))
 ori_dat <- mod$gen(300)
 
 ori_dat %>%
-  VI_MODEL$plot(theme = theme_light(base_size = 12), size = 1, remove_grid_line = TRUE, ) +
+  VI_MODEL$plot(theme = theme_light(), remove_grid_line = TRUE) +
   xlab("Fitted values") +
   ylab("Residuals")
 ```
@@ -95,40 +91,61 @@ ori_dat %>%
 
 # Methodogology
 
+## Different possible configurations of the model formula
+
+
+<!-- - discuss different types of inputs and output choices, and why we choose the current design -->
+
+In addressing a problem, there exist multiple avenues for solutions. Various configurations of the computer vision model formula can effectively read residual plots, and these configurations can be categorized based on two key components of the model formula: the input and the output format.
+
+### Different input formats
+
+In computer vision models, the input plays a role similar to predictors in a linear regression model. The quality and relevance of the input data greatly influence the model's capacity to generate insightful and meaningful results. A straightforward approach involves feeding the model a vector of residuals along with a vector of fitted values, essentially providing all the necessary details for creating a residuals vs fitted values plot. However, a drawback of this method is the dynamic input size, as different fitted regression models may have varying numbers of observations. In modern computer vision models created with mainstream software like TensorFlow (ref here), the input is typically a fixed-shape tensor. One solution is to pad the input vector with leading or trailing zeros if the input tensor expects a longer vector. However, this approach may fail if the input vector surpasses the designed length. Another strategy is to summarize the residuals and fitted values separately using histograms and utilize the counts as the input. By controlling the number of bins in the histograms, it becomes possible to provide a fixed-length input vector.
+
+The primary advantage of using an image as input, as opposed to a vector input format, relates to the development of sophisticated image processing architectures over the years (see ref here). These architectures effectively capture and summarize spatial information from nearby pixels, which is less straightforward with vector input. The only considerations are the image resolution and the aesthetics of the residual plot. In general, higher resolution provides more information to the model but comes with the trade-off of increased complexity and greater difficulty in training. As for the aesthetics of the residual plot, a practical solution is to consistently present residual plots in the same style to the model. This implies that the model can not accept arbitrary images as input but requires the use of the same preprocessing software to convert provided residuals and fitted values into a standardized style for the residual plot.
+
+Other possible input formats include, but are not limited to, a pair of residual plots, a triplet, and a lineup. Existing computer vision models designed for image comparison can assess whether a pair of images are similar or dissimilar (as seen in LeCun's 2005 paper). Applied to our specific problem, we can define null plots of a fitted model to be similar to each other, while considering actual residual plots to be distinct from null plots of any fitted model. A triplet constitutes a set of three images, denoted as $image_1$, $image_2$ and $image_3$. In computer vision models, triplets are often used to predict whether $image_2$ or $image_3$ is more similar to $image_1$, proving particularly useful for establishing rankings between samples. In the context of our problem, we can apply the same criteria to define similarity between images. However, it's important to note that these two approaches usually require additional considerations regarding the loss function and, at times, non-standard training processes due to shared weights between different convolutional blocks.
+
+Presenting a lineup to a model and asking it to predict which residual plot is the most different one aligns closely with the lineup protocol. However, if the lineup consists of around 20 plots, similar to previous human subject experiments (reference here), the resolution of the input image could become quite large, posing challenges in training the model. In fact, we experimented with this approach in a pilot study, and the model's performance was suboptimal.
+
+We did not explore all the mentioned input formats due to the considerable costs associated with data preparation and model training. Considering the implementation cost and the interpretability of the model, we settled on the single residual plot input format.
+
+### Different output formats
+
+Given that the input is a single residual plot represented as a fixed-resolution image, the computer vision model's output can take one of two formats: binary or numeric. This choice determines whether the model is a classification model or a regression model. The binary outcome might indicates whether the input image is a null plot or not, or whether the input image would be rejected in a visual test conducted by humans. The latter option requires data from prior human subject experiments, posing challenges in controlling the quality and quantity of data due to variations in experimental settings across different studies. Additionally, some visual inference experiments are unrelated to linear regression models and residual plots, resulting in a limited amount of available training data.
+
+Alternatively, the output could be a meaningful numeric measure, such as the average distance to good residual plots. This approach necessitates defining a distance measure between residual plots, which may be a non-trivial task. However, once a meaningful distance measure is established, the computer vision model's prediction becomes an interpretable value with tangible significance. Studies have demonstrated that defining a proper distance between images can enhance the matching accuracy in image search compared to a binary outcome model (ref here). 
+
+The following section will propose the distance measure used for training the computer vision model. 
+
 ## Distance from the good residual plots
 
-In a visual test, the observer will be asked to choose one or more plots that stand out as most distinct from others in a given lineup. To develop a computer vision model for evaluating residual plots within the visual inference framework, it is important to precisely define a numerical measure of "difference" or "distance" between plots. This distance can take the form of a basic statistical operation on pixels, such as the sum of square differences. Alternatively, it could involve established image similarity metrics like the Structural Similarity Index Measure (SSIM) (ref here). The challenge lies in the fact that metrics tailored for image comparison may not be suitable for evaluating data plots, where only essential plot elements require assessment [@chowdhury2018measuring]. 
+In a visual test, the observer will be asked to choose one or more plots that stand out as most distinct from others in a given lineup. To develop a computer vision model for evaluating residual plots within the visual inference framework, it is important to precisely define a numerical measure of "difference" or "distance" between plots. This distance can take the form of a basic statistical operation on pixels, such as the sum of square differences. Alternatively, it could involve established image similarity metrics like the Structural Similarity Index Measure [@wang2004image]. The challenge lies in the fact that metrics tailored for image comparison may not be suitable for evaluating data plots, where only essential plot elements require assessment [@chowdhury2018measuring]. Furthermore, scagnostics mentioned in Section \ref{introduction} could be used to construct distance metrics for data plots comparison, but the functional form still needs to be carefully refined to accurately reflect the extent of the violations.
 
 ### Residual distribution
 
-The distance metrics proposed in this paper takes into account the fact that we try to measure how different a residual plot is from a good residual plot, or in other words, how different a given fitted model is from a correctly specified model. For classical normal linear regression model, residuals are derived from the fitted values $\hat{\boldsymbol{y}}$ and observed values $\boldsymbol{y}$. However, if the data generating process is known and the model is correctly specified, by the Frisch-Waugh-Lowell theorem (ref here), residuals $\boldsymbol{e}$ can be written as a linear transformation of the error $\boldsymbol{\varepsilon}$:
+The distance metrics proposed in this paper takes into account the fact that we try to measure how different a residual plot is from a good residual plot, or in other words, how different a given fitted model is from a correctly specified model. For the classical normal linear regression model, residuals are derived from the fitted values $\hat{\boldsymbol{y}}$ and observed values $\boldsymbol{y}$. Suppose the data generating process is known and the model is correctly specified, by the Frisch-Waugh-Lowell theorem [@frisch1933partial], residuals $\boldsymbol{e}$ can also be written as a linear transformation of the error $\boldsymbol{\varepsilon}$ formulated as $\boldsymbol{e} = \boldsymbol{R}\boldsymbol{\varepsilon}$, where $\boldsymbol{R}=\boldsymbol{I}_n -\boldsymbol{X}(\boldsymbol{X}'\boldsymbol{X})^{-1}\boldsymbol{X}'$ is the residual operator, $\boldsymbol{X}$ is the design matrix, $\boldsymbol{I}_n$ is a $n$ by $n$ identity matrix, and $n$ is the number of observations.
 
-\begin{equation}
-\label{eq:residual-1}
-\boldsymbol{e} = \boldsymbol{R}\boldsymbol{\varepsilon},
-\end{equation}
+One of the assumptions of the classical normal linear regression model is the error $\boldsymbol{\varepsilon}$ follows a multivariate normal distribution with zero mean and constant variance, i.e., $\boldsymbol{\varepsilon} \sim N(\boldsymbol{0}_n,\sigma^2\boldsymbol{I}_n)$. It can be known that residuals $\boldsymbol{e}$ also follow a certain probability distribution transformed from the multivariate normal distribution, which will be denoted as $Q$. This reference distribution $Q$ summarises what good residuals should follow given the predictors are known and fixed.
 
-\noindent where $\boldsymbol{R}=\boldsymbol{I}_n -\boldsymbol{X}(\boldsymbol{X}'\boldsymbol{X})^{-1}\boldsymbol{X}'$ is the residual operator, $\boldsymbol{X}$ is the design matrix, $\boldsymbol{I}_n$ is a $n$ by $n$ identity matrix, and $n$ is the number of observations.
+When fitting a linear regression model, the solver will force $\sum_{i=1}^{n} e_i = 0$, making any residual value to be a linear combination of the remaining $n - 1$ residuals. This effectively means $rank(\boldsymbol{R}) = n - 1 < n$ and $Q$ becomes a degenerate multivariate distribution. To capture the characteristics of $Q$, such as moments, we can simulate a large numbers of $\boldsymbol{\varepsilon}$ and transform it to $\boldsymbol{e}$ to get the empirical estimates. For simplicity, we replaced $\boldsymbol{R}$ with a full-rank diagonal matrix $diag(\boldsymbol{R})$, where $diag(.)$ set the non-diagonal entries of a matrix to zeros. The resulting distribution for $\boldsymbol{Q}$ is $N(\boldsymbol{0}_n, diag(\boldsymbol{R}\sigma^2))$.
 
-One of the assumptions of the classical normal linear regression model is the error $\boldsymbol{\varepsilon}$ follows a multivariate normal distribution with zero mean and constant variance, i.e., $N(\boldsymbol{0}_n,\sigma^2\boldsymbol{I}_n)$. Using equation \ref{eq:residual-1}, it can be known that residuals $\boldsymbol{e}$ also follow a certain probability distribution, which will be denoted as $Q$. This reference distribution $Q$ summarises what good residuals should follow given the predictors are known and fixed.
-
-Probability distribution $Q$ is actually a degenerate multivariate distribution due to the fact that $rank(\boldsymbol{R}) = n - 1 < n$. This means the $n$th residual value will be known given the $n - 1$ residuals. To capture the exact characteristics of $Q$, such as moments, we can simulate a large numbers of $\boldsymbol{\varepsilon}$ and transform it to $\boldsymbol{e}$. For simplicity, we replaced $\boldsymbol{R}$ with a diagonal matrix $diag(\boldsymbol{R})$. The resulting distribution for $\boldsymbol{Q}$ is $N(\boldsymbol{0}_n, diag(\boldsymbol{R}\sigma^2))$.
-
-If the model is misspecified, then the actual distribution of residuals denoted as $P$, will be different to $Q$. For example, if the model formula is correct, but the error $\boldsymbol{\varepsilon}$ follows a multivariate lognormal distribution, $P$ will not be the same as $Q$ and we would expect a skewed empirical distribution for residuals. And if there is an omitted variable problem, then the residual operator obtained from the fitted model will not be the same as $\boldsymbol{R}$, and again, $P$ will be different to $Q$.
+Distribution $Q$ is derived from the correctly specified model. However, if the model is misspecified, then the actual distribution of residuals denoted as $P$, will be different to $Q$. For example, if the data generating process contains variables correlated with any column of $\boldsymbol{X}$ but not included in $\boldsymbol{X}$, causing an omitted variable problem, $P$ will be different to $Q$ because the residual operator obtained from the fitted model will not be the same as $\boldsymbol{R}$. Besides, if the $\boldsymbol{\varepsilon}$ follows a non-normal distribution such as a multivariate lognormal distribution, the empirical residual distribution will usually be skewed and has a long tail. 
 
 ### Kullback-Leibler divergence of $P$ from $Q$
 
-Define a proper distance between distributions is usually easier than define a proper distance between data plots. Given the actual residual distribution $Q$ and the reference residual distribution $P$, we used a distance metric based on Kullback-Leibler divergence (ref here) to quantify the difference between two distributions
+Define a proper distance between distributions is usually easier than define a proper distance between data plots. Given the actual residual distribution $Q$ and the reference residual distribution $P$, we used a distance metric based on Kullback-Leibler divergence [@kullback1951information] to quantify the difference between two distributions
 
 \begin{align}
+\label{eq:kl-0}
 D &= log\left(1 + KL\right), \\
 \label{eq:kl-1}
 KL &= \int_{\mathbb{R}^{n}}log\frac{p(\boldsymbol{e})}{q(\boldsymbol{e})}p(\boldsymbol{e})d\boldsymbol{e},
 \end{align}
 
-\noindent where $p(\boldsymbol{e})$ is the probability density function for distribution $P$, and $q(\boldsymbol{e})$ is the probability density function for distribution $Q$.
+\noindent where $p(.)$ is the probability density function for distribution $P$, and $q(.)$ is the probability density function for distribution $Q$.
 
-This distance metric was first proposed in @li2023plot. It was mainly designed for measuring the effect size of non-linearity and heteroskedasticity in a residual plot. For a linear regression model that has omitted higher-order predictors $\boldsymbol{Z}$ along with coefficients $\boldsymbol{\beta}_z$, and an error distribution $N(\boldsymbol{0}_n, \boldsymbol{V})$, $Q$ can be represented as $N(\boldsymbol{R}\boldsymbol{Z}\boldsymbol{\beta}_z, diag(\boldsymbol{R}\boldsymbol{V}\boldsymbol{R}'))$. Note that the variance-covariance matrix is replaced with its diagonal analogy to ensure it is a full rank matrix. 
+This distance metric was first proposed in @li2023plot. It was mainly designed for measuring the effect size of non-linearity and heteroskedasticity in a residual plot. @li2023plot showed that, for a classical normal linear regression model that omits a necessary higher-order predictors $\boldsymbol{Z}$, and incorrectly assumes $\boldsymbol{\varepsilon} \sim N(\boldsymbol{0}_n,\sigma^2\boldsymbol{I}_n)$ while in fact $\boldsymbol{\varepsilon} \sim N(\boldsymbol{0}_n, \boldsymbol{V})$, $Q$ can be represented as $N(\boldsymbol{R}\boldsymbol{Z}\boldsymbol{\beta}_z, diag(\boldsymbol{R}\boldsymbol{V}\boldsymbol{R}'))$. Note that the variance-covariance matrix is replaced with the diagonal matrix to ensure it is a full-rank matrix. 
 
 Since both $P$ and $Q$ are adjusted to be multivariate normal distributions, equation \ref{eq:kl-1} can be further expanded to
 
@@ -142,70 +159,127 @@ KL &= \frac{1}{2}\left(\log\frac{|\text{diag}(\boldsymbol{W})|}{|\text{diag}(\bo
 
 ### Evaluation of Kullback-Leibler divergence for non-normal $P$
 
-For non-normal error $\boldsymbol{\varepsilon}$, the actual residual distribution $P$ is unlikely to be a multivariate normal distribution. Thus, equation \ref{eq:kl-2} will not be applicable to linear regression model with non-normality issue. 
+For non-normal error $\boldsymbol{\varepsilon}$, the actual residual distribution $P$ is unlikely to be a multivariate normal distribution. Thus, equation \ref{eq:kl-2} given in @li2023plot will not be applicable to models with non-normality violations. 
 
-To evaluate the Kullback-Leibler divergence of non-normal $P$ from $Q$, we need to solve equation \ref{eq:kl-1}. However, since $\boldsymbol{e}$ is a linear transformation of non-normal random variables, it is very common that the general form of $P$ is unknown, meaning that we can not easily compute $p(\boldsymbol{e})$ using a well-known probability density function. 
+To evaluate the Kullback-Leibler divergence of non-normal $P$ from $Q$, the fallback is to solve equation \ref{eq:kl-1} numerically. However, since $\boldsymbol{e}$ is a linear transformation of non-normal random variables, it is very common that the general form of $P$ is unknown, meaning that we can not easily compute $p(\boldsymbol{e})$ using a well-known probability density function. Additionally, even if $p(\boldsymbol{e})$ can be calculated for any $\boldsymbol{e} \in \mathbb{R}^n$, it will be very difficult to do numerical integration over the $n$ dimensional space, because $n$ could be potentially very large.   
 
-Additionally, even if $p(\boldsymbol{e})$ can be calculated for any $\boldsymbol{e} \in \mathbb{R}^n$, it will be very difficult to do numerical integration over the $n$ dimensional space, because $n$ could be potentially very large.   
+In order to evaluate equation \ref{eq:kl-1} in a practically computable manner, the elements of $\boldsymbol{e}$ are assumed to be independent of each other. This assumption solves both of the issues mentioned above. First, we no longer need to integrate over $n$ random variables. The result of equation \ref{eq:kl-1} is now the sum of the Kullback-Leibler divergence evaluated for each individual residual thanks for the independence assumption. Second, it is not required to know the joint probability density $p(\boldsymbol{e})$ any more. Instead, the evaluation of Kullback-Leibler divergence for an individual residual relies on the knowledge of the marginal density $p_i(e_i)$, where $e_i$ is the $i$-th residual for $i = 1, ..., n$. This is much easier to estimate through simulation.
 
-In order to evaluate equation \ref{eq:kl-1} in a practically computable manner, the elements of $\boldsymbol{e}$ are assumed to be independent of each other. This assumption solves both of the issues mentioned above. First, we no longer need to integrate over $n$ random variables. The result is now the sum of the Kullback-Leibler divergence evaluated for each individual residual thanks for the independence assumption. Second, it is not required to know the joint probability density $p(\boldsymbol{e})$ any more. Instead, the evaluation of Kullback-Leibler divergence for a single residual relies on the knowledge of $p(e_i)$, where $e_i$ is the $i$th residual for $i = 1, ..., n$. This is much easier to estimate through simulation.
+The algorithm for computing equation \ref{eq:kl-1} starts from simulating $m$ sets of $\boldsymbol{\varepsilon}$ according to the error distribution. The simulated errors are stored in a matrix $\boldsymbol{A}$ with $n$ rows and $m$ columns. So each column of $\boldsymbol{A}$ is a set of realization values of $\boldsymbol{\varepsilon}$. Then, we can get $m$ sets of $\boldsymbol{e}$ stored in the matrix $\boldsymbol{B}$ by applying the residual rotation operator $\boldsymbol{B} = \boldsymbol{R}\boldsymbol{A}$. Furthermore, kernel density estimation (KDE) with Gaussian kernel and optimal bandwidth selected by the Sliverman's rule of thumb [@silverman2018density] is applied on each row of $B$ to estimate $p_i(e_i)$ for $i = 1, ..., n$. The KDE computation is done by the `density` function in R. 
 
-The algorithm to compute equation \ref{eq:kl-1} starts from simulating $m$ sets of $\boldsymbol{\varepsilon}$ according to the error distribution. The simulated errors are stored in a matrix $\boldsymbol{A}$ with $n$ rows and $m$ columns. So each column of $\boldsymbol{A}$ is a set of realization values of $\boldsymbol{\varepsilon}$. Then, we can get $m$ sets of $\boldsymbol{e}$ stored in the matrix $\boldsymbol{B}$ by applying the residual rotation operator $\boldsymbol{B} = \boldsymbol{R}\boldsymbol{A}$. Furthermore, kernel density estimation (ref here) is applied on each row of $B$ to estimate $p(e_i)$ for $i = 1, ..., n$. 
-
-Since the Kullback-Leibler divergence can be viewed as the expectation of the log-likelihood ratio between distribution $P$ and distribution $Q$ evaluated on distribution $P$, we can reuse the simulated residuals in matrix $\boldsymbol{B}$ to compute the expectation. Therefore, the Kullback-Leibler divergence can be formulated as
+Since the Kullback-Leibler divergence can be viewed as the expectation of the log-likelihood ratio between distribution $P$ and distribution $Q$ evaluated on distribution $P$, we can reuse the simulated residuals in matrix $\boldsymbol{B}$ to estimate the expectation by the sample mean. With the independence assumption, for non-normal $P$, $KL$ can be estimated by
 
 \begin{align}
 \label{eq:kl-3}
-KL &= \sum_{i = 1}^{n} KL_i, \\
-KL_i &= \frac{1}{m}\sum_{j = 1}^{m} log\frac{p(B_{ij})}{q(B_{ij})},
+\hat{KL} &= \sum_{i = 1}^{n} \hat{KL_i}, \\
+\hat{KL_i} &= \frac{1}{m}\sum_{j = 1}^{m} log\frac{\hat{p_i}(B_{ij})}{q(B_{ij})},
 \end{align}
 
-\noindent where $KL_i$ is the Kullback-Leibler divergence for an individual residual $e_i$, $B_{ij}$ is the $i$th row and $j$th column entry of the matrix $B$, $q(.)$ is the normal density function with mean zero and an assumed variance estimated as $\hat{\sigma^2} = var(flatten(B))$, and $flatten(.)$ unfolds a matrix into a vector.
+\noindent where $\hat{KL_i}$ is the estimator of the Kullback-Leibler divergence for an individual residual $e_i$, $B_{ij}$ is the $i$-th row and $j$-th column entry of the matrix $B$, $\hat{p_i}(.)$ is the kernel density estimator of $p_i(.)$, $q(.)$ is the normal density function with mean zero and an assumed variance estimated as $\hat{\sigma^2} = \sum_{b \in vec(B)}(b - \sum_{b \in vec(B)} b/nm)^2/(nm - 1)$, and $vec(.)$ is the vectorization operator which turns a $n \times m$ matrix into a $nm \times 1$ column vector by stacking the columns of the matrix on top of each other.
+
+### Approximation of the distance metric
+
+In the previous sections, we have defined a distance metric given in equation \ref{eq:kl-0} for quantifying the difference between the actual residual distribution $P$ and an ideal reference distribution $Q$. You may have noticed that this distance metric can only be computed when the data generating process is known. In reality, we often have no knowledge about the data generating process, otherwise we do not need to fit a linear regression model in the first place.
+
+What we proposed in this paper is a method to approximate this distance with a residual plot. Let $D$ be the result of equation \ref{eq:kl-0} indicating the extent of the model violations, and our estimator $\hat{D}$ is formulated as 
+
+\begin{equation}
+\label{eq:d-approx}
+\hat{D} = cv(plot_{h\times w}(\boldsymbol{e}, \hat{\boldsymbol{y}})),
+\end{equation}
+
+\noindent where $\boldsymbol{e}$ is a vector of residuals obtained from the fitted model rather than a vector of random variables, $\hat{\boldsymbol{y}}$ is the fitted values also obtained from the fitted model, $plot(.)_{h \times w}$ is a plotting function that generates a residuals vs fitted values plot with fixed aesthetic and then saves it as an image with $h \times w$ pixels and three colour channels, and $cv(.)$ is a computer vision model which takes an $h \times w$ image as input and predicts the distance.
+
+With the approximated distance $\hat{D}$, we will be able to know how different the underlying distribution of the residuals is from a good residual distribution. This is meaningful way to check if a residual plot is a good residual plot, and to know the strength of the visual signal embedded in the residual plot. 
+
+The approximated distance $\hat{D}$ is not expected to be the same as the original distance $D$. This is largely because information contained in a single residual plot is limited and it may not be able to summarise all the characteristics of the residual distribution. For a given residual distribution $P$, we can generate many different residual plots. Some of them share similar visual patterns, but some of them could be visually very different from the rest, especially for models with small $n$. This suggests the error of the approximation will vary depends on whether the observed residual plot is representative or not.
+
+## Statistical testing based on the approximated distance
+
+### Null distribution of the approximated distance
+
+### Estimation of quantiles of the null distribution
+
+### Bootstrapping the approximated distance
 
 
-### Approximation of the distance metric with a residual plot
 
-In the previous sections, we have defined a distance metric for quantifying the difference between the actual residual distribution and an ideal reference distribution. This distance metric can only be computed when the data generating process is known. In reality, we often have no knowledge about the data generating process, otherwise we do not need to fit a linear regression model in the first place.
+## Generation of training data
 
-What we proposed in this paper is a method to approximate this distance with a residual plot. This is done by training computer vision models with a large number of pairs of residual plots and distance. With the approximated distance, we will be able to know how different the underlying distribution of the residuals is from a good residual distribution. This is meaningful way to check if a residual plot is a good residual plot, and to know the strength of the visual signal indicating model violations. 
+### Data generating process
 
-The approximated distance is not expected to be the same as the original distance. This is largely because information embedded in a single residual plot is limited and it may not be able to summarise the characteristics of the residual distribution. For a given residual distribution $P$, we can generate many different residual plots. Some of them share similar visual patterns, but some of them could be visually very different from the rest, especially for models with small $n$. This suggests the approximated distance will vary depends on whether the observed residual plot is representative or not.
+While observational data is frequently employed in training models for real-world applications, the data generating process of observational data often remains unknown, making computation for our target variable $D$ unattainable. Consequently, the computer vision models developed in this study were trained using synthetic data. This approach provides us with precise label annotations. Additionally, it ensures a large and diverse training dataset, as we have control over the data generating process, and the simulation of the training data is relatively cost-effective.
 
-## Generation of simulated training data
+<!-- The computer vision model is trained with $n_{train}$ pairs of residual plots and distance $D$, and the trainable parameters $\boldsymbol{\theta}$ are optimized using the mean square error loss function written as -->
 
-The computer vision models we developed in this study were trained with synthetic data. This means the training data and the test data were simulated from a known data generating process under different parameter settings.
-
-We have incorporated three types of residual departures of linear regression model in this study, including non-linearity, heteroskedasticity and non-normality. 
+<!-- $$\hat{\boldsymbol{\theta}} = \underset{\boldsymbol{\theta}}{argmin}\frac{1}{n_{train}}\sum_{i=1}^{n_{train}}(D_i - vss_{\boldsymbol{\theta}}(plot_i))^2,$$ -->
+<!-- \noindent where $plot_{i}$ is the i$th$ residual plot, and $D_i$ is the computed distance for the underlying residual distribution of the $i$th residual plot. The detailed training process is described in Section ....  -->
 
 
-<!-- The training data and test data was simulated using the following data   -->
+We have incorporated three types of residual departures of linear regression model in the training data, including non-linearity, heteroskedasticity and non-normality. All three departures can be summarised by the data generating process formulated as
 
-
-<!-- The data was simulated using the following data generating process -->
-
-\begin{align*}
+\begin{align}
+\label{eq:data-sim}
 \boldsymbol{y} &= \boldsymbol{1}_n + \boldsymbol{x}_1 + \beta_1\boldsymbol{x}_2 + \beta_2(\boldsymbol{z} + \beta_1\boldsymbol{w}) + \boldsymbol{k} \odot \boldsymbol{\varepsilon}, \\
 \boldsymbol{z} &= He_j(g(\boldsymbol{x}_1, 2)), \\
 \boldsymbol{w} &= He_j(g(\boldsymbol{x}_2, 2)), \\
-\boldsymbol{k} &= \sqrt{\boldsymbol{1}_n + b(2 - |a|)(\boldsymbol{x}_1 + \beta_1\boldsymbol{x}_2 - a\boldsymbol{1}_n)^2}, \\
-\boldsymbol{\varepsilon} &\sim N(\boldsymbol{0}_n, \boldsymbol{I}_n),
-\end{align*}
+\boldsymbol{k} &= \sqrt{\boldsymbol{1}_n + b(2 - |a|)(\boldsymbol{x}_1 + \beta_1\boldsymbol{x}_2 - a\boldsymbol{1}_n)^2},
+\end{align}
 
-\noindent where $\boldsymbol{y}$, $\boldsymbol{x}_1$, $\boldsymbol{x}_2$, $\boldsymbol{z}$, $\boldsymbol{w}$, $\boldsymbol{k}$ and $\boldsymbol{\varepsilon}$ are vectors of size $n$, $\boldsymbol{1}_n$ is a vector of ones of size $n$, $He_j(.)$ is the $j$th-order probabilist's Hermite polynomials (ref), the $\sqrt{(.)}$ and $(.)^2$ operator are element-wise operators, $\odot$ is the Hadamard product, and $g(., k)$ is a scaling function to enforce the support of the random vector to be $[-k, k]^n$ defined as
+\noindent where $\boldsymbol{y}$, $\boldsymbol{x}_1$, $\boldsymbol{x}_2$, $\boldsymbol{z}$, $\boldsymbol{w}$, $\boldsymbol{k}$ and $\boldsymbol{\varepsilon}$ are vectors of size $n$, $\boldsymbol{1}_n$ is a vector of ones of size $n$, $\boldsymbol{x}_1$ and $\boldsymbol{x}_2$ are two independent predictors, $He_j(.)$ is the $j$th-order probabilist's Hermite polynomials [@hermite1864nouveau], the $\sqrt{(.)}$ and $(.)^2$ operators are element-wise operators, $\odot$ is the Hadamard product, and $g(., k)$ is a scaling function to enforce the support of the random vector to be $[-k, k]^n$ defined as
 
 $$g(\boldsymbol{x}, k) = 2k \cdot \frac{\boldsymbol{x} - x_{min}\boldsymbol{1}_n}{x_{max} - x_{min}} - k\boldsymbol{1}_n,~for~k > 0,$$
 \noindent where $x_{min} = \underset{i \in \{ 1,...,n\}}{min} x_i$, $x_{max} = \underset{i \in \{ 1,...,n\}}{max} x_i$ and $x_i$ is the $i$-th entry of $\boldsymbol{x}$.
 
+The residuals and fitted values of the fitted model is obtained by regressing $\boldsymbol{y}$ on $\boldsymbol{x}_1$. This data generating process is adopted from @li2023plot where it was used to simulate residual plots with non-linearity and heteroskedasticity visual patterns for human subject experiments.
 
-## Different configurations of the model formula
+In equation \ref{eq:data-sim}, predictor $\boldsymbol{x}_1$ and $\boldsymbol{x}_2$ are independent of each other, so excluding $\boldsymbol{x}_2$ from the regression formula will not cause any problem. However, $\boldsymbol{z}$ and $\boldsymbol{w}$ are higher-order terms of $\boldsymbol{x}_1$ and $\boldsymbol{x}_2$. If $\beta_2 \neq 0$, the regression model will suffer from non-linearity issues. Parameter $j$ is a shape parameter controlling the number of tuning points of the non-linearity pattern. Generally, greater values of $j$ will result in more tuning points. 
 
-discuss different types of inputs and output choices, and why we choose the current design
+Additionally, Scaling factor $\boldsymbol{k}$ directly affects the error distribution and it is correlated with $\boldsymbol{x}_1$ and $\boldsymbol{x}_2$. If $b \neq 0$ and $\boldsymbol{\varepsilon} \sim N(\boldsymbol{0}_n, \sigma^2\boldsymbol{I}_n)$, the constant variance assumption will be violated. Parameter $a$ is a shape parameter controlling the location of the smallest variance in a residual plot.
+
+Non-normality violations are introduced by defining a non-normal distribution for $\boldsymbol{\varepsilon}$. 
+- distribution of x1 and x2
+- summary table of all the factor values
+- example plots for the violations
+
+### Computation of scagnostics
+
+We have mentioned in Section \ref{introduction} that scagnostics summarise some useful characteristics of the scatter plot. Although the computer vision model will learn the feature extraction function during the training process, it will be beneficial to utilize scagnostics to help computer vision model making more accurate predictions as these measure could provide additional useful information.
+
+For each generated residual plot, four scagnostics, namely, "Monotonic", "Sparse", "Splines" and "Striped" are computed using the `cassowaryr` R package (ref here). The computed measures along with the number of observations of the fitted model are provided as the second input of the computer vision model.
+
+Other scagnostics are also informative, but unfortunately, they are unavailable due to a fatal bug in the compiled C program of the `interp` R package (ref here) that will crash the process in a unpredictable manner. For reproducibility, we do not include these scagnostics in the training data.
+
+### Crafting a balanced training set
+
 
 ## Architecture of the computer vision model
 
+- optimization (MSE loss function, with equation)
+- a diagram
+- explain the existence of removable layers 
+- explain three different resolutions
+
 ## Training process and hyperparameter tuning
 
+- software environment (tf and keras)
+- tuner (keras_tuner)
+- 80% validation data, 20% training data
+- 100 trials (Bayesian optimizer)
+- monitor RMSE
+- early stopping (50 epochs)
+- learning rate reduction (10 epochs, 0.5 factor)
+- max 2000 epochs (no one reach)
+- restore best epoch of the best trial
+
 ## Model evaluation methods
+
+- RMSE for the test set
+- R^2
+- Mean bias deviation to understand the overall bias
+- quantile loss to understand how well the model captures the entire distribution of D
+- Percentage of predictions within a tolerance interval (like 0.1)
+
 
 # Results
 
@@ -238,6 +312,8 @@ discuss different types of inputs and output choices, and why we choose the curr
 ## Workflow: how one use this model? (small showcase) 
 
 # Dicussion
+
+There are other kinds of residual departures like autocorrelation that are not considered in this study. The primary goal of this paper is to establish a new way of evaluating residual plot and conducting visual test with computer vision models. Building computer vision models for other model violations and other types of diagnostic plots could be future directions of this field.   
 
 # Conclusion
 

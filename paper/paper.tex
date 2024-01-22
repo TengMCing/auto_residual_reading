@@ -122,13 +122,13 @@ the lineup protocol lies in its reliance on human judgments. Unlike
 conventional statistical tests that can be performed numerically and
 automatically in statistical software, the lineup protocol requires
 human evaluation of images. This characteristic makes it less suitable
-for large-scale applications, given the associated high labour costs and
+for large-scale applications, given the associated high labor costs and
 time requirements.
 
 There is a substantial need to develop an approach that alleviates
 people's workload by automating repetitive tasks and providing
 standardized results in a controlled environment. The large-scale
-evaluation of lineups ihs impractical without the use of technology and
+evaluation of lineups is impractical without the use of technology and
 machines.
 
 The utilization of computers to interpret data plots has a rich history,
@@ -181,8 +181,8 @@ paper is structured as follows: \ldots{}
 \caption{An example residual vs fitted values plot (red line indicates 0). The vertical spread of the data points varies with the fitted values. This often indicates the existence of heteroskedasticity.}\label{fig:false-finding}
 \end{figure}
 
-\hypertarget{methodogology}{%
-\section{Methodogology}\label{methodogology}}
+\hypertarget{methodology}{%
+\section{Methodology}\label{methodology}}
 
 \hypertarget{different-possible-configurations-of-the-model-formula}{%
 \subsection{Different possible configurations of the model
@@ -253,7 +253,7 @@ However, if the lineup consists of around 20 plots, similar to previous
 human subject experiments (reference here), the resolution of the input
 image could become quite large, posing challenges in training the model.
 In fact, we experimented with this approach in a pilot study, and the
-model's performance was suboptimal.
+model's performance was sub-optimal.
 
 We did not explore all the mentioned input formats due to the
 considerable costs associated with data preparation and model training.
@@ -336,7 +336,7 @@ distribution with zero mean and constant variance, i.e.,
 It can be known that residuals \(\boldsymbol{e}\) also follow a certain
 probability distribution transformed from the multivariate normal
 distribution, which will be denoted as \(Q\). This reference
-distribution \(Q\) summarises what good residuals should follow given
+distribution \(Q\) summarizes what good residuals should follow given
 the predictors are known and fixed.
 
 When fitting a linear regression model, the solver will force
@@ -457,7 +457,7 @@ error distribution. The simulated errors are stored in a matrix
 \(\boldsymbol{e}\) stored in the matrix \(\boldsymbol{B}\) by applying
 the residual operator \(\boldsymbol{B} = \boldsymbol{R}\boldsymbol{A}\).
 Furthermore, kernel density estimation (KDE) with Gaussian kernel and
-optimal bandwidth selected by the Sliverman's rule of thumb
+optimal bandwidth selected by the Silverman's rule of thumb
 \citep{silverman2018density} is applied on each row of \(B\) to estimate
 \(p_i(e_i)\) for \(i = 1, ..., n\). The KDE computation is done by the
 \texttt{density} function in R.

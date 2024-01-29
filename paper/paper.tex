@@ -39,6 +39,20 @@
 \usepackage{setspace}
 \doublespacing
 
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
 
 \begin{document}
 
@@ -188,77 +202,78 @@ paper is structured as follows: \ldots{}
 \subsection{Different possible configurations of the model
 formula}\label{different-possible-configurations-of-the-model-formula}}
 
-In addressing a problem, there exist multiple avenues for solutions.
-Various configurations of the computer vision model formula can
-effectively read residual plots, and these configurations can be
-categorized based on two key components of the model formula: the input
-and the output format.
+In addressing the residual reading problem, there exist multiple
+configurations of the computer vision model formula. These
+configurations can be categorized by two key components of the model
+formula: the input and the output format.
 
 \hypertarget{different-input-formats}{%
 \subsubsection{Different input formats}\label{different-input-formats}}
 
-In computer vision models, the input plays a role similar to predictors
-in a linear regression model. The quality and relevance of the input
-data greatly influence the model's capacity to generate insightful and
-meaningful results. A straightforward approach involves feeding the
-model a vector of residuals along with a vector of fitted values,
-essentially providing all the necessary details for creating a residuals
-vs fitted values plot. However, a drawback of this method is the dynamic
-input size, as different fitted regression models may have varying
-numbers of observations. In modern computer vision models created with
-mainstream software like TensorFlow (ref here), the input is typically a
-fixed-shape tensor. One solution is to pad the input vector with leading
-or trailing zeros if the input tensor expects a longer vector. However,
-this approach may fail if the input vector surpasses the designed
+In computer vision models, the quality and relevance of the input data
+greatly influence the model's capacity to generate insightful and
+meaningful results. The input of the model can be designed in different
+formats.
+
+A straightforward approach involves feeding the model a vector of
+residuals along with a vector of fitted values, essentially providing
+all the necessary information for creating a residuals vs fitted values
+plot. However, a drawback of this method is the dynamic input size, as
+different fitted regression models may have varying numbers of
+observations. For modern computer vision models implemented with
+mainstream software like TensorFlow \citep{abadi2016tensorflow}, the
+input shape is typically fixed. One solution is to pad the input vectors
+with leading or trailing zeros if the input tensor expects longer
+vectors, but it may fail if the input vector surpasses the designed
 length. Another strategy is to summarize the residuals and fitted values
 separately using histograms and utilize the counts as the input. By
 controlling the number of bins in the histograms, it becomes possible to
-provide a fixed-length input vector.
+provide fixed-length input vectors.
 
-The primary advantage of using an image as input, as opposed to a vector
-input format, relates to the development of sophisticated image
-processing architectures over the years (see ref here). These
-architectures effectively capture and summarize spatial information from
-nearby pixels, which is less straightforward with vector input. The only
-considerations are the image resolution and the aesthetics of the
-residual plot. In general, higher resolution provides more information
-to the model but comes with the trade-off of increased complexity and
-greater difficulty in training. As for the aesthetics of the residual
-plot, a practical solution is to consistently present residual plots in
-the same style to the model. This implies that the model can not accept
-arbitrary images as input but requires the use of the same preprocessing
-software to convert provided residuals and fitted values into a
-standardized style for the residual plot.
+Another approach is to use an image as input. The primary advantage of
+using an image, as opposed to the vector format, is the utilization of
+the sophisticated image processing architectures developed over the
+years, such as the VGG16 architecture proposed in
+\citet{simonyan2014very}. These architectures can effectively capture
+and summarize spatial information from nearby pixels, which is less
+straightforward with vector input. The only considerations are the image
+resolution and the aesthetics of the residual plot. In general, higher
+resolution provides more information to the model but comes with the
+trade-off of increased complexity and greater difficulty in training. As
+for the aesthetics of the residual plot, a practical solution is to
+consistently present residual plots in the same style to the model. This
+implies that the model can not accept arbitrary images as input but
+requires the use of the same preprocessing software to convert provided
+residuals and fitted values into a standardized style for the residual
+plot.
 
 Other possible input formats include, but are not limited to, a pair of
-residual plots, a triplet, and a lineup. Existing computer vision models
-designed for image comparison can assess whether a pair of images are
-similar or dissimilar (as seen in LeCun's 2005 paper). Applied to our
-specific problem, we can define null plots of a fitted model to be
+residual plots, a triplet, and a lineup. \citet{chopra2005learning} has
+shown that computer vision models designed for image comparison can
+assess whether a pair of images are similar or dissimilar. Applied to
+our specific problem, we can define null plots of a fitted model to be
 similar to each other, while considering actual residual plots to be
 distinct from null plots of any fitted model. A triplet constitutes a
 set of three images, denoted as \(image_1\), \(image_2\) and
-\(image_3\). In computer vision models, triplets are often used to
-predict whether \(image_2\) or \(image_3\) is more similar to
-\(image_1\), proving particularly useful for establishing rankings
-between samples. In the context of our problem, we can apply the same
-criteria to define similarity between images. However, it's important to
+\(image_3\). It is often used to predict whether \(image_2\) or
+\(image_3\) is more similar to \(image_1\), proving particularly useful
+for establishing rankings between samples. However, it's important to
 note that these two approaches usually require additional considerations
 regarding the loss function and, at times, non-standard training
 processes due to shared weights between different convolutional blocks.
 
 Presenting a lineup to a model and asking it to predict which residual
 plot is the most different one aligns closely with the lineup protocol.
-However, if the lineup consists of around 20 plots, similar to previous
-human subject experiments (reference here), the resolution of the input
-image could become quite large, posing challenges in training the model.
-In fact, we experimented with this approach in a pilot study, and the
-model's performance was sub-optimal.
+However, if a lineup consists of a large amount of residual plots, the
+resolution of the input image could become quite large, posing
+challenges in training the model. This approach was experimented in a
+pilot study conducted by us but the performance of the trained model was
+sub-optimal.
 
-We did not explore all the mentioned input formats due to the
-considerable costs associated with data preparation and model training.
-Considering the implementation cost and the interpretability of the
-model, we settled on the single residual plot input format.
+Not all the mentioned input formats were explored and tested in this
+study due to the considerable costs associated with data preparation and
+model training. The single residual plot input format was chosen for its
+relatively low implementation cost and high interpretability.
 
 \hypertarget{different-output-formats}{%
 \subsubsection{Different output
@@ -267,11 +282,11 @@ formats}\label{different-output-formats}}
 Given that the input is a single residual plot represented as a
 fixed-resolution image, the computer vision model's output can take one
 of two formats: binary or numeric. This choice determines whether the
-model is a classification model or a regression model. The binary
-outcome might indicates whether the input image is a null plot or not,
-or whether the input image would be rejected in a visual test conducted
-by humans. The latter option requires data from prior human subject
-experiments, posing challenges in controlling the quality and quantity
+model belongs to a classification model or a regression model. The
+binary outcome might indicates whether the input image is a null plot or
+not, or whether the input image would be rejected in a visual test
+conducted by humans. The latter option requires data from prior human
+subject experiments, presenting difficulties in controlling the quality
 of data due to variations in experimental settings across different
 studies. Additionally, some visual inference experiments are unrelated
 to linear regression models and residual plots, resulting in a limited
@@ -286,9 +301,6 @@ interpretable value with tangible significance. Studies have
 demonstrated that defining a proper distance between images can enhance
 the matching accuracy in image search compared to a binary outcome model
 (ref here).
-
-The following section will propose the distance measure used for
-training the computer vision model.
 
 \hypertarget{distance-from-the-good-residual-plots}{%
 \subsection{Distance from the good residual
@@ -377,9 +389,9 @@ distributions
 
 \begin{align}
 \label{eq:kl-0}
-D &= log\left(1 + KL\right), \\
+D &= log\left(1 + D_{KL}\right), \\
 \label{eq:kl-1}
-KL &= \int_{\mathbb{R}^{n}}log\frac{p(\boldsymbol{e})}{q(\boldsymbol{e})}p(\boldsymbol{e})d\boldsymbol{e},
+D_{KL} &= \int_{\mathbb{R}^{n}}log\frac{p(\boldsymbol{e})}{q(\boldsymbol{e})}p(\boldsymbol{e})d\boldsymbol{e},
 \end{align}
 
 \noindent where \(p(.)\) is the probability density function for
@@ -404,7 +416,7 @@ distributions, equation \ref{eq:kl-1} can be further expanded to
 
 \begin{align}
 \label{eq:kl-2}
-KL &= \frac{1}{2}\left(\log\frac{|\text{diag}(\boldsymbol{W})|}{|\text{diag}(\boldsymbol{R}\sigma^2)|} - n + \text{tr}(\text{diag}(\boldsymbol{W})^{-1}\text{diag}(\boldsymbol{R}\sigma^2)) + \boldsymbol{\mu}_z'(diag(\boldsymbol{W}))^{-1}\boldsymbol{\mu}_z\right),
+D_{KL} &= \frac{1}{2}\left(\log\frac{|\text{diag}(\boldsymbol{W})|}{|\text{diag}(\boldsymbol{R}\sigma^2)|} - n + \text{tr}(\text{diag}(\boldsymbol{W})^{-1}\text{diag}(\boldsymbol{R}\sigma^2)) + \boldsymbol{\mu}_z'(diag(\boldsymbol{W}))^{-1}\boldsymbol{\mu}_z\right),
 \end{align}
 
 \noindent where
@@ -467,21 +479,21 @@ of the log-likelihood ratio between distribution \(P\) and distribution
 \(Q\) evaluated on distribution \(P\), we can reuse the simulated
 residuals in matrix \(\boldsymbol{B}\) to estimate the expectation by
 the sample mean. With the independence assumption, for non-normal \(P\),
-\(KL\) can be estimated by
+\(D_{KL}\) can be estimated by
 
 \begin{align}
 \label{eq:kl-3}
-\hat{KL} &= \sum_{i = 1}^{n} \hat{KL_i}, \\
-\hat{KL_i} &= \frac{1}{m}\sum_{j = 1}^{m} log\frac{\hat{p_i}(B_{ij})}{q(B_{ij})},
+\widehat{D_{KL}} &= \sum_{i = 1}^{n} \widehat{D_{KL}^{(i)}}, \\
+\widehat{D_{KL}^{(i)}} &= \frac{1}{m}\sum_{j = 1}^{m} log\frac{\hat{p_i}(B_{ij})}{q(B_{ij})},
 \end{align}
 
-\noindent where \(\hat{KL_i}\) is the estimator of the Kullback-Leibler
-divergence for an individual residual \(e_i\), \(B_{ij}\) is the
-\(i\)-th row and \(j\)-th column entry of the matrix \(B\),
-\(\hat{p_i}(.)\) is the kernel density estimator of \(p_i(.)\), \(q(.)\)
-is the normal density function with mean zero and an assumed variance
-estimated as
-\(\hat{\sigma^2} = \sum_{b \in vec(B)}(b - \sum_{b \in vec(B)} b/nm)^2/(nm - 1)\),
+\noindent where \(\widehat{D_{KL}^{(i)}}\) is the estimator of the
+Kullback-Leibler divergence for an individual residual \(e_i\),
+\(B_{ij}\) is the \(i\)-th row and \(j\)-th column entry of the matrix
+\(B\), \(\hat{p_i}(.)\) is the kernel density estimator of \(p_i(.)\),
+\(q(.)\) is the normal density function with mean zero and an assumed
+variance estimated as
+\(\widehat{\sigma^2} = \sum_{b \in vec(B)}(b - \sum_{b \in vec(B)} b/nm)^2/(nm - 1)\),
 and \(vec(.)\) is the vectorization operator which turns a
 \(n \times m\) matrix into a \(nm \times 1\) column vector by stacking
 the columns of the matrix on top of each other.
@@ -505,18 +517,17 @@ indicating the extent of the model violations, and our estimator
 
 \begin{equation}
 \label{eq:d-approx}
-\hat{D} = cv(plot_{h\times w}(\boldsymbol{e}, \hat{\boldsymbol{y}})),
+\hat{D} = f(V(\hat{\boldsymbol{e}}, \hat{\boldsymbol{y}})),
 \end{equation}
 
-\noindent where \(\boldsymbol{e}\) is a vector of residuals obtained
-from the fitted model rather than a vector of random variables,
+\noindent where \(\hat{\boldsymbol{e}}\) is a vector of residuals
+obtained from the fitted model rather than a vector of random variables,
 \(\hat{\boldsymbol{y}}\) is the fitted values also obtained from the
-fitted model, \(plot(.)_{h \times w}\) is a plotting function that
-generates a residuals vs fitted values plot with fixed aesthetic and
-then saves it as an image with \(h \times w\) pixels and three colour
-channels, and \(cv(.)\) is a computer vision model which takes an
-\(h \times w\) image as input and predicts the distance in the domain
-\([0, +\infty)\).
+fitted model, \(V(.)\) is a plotting function that generates a residuals
+vs fitted values plot with fixed aesthetic and then saves it as an image
+with \(h \times w\) pixels and three colour channels, and \(f(.)\) is a
+computer vision model which takes an \(h \times w\) image as input and
+predicts the distance in the domain \([0, +\infty)\).
 
 With the approximated distance \(\hat{D}\), we will be able to know how
 different the underlying distribution of the residuals is from a good
@@ -543,53 +554,61 @@ distance}\label{statistical-testing-based-on-the-approximated-distance}}
 \subsubsection{Null distribution of the approximated
 distance}\label{null-distribution-of-the-approximated-distance}}
 
-Having a computer vision model \(cv\) which gives an approximated
-distance between \(0\) and \(+\infty\) is not enough to determine if the
-null hypothesis that the model is correctly specified should be
-rejected. Theoretically, the distance \(D\) for a correctly specified
-model is \(0\), because \(P\) will be the same as \(Q\), and
-\(log(1 + 0) = 0\). The computer vision model may not necessary predict
-\(0\) for a null plot. Using \ref{fig:false-finding} as an example, it
-contains a visual pattern which is an indication of heteroskedasticity.
-We would not expect the model to be able to magically tell if the
-suspicious pattern is caused by the skewed distribution of the fitted
-values or the existence of heteroskedasticity. Assume we only train the
-model with this single image, while \(50\)\% of the time the label is
-\(0\), and \(50\)\% of the time the label is some constant greater than
-\(0\). Then, a perfect model will predict a value between \(0\) and that
-constant to achieve a minimum loss. So, it is expected that our computer
-vision models will also predict value greater than \(0\) for some null
-plots. It will make more sense if we interpret the model prediction as
-the visual signal strength of the residual plot. Some null plots could
-have outliers or strong visual patterns due to randomness, and the model
-will try to summarise those information into the prediction.
+Theoretically, the distance \(D\) for a correctly specified model is
+\(0\), because \(P\) will be the same as \(Q\). However, the computer
+vision model may not necessary predict \(0\) for a null plot. Using
+Figure \ref{fig:false-finding} as an example, it contains a visual
+pattern which is an indication of heteroskedasticity. We would not
+expect the model to be able to magically tell if the suspicious pattern
+is caused by the skewed distribution of the fitted values or the
+existence of heteroskedasticity. Assume we only train the model with
+this single image, while \(50\)\% of the time the label is \(0\), and
+\(50\)\% of the time the label is some constant \(c > 0\). Then, a
+perfect model will predict \(0 < \hat{D} < c\) to achieve a minimum
+loss. Some null plots could have outliers or strong visual patterns due
+to randomness, and a reasonable model will try to summarise those
+information into the prediction, resulting in \(\hat{D} > 0\).
 
-To align with the principle of visual inference, we need to provide a
-valid null distribution for the test statistic. If we treat the
-approximated distance \(\hat{D}\) as a test statistic, then the null
-distribution of this statistic can be approximated by the empirical
-distribution of \(\hat{D}\) for a large amount of null plots of given a
-fitted model. The procedure involves applying the residual rotation
-technique \citep{buja2009statistical} on the fitted model to obtain null
-residuals. The null residuals are then used to make null plots and fed
-into the model. The results are used to construct an empirical
-distribution.
+This property is not an issue if \(\hat{D} \gg 0\) for which the visual
+signal of the residual plot is very strong, and we usually do not need
+any further examination of the significance of the result. However, if
+the visual pattern is weak or moderate, having \(\hat{D}\) will not be
+sufficient to determine if the null hypothesis that the model is
+correctly specified should be rejected.
+
+To solve this issue while aligning with the principle of visual
+inference, the approximated distance \(\hat{D}\) can be defined as a
+test statistic. And the null distribution of this statistic can be
+approximated by the empirical distribution of \(\widehat{D_{null}}\) for
+a large amount of null plots of a fitted model. The procedure involves
+applying the residual rotation technique \citep{buja2009statistical} on
+the fitted model to obtain null residuals. The null residuals are then
+used to make null plots and fed into the model. The predicted distance
+are used to construct an empirical distribution.
 
 \hypertarget{estimation-of-quantiles-of-the-null-distribution}{%
 \subsubsection{Estimation of quantiles of the null
 distribution}\label{estimation-of-quantiles-of-the-null-distribution}}
 
-With the null distribution of the test statistic,
-
-\begin{itemize}
-\tightlist
-\item
-  How many null samples are needed to get stable 95\% quantile
-\item
-  How do we make decision based on the quantile (reject or not reject)
-\item
-  p-value calculation (percentage of null vss \textgreater{} vss)
-\end{itemize}
+Let \(\widehat{D_{null}^{(i)}}\) be the predicted distance of the
+\(i\)-th null plots, where \(i = 1,...,m\) and \(m \in \mathbb{N}^+\) is
+a sufficiently large number. Quantiles of the null distribution can then
+be estimated using the sample quantiles available in statistical
+software such as R. The details of the sample quantile computation can
+be found in \citet{hyndman1996sample}. In statistical testing, analysts
+often care about certain quantiles of the null distribution, such as
+90\% quantile, 95\% quantile and 99\% quantile. These quantiles are used
+as thresholds to decide if \(H_0\) needs to be rejected. For example, if
+\(\hat{D}\) is greater than and equal to the 95\% sample quantile of the
+null distribution, we could say the predicted distance for the actual
+residual plot is significantly different from the predicted distance for
+null plots with 95\% significance level. Based on our experience, in
+order to get a stable estimate of the 95\% quantile, \(m\) usually needs
+to be at least \(100\). And if the null distribution has a long tail,
+more null plots will be needed. Alternatively, a p-value can be used to
+represents the probability of observing an event equally or more extreme
+than the given event under \(H_0\), and it can be estimated by
+\(1/m\sum_{i=1}^{m}I\left(\widehat{D_{null}^{(i)}} \geq \hat{D}\right)\).
 
 \hypertarget{bootstrapping-the-approximated-distance}{%
 \subsubsection{Bootstrapping the approximated
@@ -712,20 +731,19 @@ distribution for \(\boldsymbol{\varepsilon}\).
 \subsubsection{Computation of
 scagnostics}\label{computation-of-scagnostics}}
 
-We have mentioned in Section \ref{introduction} that scagnostics
-summarise some useful characteristics of the scatter plot. Although the
-computer vision model will learn the feature extraction function during
-the training process, it will be beneficial to utilize scagnostics to
-help computer vision model making more accurate predictions as these
-measure could provide additional useful information.
+We have mentioned in Section \ref{introduction} that scagnostics are a
+set of manually designed visual feature extraction functions. Although
+our computer vision model will learn its own feature extraction function
+during the training process, it will be beneficial to utilize additional
+information provided by scagnostics to help computer vision model making
+more accurate predictions.
 
 For each generated residual plot, four scagnostics, namely,
 ``Monotonic'', ``Sparse'', ``Splines'' and ``Striped'' are computed
 using the \texttt{cassowaryr} R package (ref here). The computed
 measures along with the number of observations of the fitted model are
-provided as the second input of the computer vision model.
-
-Other scagnostics are also informative, but unfortunately, they are
+provided as the second input of the computer vision model. Other
+scagnositcs are also informative, but unfortunately, they are
 unavailable due to a fatal bug in the compiled C program of the
 \texttt{interp} R package (ref here) that will crash the process in a
 unpredictable manner. For reproducibility, we do not include these
@@ -753,49 +771,149 @@ bucket, until all the buckets are full.
 \subsection{Architecture of the computer vision
 model}\label{architecture-of-the-computer-vision-model}}
 
+The architecture of the computer vision model is adopted from a existing
+architecture called VGG16 that proven to be performant in image
+classification \citep{simonyan2014very}. The first layer is the input
+layer with shape \(n \times h \times w \times 3\) which could accept
+\(n\) RGB images, followed by a grayscale conversion layer using the
+luma formula under the CCIR 601 standard (ref here) to convert the
+colour image to an grey scale image. Grayscale is enough for our task
+since data points are plotted in black. Three different combinations of
+\(h\) and \(w\) are chosen to seek a sufficient large image resolution
+for this problem. This includes \(32 \times 32\), \(64 \times 64\) and
+\(128 \times 128\).
+
+The processed image is then used as the input of the first
+convoluational block. The model has at most five consecutive
+convolutional blocks which is similar to the original VGG16
+architecture. In each block, there are two 2D convoluational layers
+followed by two activation layers respectively, and there is a 2D max
+pooling layer follows the second activation layer. The 2D convolutional
+layer convolves the input with a fixed number of \(3 \times 3\)
+convolution filters, and the 2D max pooling layer downsamples the input
+along its spatial dimensions by taking the maximum value over a
+\(2 \times 2\) window for each channel of the input. The activation
+layer is set to be the rectified linear unit activation function (ReLu),
+which is a standard practice in deep learning. This introduces a
+non-linear transformation of the output of the 2D convolutional layer.
+Furthermore, to regularize the training, a batch normalization layer is
+added after each of the 2D convolutional layer and before the activation
+layer. A dropout layer is also appended at the end of each convolutional
+block to randomly set some inputs to zeros during training.
+
+The output of the last convolutional block will be summarised by a
+global max pooling layer or a global average pooling layer to gain a
+two-dimensional tensor. Since we want to utilize the information
+contained in scagnostics, the two-dimensional tensor is concatenated
+with an additional \(n \times 5\) tensor, which contains the
+``Monotonic'', ``Sparse'', ``Splines'' and ``Striped'' measures and the
+number of observations for \(n\) residual plots.
+
+The concatenated tensor will be fed into the final prediction block.
+This block contains two fully-connected layers, the first one has at
+least \(128\) units followed by a dropout layer. Sometimes, a batch
+normalization layer will be inserted between the fully-connected layer
+and the dropout layer. The second fully-connected layer has only one
+unit, serves as the output of the model.
+
+The model weights are randomly initialized and they are optimized by the
+Adam optimizer with the mean square error loss function. Therefore, we
+try to find a set of weights \(\hat{\boldsymbol{\theta}}\) by
+
+\[\hat{\boldsymbol{\theta}} = \underset{\boldsymbol{\theta}}{argmin}\frac{1}{n_{train}}\sum_{i=1}^{n_{train}}(D_i - f_{\boldsymbol{\theta}}(V_i, S_i))^2,\]
+
+\noindent where \(n_{train}\) is the number of training samples, \(V_i\)
+is the \(i\)-th residual plot and \(S_i\) is the additional information
+about the \(i\)-th residual plot including four scagnostics and the
+number of observations.
+
 \begin{itemize}
 \tightlist
 \item
-  optimization (MSE loss function, with equation)
-\item
-  a diagram
-\item
-  explain the existence of removable layers
-\item
-  explain three different resolutions
+  a diagram for the model
 \end{itemize}
 
-\hypertarget{training-process-and-hyperparameter-tuning}{%
-\subsection{Training process and hyperparameter
-tuning}\label{training-process-and-hyperparameter-tuning}}
+\hypertarget{training-and-hyperparameter-tuning}{%
+\subsection{Training and hyperparameter
+tuning}\label{training-and-hyperparameter-tuning}}
 
-\begin{itemize}
-\tightlist
-\item
-  software environment (tf and keras)
-\item
-  tuner (keras\_tuner)
-\item
-  80\% validation data, 20\% training data
-\item
-  100 trials (Bayesian optimizer)
-\item
-  monitor RMSE
-\item
-  early stopping (50 epochs)
-\item
-  learning rate reduction (10 epochs, 0.5 factor)
-\item
-  max 2000 epochs (no one reach)
-\item
-  restore best epoch of the best trial
-\end{itemize}
+To obtain an optimal deep learning model, hyperparameters such as
+learning rate often needs to be tuned via a tuner. In this study, we
+used the Bayesian optimization tuner from the \texttt{keras-tuner}
+Python library (ref here) to tune the hyperparameters. The complete list
+of hyperparameters is provided in Table \ref{tab:hyperparameter}.
+
+The number of base filters determines the number of filters for the
+first 2D convolutional layer. In VGG16, the number of filters for the 2D
+convolutional layer in a block is 2 times the number in the previous
+block, except for the last block which has the same number of
+convolution filters as the previous one. This hyperparameter helps to
+control the complexity of the computer vision model. More base filters
+will result in more trainable parameters.
+
+Similarly, the number of units for the first fully-connected layer
+determines the complexity of the final prediction block. And more units
+will lead to more trainable parameters.
+
+Dropout rate and batch normalization are flexible hyperparameters which
+works jointly with other hyperparameters to smooth the training process.
+A high dropout rate is needed when the model learns too much noise from
+the training dataset. And a low dropout rate is needed when the model is
+complex and difficult to converge. Batch normalization on the other hand
+may be needed for solving the internal covariate shift problem due to
+randomness in the weight initialization and randomness in the input
+data.
+
+Having additional inputs including the scagnostics and the number of
+observations could be beneficial for making more accurate prediction. So
+we let the tuner to decide if these inputs are actually needed.
+
+Learning rate is one of the most important hyperparameters, and it
+determines the step size of the optimization algorithm. A high learning
+rate could help the model to avoid getting stuck in a local minimum, but
+it could also ruin the optimization process by jumping over the global
+minimum. A low learning rate could smooth the training process but it
+increases the time to converge and the chance of getting stuck in local
+minimum.
+
+The model is trained on a high-performance computing platform owned by
+Monash university with TensorFlow (ref here) and Keras (ref here).
+During the training process, 80\% of the training data are used as the
+actual training data, and 20\% of the training data are reserved as
+validation data. We let the Bayesian optimization tuner runs 100 trials
+to find the best hyperparameter values according to the validation root
+mean square error. The tuner will restore the best epoch of the best
+model from the trials. Early stopping is also applied such that the
+training process will halt if the validation root mean square error does
+not improve for 50 epochs. The maximum allowed epochs is 2000 where no
+models reach.
+
+\begin{table}
+
+\caption{\label{tab:hyperparameter}Name of hyperparameters and their correspoding domain for the computer vision model.}
+\centering
+\begin{tabular}[t]{ll}
+\toprule
+Hyperparameter & Domain\\
+\midrule
+Number of base filters & \{4, 8, 16, 32, 64\}\\
+Dropout rate for convolutional blocks & {}[0.1, 0.6]\\
+Batch normalization for convolutional blocks & \{false, true\}\\
+Type of global pooling & \{max, average\}\\
+Ignore additional inputs & \{false, true\}\\
+\addlinespace
+Number of units for the fully-connected layer & \{128, 256, 512, 1024, 2048\}\\
+Batch normalization for the fully-connected layer & \{false, true\}\\
+Dropout rate for the fully-connected layer & {}[0.1, 0.6]\\
+Learning rate & {}[1e-8, 1e-1]\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \hypertarget{model-evaluation-methods}{%
 \subsection{Model evaluation methods}\label{model-evaluation-methods}}
 
 \begin{itemize}
-\tightlist
 \item
   RMSE for the test set
 \item
@@ -807,23 +925,132 @@ tuning}\label{training-process-and-hyperparameter-tuning}}
   distribution of D
 \item
   Percentage of predictions within a tolerance interval (like 0.1)
+\item
+  comparison with human visual inference
+\item
+  overview of the human subject experiment
+\item
+  metrics
+\item
+  agreement rate
+\item
+  check cases that are aggreed
+\item
+  check cases that are disaggreed
 \end{itemize}
 
 \hypertarget{results}{%
 \section{Results}\label{results}}
 
-\hypertarget{best-model-performance}{%
-\subsection{Best model performance}\label{best-model-performance}}
+\hypertarget{best-hyperparameters}{%
+\subsection{Best hyperparameters}\label{best-hyperparameters}}
 
-\begin{itemize}
-\tightlist
-\item
-  Metrics for model performance
-\item
-  Shap values
-\item
-  Heatmap
-\end{itemize}
+Based on the tuning process described in Section
+\ref{training-and-hyperparameter-tuning}, the best hyperparameter values
+are provided in Table \ref{tab:best-hyperparameter}. It can be observed
+that at least \(32\) base filters are needed, and the preferable choice
+for the \(64 \times 64\) model and the \(128 \times 128\) model is
+\(64\) base filters, which is the same as the original VGG16
+architecture. The best values for dropout rate for convolutional blocks
+is around \(0.4\). And applying batch normalization for convolutional
+blocks has a positive impact on the performance. All best models choose
+to preserve the additional inputs to reduce the validation error. The
+number of units needed for the fully-connected layer is \(256\), which
+is not a very large number comparing to the VGG16 classifier, suggesting
+that the problem we are trying to solve is relatively easy. The best
+learning rates are usually smaller than the default value recommended by
+Keras which is 0.001.
+
+\begin{table}
+
+\caption{\label{tab:best-hyperparameter}Hyperparameters values for the best computer vision models with differnet input sizes.}
+\centering
+\resizebox{\linewidth}{!}{
+\begin{tabular}[t]{llll}
+\toprule
+Hyperparameter & $32 \times 32$ & $64 \times 64$ & $128 \times 128$\\
+\midrule
+Number of base filters & 32 & 64 & 64\\
+Dropout rate for convolutional blocks & 0.4 & 0.3 & 0.4\\
+Batch normalization for convolutional blocks & true & true & true\\
+Type of global pooling & max & average & average\\
+Ignore additional inputs & false & false & false\\
+\addlinespace
+Number of units for the fully-connected layer & 256 & 256 & 256\\
+Batch normalization for the fully-connected layer & false & true & true\\
+Dropout rate for the fully-connected layer & 0.2 & 0.4 & 0.1\\
+Learning rate & 0.0003 & 0.0006 & 0.0052\\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\hypertarget{model-performance}{%
+\subsection{Model performance}\label{model-performance}}
+
+The training and test performance of models with three different input
+sizes are provided in Table \ref{tab:performance}. Among these models,
+the \(64 \times 64\) model and the \(32 \times 32\) model are
+consistently having the best metrics on the training set and the test
+set respectively. The mean absolute error shows that the difference
+between \(\hat{D}\) and \(D\) is around \(0.43\) on the test set, which
+is very small considering the range of \(D\) is normally between \(0\)
+and \(7\). The high \(R^2\) also suggests the prediction is mostly
+linearly correlated with the target.
+
+Figure \ref{fig:model-performance} displays a scatter plot for
+\(D - \hat{D}\) vs \(D\). For residual plots with \(D\) close to zero,
+all the models tends to over-predict \(\hat{D}\), leading to negative
+residuals. When \(D\) is between \(1.5\) and \(6\), the smooth curves
+indicate that \(\hat{D}\) is not heavily biased, and there are some
+instances where \(\hat{D}\) is severely under-predicted. And when \(D\)
+is greater than \(6\), there are more instances being under-predicted
+than over-predicted. It can be observed from Figure
+\ref{fig:model-performance-density} that the models produced much more
+\(\hat{D}\) at around \(1\) than expected.
+
+Given the model performance metrics, only the best model evaluated on
+the test set, i.e.~the \(32 \times 32\) model, will be used in the
+following analysis.
+
+\begin{table}
+
+\caption{\label{tab:performance}The training and test performance of three models with different input sizes.}
+\centering
+\begin{tabular}[t]{lllll}
+\toprule
+ & RMSE & $R^2$ & MAE & Huber loss\\
+\midrule
+\addlinespace[0.3em]
+\multicolumn{5}{l}{\textbf{Training set}}\\
+\hspace{1em}$32 \times 32$ & 0.531 & 0.937 & 0.364 & 0.126\\
+\hspace{1em}$64 \times 64$ & 0.405 & 0.963 & 0.260 & 0.072\\
+\hspace{1em}$128 \times 128$ & 0.432 & 0.959 & 0.290 & 0.084\\
+\addlinespace[0.3em]
+\multicolumn{5}{l}{\textbf{Test set}}\\
+\hspace{1em}$32 \times 32$ & 0.660 & 0.901 & 0.434 & 0.181\\
+\hspace{1em}$64 \times 64$ & 0.674 & 0.897 & 0.438 & 0.186\\
+\hspace{1em}$128 \times 128$ & 0.692 & 0.892 & 0.460 & 0.199\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{paper_files/figure-latex/model-performance-1} 
+
+}
+
+\caption{Residuals vs distance plot on training and test data for three best models with different input sizes. The blue lines are smoothing curves produced by fitting gnealized additive models.}\label{fig:model-performance}
+\end{figure}
+
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{paper_files/figure-latex/model-performance-density-1} 
+
+}
+
+\caption{Density plot of predicted distance on training and test data for three best models with different input sizes. The density drawn in red is the density of the distance.}\label{fig:model-performance-density}
+\end{figure}
 
 \hypertarget{comparison-with-human-visual-inference}{%
 \subsection{Comparison with human visual
@@ -833,16 +1060,43 @@ inference}\label{comparison-with-human-visual-inference}}
 \subsubsection{Overview of the human subject
 experiment}\label{overview-of-the-human-subject-experiment}}
 
-\hypertarget{comparison}{%
-\subsubsection{Comparison}\label{comparison}}
-
 \begin{itemize}
 \tightlist
 \item
-  power comparison
+  basic background
 \item
-  decisions
+  highlights the same and the different settings
 \end{itemize}
+
+\hypertarget{comparison}{%
+\subsubsection{Comparison}\label{comparison}}
+
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{paper_files/figure-latex/unnamed-chunk-2-1} 
+
+}
+
+\caption{Residuals vs distance plot on data used in the human subject experiment. The blue line is a smoothing curve produced by fitting a gnealized additive model.}\label{fig:unnamed-chunk-2}
+\end{figure}
+
+\begin{table}
+
+\caption{\label{tab:experiment-performance}The performance of the $32 \times 32$ model on the data used in the human subject experiment.}
+\centering
+\begin{tabular}[t]{lllll}
+\toprule
+Type & RMSE & $R^2$ & MAE & Huber loss\\
+\midrule
+heteroskedasticity & 0.768 & 0.863 & 0.594 & 0.263\\
+non-linearity & 0.731 & 0.817 & 0.560 & 0.242\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+It can be observed from Table \ref{tab:experiment-performance} that all
+the performance metrics are lower than the metrics evaluated on the test
+data.
 
 \hypertarget{when-the-model-works}{%
 \subsection{When the model works}\label{when-the-model-works}}

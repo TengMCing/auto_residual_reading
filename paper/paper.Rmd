@@ -454,7 +454,7 @@ vss_32 <- readRDS(here::here("paper/data/vss_32.rds"))
 experiment <- vi_survey %>%
   group_by(unique_lineup_id) %>%
   summarise(across(everything(), first)) %>%
-  select(unique_lineup_id, attention_check, null_lineup,
+  select(unique_lineup_id, attention_check, null_lineup, prop_detect,
          answer, effect_size, conventional_p_value,
          p_value, type, shape, a, b, x_dist, e_dist,
          e_sigma, include_z, k, n)
@@ -498,6 +498,71 @@ experiment %>%
 ```
 
 It can be observed from Table \ref{tab:experiment-performance} that all the performance metrics are lower than the metrics evaluated on the test data.
+
+```{r fig.cap = "A weighted detection rate vs $\\delta$-differnence plot."}
+lineup_vss <- readRDS(here::here("paper/data/lineup_vss.rds"))
+lineup_vss <- lineup_vss %>%
+  group_by(unique_lineup_id) %>%
+  mutate(delta_diff = vss[!null] - max(vss[null])) %>%
+  mutate(gamma_diff = sum(vss[null] > vss[!null]))
+
+experiment %>%
+  left_join(lineup_vss %>%
+              group_by(unique_lineup_id) %>%
+              summarise(delta_diff = first(delta_diff), gamma_diff = first(gamma_diff))) %>%
+  ggplot() +
+  geom_point(aes(delta_diff, prop_detect)) +
+  geom_smooth(aes(delta_diff, prop_detect), se = FALSE) +
+  ylab("Weighted detection rate") +
+  xlab(expression(gamma-difference)) +
+  theme_light()
+```
+
+
+```{r fig.cap = "A weighted detection rate vs $\\gamma$-number of extreme nulls plot."}
+experiment %>%
+  left_join(lineup_vss %>%
+              group_by(unique_lineup_id) %>%
+              summarise(delta_diff = first(delta_diff), gamma_diff = first(gamma_diff))) %>%
+  ggplot() +
+  geom_point(aes(gamma_diff, prop_detect)) +
+  ylab("Weighted detection rate") +
+  xlab(expression(gamma-number~of~extreme~nulls)) +
+  theme_light()
+```
+
+
+```{r fig.cap = "A weighted detection rate vs $\\delta$-differnence plot for lineups evaluated by 11 people."}
+experiment %>%
+  filter(!null_lineup) %>%
+  filter(!attention_check) %>%
+  filter(x_dist == "uniform") %>%
+  left_join(lineup_vss %>%
+              group_by(unique_lineup_id) %>%
+              summarise(delta_diff = first(delta_diff), gamma_diff = first(gamma_diff))) %>%
+  ggplot() +
+  geom_point(aes(delta_diff, prop_detect)) +
+  geom_smooth(aes(delta_diff, prop_detect), se = FALSE) +
+  ylab("Weighted detection rate") +
+  xlab(expression(delta-difference)) +
+  theme_light()
+```
+
+
+```{r fig.cap = "A weighted detection rate vs $\\gamma$-number of extreme nulls plot for lineups evaluated by 11 people."}
+experiment %>%
+  filter(!null_lineup) %>%
+  filter(!attention_check) %>%
+  filter(x_dist == "uniform") %>%
+  left_join(lineup_vss %>%
+              group_by(unique_lineup_id) %>%
+              summarise(delta_diff = first(delta_diff), gamma_diff = first(gamma_diff))) %>%
+  ggplot() +
+  geom_point(aes(gamma_diff, prop_detect)) +
+  ylab("Weighted detection rate") +
+  xlab(expression(gamma-number~of~extreme~nulls)) +
+  theme_light()
+```
 
 
 ## When the model works

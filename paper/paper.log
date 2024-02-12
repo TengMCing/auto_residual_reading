@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.3.14)  12 FEB 2024 22:52
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.3.14)  13 FEB 2024 06:26
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -583,7 +583,7 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 \openout4 = `paper.toc'.
 
 [3] [4] [5]
-<paper_files/figure-latex/false-finding-1.pdf, id=271, 461.725pt x 433.62pt>
+<paper_files/figure-latex/false-finding-1.pdf, id=276, 461.725pt x 433.62pt>
 File: paper_files/figure-latex/false-finding-1.pdf Graphic file (type pdf)
 <use paper_files/figure-latex/false-finding-1.pdf>
 Package pdftex.def Info: paper_files/figure-latex/false-finding-1.pdf  used on input line 205.
@@ -619,12 +619,12 @@ pdfTeX warning (ext4): destination with the same identifier (name{table.1}) has 
                                                   \__shipout_drop_firstpage_...
 l.774 
       ]
-<paper_files/figure-latex/different-j-1.pdf, id=438, 578.16pt x 433.62pt>
+<paper_files/figure-latex/different-j-1.pdf, id=444, 578.16pt x 433.62pt>
 File: paper_files/figure-latex/different-j-1.pdf Graphic file (type pdf)
 <use paper_files/figure-latex/different-j-1.pdf>
 Package pdftex.def Info: paper_files/figure-latex/different-j-1.pdf  used on input line 786.
 (pdftex.def)             Requested size: 408.0pt x 305.99988pt.
-<paper_files/figure-latex/different-a-1.pdf, id=440, 693.59125pt x 650.43pt>
+<paper_files/figure-latex/different-a-1.pdf, id=446, 693.59125pt x 650.43pt>
 File: paper_files/figure-latex/different-a-1.pdf Graphic file (type pdf)
 <use paper_files/figure-latex/different-a-1.pdf>
 Package pdftex.def Info: paper_files/figure-latex/different-a-1.pdf  used on input line 803.
@@ -632,7 +632,7 @@ Package pdftex.def Info: paper_files/figure-latex/different-a-1.pdf  used on inp
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-<paper_files/figure-latex/different-e-1.pdf, id=441, 578.16pt x 433.62pt>
+<paper_files/figure-latex/different-e-1.pdf, id=447, 578.16pt x 433.62pt>
 File: paper_files/figure-latex/different-e-1.pdf Graphic file (type pdf)
 <use paper_files/figure-latex/different-e-1.pdf>
 Package pdftex.def Info: paper_files/figure-latex/different-e-1.pdf  used on input line 812.
@@ -646,7 +646,7 @@ pdfTeX warning (ext4): destination with the same identifier (name{figure.2}) has
                                                   \__shipout_drop_firstpage_...
 l.830 
        <./paper_files/figure-latex/different-j-1.pdf>]
-<paper_files/figure-latex/different-j-x2-1.pdf, id=456, 578.16pt x 433.62pt>
+<paper_files/figure-latex/different-j-x2-1.pdf, id=461, 578.16pt x 433.62pt>
 File: paper_files/figure-latex/different-j-x2-1.pdf Graphic file (type pdf)
 <use paper_files/figure-latex/different-j-x2-1.pdf>
 Package pdftex.def Info: paper_files/figure-latex/different-j-x2-1.pdf  used on input line 833.
@@ -654,7 +654,7 @@ Package pdftex.def Info: paper_files/figure-latex/different-j-x2-1.pdf  used on 
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-<paper_files/figure-latex/different-j-heter-1.pdf, id=457, 578.16pt x 433.62pt>
+<paper_files/figure-latex/different-j-heter-1.pdf, id=462, 578.16pt x 433.62pt>
 File: paper_files/figure-latex/different-j-heter-1.pdf Graphic file (type pdf)
 <use paper_files/figure-latex/different-j-heter-1.pdf>
 Package pdftex.def Info: paper_files/figure-latex/different-j-heter-1.pdf  used on input line 842.
@@ -662,7 +662,7 @@ Package pdftex.def Info: paper_files/figure-latex/different-j-heter-1.pdf  used 
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-<paper_files/figure-latex/different-e-heter-1.pdf, id=458, 578.16pt x 433.62pt>
+<paper_files/figure-latex/different-e-heter-1.pdf, id=463, 578.16pt x 433.62pt>
 File: paper_files/figure-latex/different-e-heter-1.pdf Graphic file (type pdf)
 <use paper_files/figure-latex/different-e-heter-1.pdf>
 Package pdftex.def Info: paper_files/figure-latex/different-e-heter-1.pdf  used on input line 851.
@@ -706,7 +706,7 @@ pdfTeX warning (ext4): destination with the same identifier (name{table.3}) has 
                                                   \__shipout_drop_firstpage_...
 l.1148 
        ] [29]
-<paper_files/figure-latex/model-performance-1.png, id=576, 2409.0pt x 1806.75pt>
+<paper_files/figure-latex/model-performance-1.png, id=581, 2409.0pt x 1806.75pt>
 File: paper_files/figure-latex/model-performance-1.png Graphic file (type png)
 <use paper_files/figure-latex/model-performance-1.png>
 Package pdftex.def Info: paper_files/figure-latex/model-performance-1.png  used on input line 1218.
@@ -725,89 +725,124 @@ l.1279
 pdfTeX warning (ext4): destination with the same identifier (name{table.5}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1298 
-       ]
-<paper_files/figure-latex/hist-null-human-1.pdf, id=600, 578.16pt x 433.62pt>
-File: paper_files/figure-latex/hist-null-human-1.pdf Graphic file (type pdf)
-<use paper_files/figure-latex/hist-null-human-1.pdf>
-Package pdftex.def Info: paper_files/figure-latex/hist-null-human-1.pdf  used on input line 1329.
-(pdftex.def)             Requested size: 408.0pt x 305.99988pt.
-<paper_files/figure-latex/unnamed-chunk-4-1.pdf, id=601, 578.16pt x 433.62pt>
-File: paper_files/figure-latex/unnamed-chunk-4-1.pdf Graphic file (type pdf)
-<use paper_files/figure-latex/unnamed-chunk-4-1.pdf>
-Package pdftex.def Info: paper_files/figure-latex/unnamed-chunk-4-1.pdf  used on input line 1338.
-(pdftex.def)             Requested size: 408.0pt x 305.99988pt.
-<paper_files/figure-latex/unnamed-chunk-5-1.pdf, id=602, 578.16pt x 433.62pt>
-File: paper_files/figure-latex/unnamed-chunk-5-1.pdf Graphic file (type pdf)
-<use paper_files/figure-latex/unnamed-chunk-5-1.pdf>
-Package pdftex.def Info: paper_files/figure-latex/unnamed-chunk-5-1.pdf  used on input line 1347.
-(pdftex.def)             Requested size: 408.0pt x 305.99988pt.
-<paper_files/figure-latex/unnamed-chunk-6-1.pdf, id=603, 578.16pt x 433.62pt>
-File: paper_files/figure-latex/unnamed-chunk-6-1.pdf Graphic file (type pdf)
-<use paper_files/figure-latex/unnamed-chunk-6-1.pdf>
-Package pdftex.def Info: paper_files/figure-latex/unnamed-chunk-6-1.pdf  used on input line 1356.
-(pdftex.def)             Requested size: 408.0pt x 305.99988pt.
-<paper_files/figure-latex/unnamed-chunk-7-1.pdf, id=604, 578.16pt x 433.62pt>
-File: paper_files/figure-latex/unnamed-chunk-7-1.pdf Graphic file (type pdf)
-<use paper_files/figure-latex/unnamed-chunk-7-1.pdf>
-Package pdftex.def Info: paper_files/figure-latex/unnamed-chunk-7-1.pdf  used on input line 1365.
-(pdftex.def)             Requested size: 408.0pt x 305.99988pt.
-[32
+l.1304 \end{table}
+                  ] [32
 pdfTeX warning (ext4): destination with the same identifier (name{table.6}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1408 
-       ] [33
+l.1342 
+       ]
+<paper_files/figure-latex/hist-null-human-1.pdf, id=622, 578.16pt x 433.62pt>
+File: paper_files/figure-latex/hist-null-human-1.pdf Graphic file (type pdf)
+<use paper_files/figure-latex/hist-null-human-1.pdf>
+Package pdftex.def Info: paper_files/figure-latex/hist-null-human-1.pdf  used on input line 1379.
+(pdftex.def)             Requested size: 408.0pt x 305.99988pt.
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<paper_files/figure-latex/human-mosaic-1.pdf, id=623, 578.16pt x 433.62pt>
+File: paper_files/figure-latex/human-mosaic-1.pdf Graphic file (type pdf)
+<use paper_files/figure-latex/human-mosaic-1.pdf>
+Package pdftex.def Info: paper_files/figure-latex/human-mosaic-1.pdf  used on input line 1402.
+(pdftex.def)             Requested size: 408.0pt x 305.99988pt.
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<paper_files/figure-latex/power-1.pdf, id=624, 578.16pt x 433.62pt>
+File: paper_files/figure-latex/power-1.pdf Graphic file (type pdf)
+<use paper_files/figure-latex/power-1.pdf>
+Package pdftex.def Info: paper_files/figure-latex/power-1.pdf  used on input line 1411.
+(pdftex.def)             Requested size: 408.0pt x 305.99988pt.
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<paper_files/figure-latex/delta-1.pdf, id=625, 578.16pt x 433.62pt>
+File: paper_files/figure-latex/delta-1.pdf Graphic file (type pdf)
+<use paper_files/figure-latex/delta-1.pdf>
+Package pdftex.def Info: paper_files/figure-latex/delta-1.pdf  used on input line 1420.
+(pdftex.def)             Requested size: 408.0pt x 305.99988pt.
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<paper_files/figure-latex/unnamed-chunk-8-1.pdf, id=626, 578.16pt x 433.62pt>
+File: paper_files/figure-latex/unnamed-chunk-8-1.pdf Graphic file (type pdf)
+<use paper_files/figure-latex/unnamed-chunk-8-1.pdf>
+Package pdftex.def Info: paper_files/figure-latex/unnamed-chunk-8-1.pdf  used on input line 1433.
+(pdftex.def)             Requested size: 408.0pt x 305.99988pt.
+[33] [34
 pdfTeX warning (ext4): destination with the same identifier (name{figure.9}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1408 
-        <./paper_files/figure-latex/hist-null-human-1.pdf>] [34
+l.1433 ...re-latex/unnamed-chunk-8-1} \end{center}
+                                                  
+pdfTeX warning (ext4): destination with the same identifier (name{table.7}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1433 ...re-latex/unnamed-chunk-8-1} \end{center}
+                                                   <./paper_files/figure-latex/hist-null-human-1.pdf>]
+Overfull \vbox (77.16287pt too high) has occurred while \output is active []
+
+[35
 pdfTeX warning (ext4): destination with the same identifier (name{figure.10}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1408 
-        <./paper_files/figure-latex/unnamed-chunk-4-1.pdf>] [35
+l.1433 ...re-latex/unnamed-chunk-8-1} \end{center}
+                                                   <./paper_files/figure-latex/human-mosaic-1.pdf> <./paper_files/figure-latex/unnamed-chunk-8-1.pdf>]
+<paper_files/figure-latex/unnamed-chunk-12-1.pdf, id=666, 578.16pt x 433.62pt>
+File: paper_files/figure-latex/unnamed-chunk-12-1.pdf Graphic file (type pdf)
+<use paper_files/figure-latex/unnamed-chunk-12-1.pdf>
+Package pdftex.def Info: paper_files/figure-latex/unnamed-chunk-12-1.pdf  used on input line 1438.
+(pdftex.def)             Requested size: 408.0pt x 305.99988pt.
+[36
 pdfTeX warning (ext4): destination with the same identifier (name{figure.11}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1408 
-        <./paper_files/figure-latex/unnamed-chunk-5-1.pdf>] [36
+l.1438 ...e-latex/unnamed-chunk-12-1} \end{center}
+                                                   <./paper_files/figure-latex/power-1.pdf>]
+Overfull \vbox (19.68448pt too high) has occurred while \output is active []
+
+[37
 pdfTeX warning (ext4): destination with the same identifier (name{figure.12}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1408 
-        <./paper_files/figure-latex/unnamed-chunk-6-1.pdf>] [37
-pdfTeX warning (ext4): destination with the same identifier (name{figure.13}) has been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.1408 
-        <./paper_files/figure-latex/unnamed-chunk-7-1.pdf>] (./paper.bbl [38] [39]
+l.1438 ...e-latex/unnamed-chunk-12-1} \end{center}
+                                                   <./paper_files/figure-latex/delta-1.pdf> <./paper_files/figure-latex/unnamed-chunk-12-1.pdf>]
+<paper_files/figure-latex/unnamed-chunk-16-1.pdf, id=701, 578.16pt x 433.62pt>
+File: paper_files/figure-latex/unnamed-chunk-16-1.pdf Graphic file (type pdf)
+<use paper_files/figure-latex/unnamed-chunk-16-1.pdf>
+Package pdftex.def Info: paper_files/figure-latex/unnamed-chunk-16-1.pdf  used on input line 1443.
+(pdftex.def)             Requested size: 408.0pt x 305.99988pt.
+<paper_files/figure-latex/unnamed-chunk-20-1.pdf, id=702, 578.16pt x 433.62pt>
+File: paper_files/figure-latex/unnamed-chunk-20-1.pdf Graphic file (type pdf)
+<use paper_files/figure-latex/unnamed-chunk-20-1.pdf>
+Package pdftex.def Info: paper_files/figure-latex/unnamed-chunk-20-1.pdf  used on input line 1448.
+(pdftex.def)             Requested size: 408.0pt x 305.99988pt.
+[38 <./paper_files/figure-latex/unnamed-chunk-16-1.pdf>] (./paper.bbl [39 <./paper_files/figure-latex/unnamed-chunk-20-1.pdf>] [40] [41]
 Underfull \hbox (badness 2065) in paragraph at lines 169--172
 \OT1/cmr/m/n/10 2017. ``Deep con-vo-lu-tional neu-ral net-works for pair-wise causal-ity.'' \OT1/cmr/m/it/10 arXiv preprint
  []
 
-[40]) [41] (./paper.aux)
+) [42] (./paper.aux)
 
 LaTeX Font Warning: Size substitutions with differences
 (Font)              up to 1.0pt have occurred.
 
 Package rerunfilecheck Info: File `paper.out' has not changed.
-(rerunfilecheck)             Checksum: 7ABC0A5CE4D8FEF1F50EC9E6BCA9D8C4;7071.
+(rerunfilecheck)             Checksum: 648826779C2A771CC87EE30127316B2E;6906.
  ) 
 Here is how much of TeX's memory you used:
- 13554 strings out of 477984
- 220494 string characters out of 5838233
+ 13587 strings out of 477984
+ 221645 string characters out of 5838233
  1867388 words of memory out of 5000000
- 33302 multiletter control sequences out of 15000+600000
+ 33328 multiletter control sequences out of 15000+600000
  526480 words of font info for 87 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 87i,14n,90p,547b,623s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 87i,14n,90p,547b,613s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </Users/patrickli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></Users/patrickli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></Users/patrickli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx8.pfb></Users/patrickli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx9.pfb></Users/patrickli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmbxti10.pfb></Users/patrickli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></Users/patrickli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></Users/patrickli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></Users/patrickli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></Users/patrickli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></Users/patrickli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></Users/patrickli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmib10.pfb></Users/patrickli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmmib8.pfb></Users/patrickli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></Users/patrickli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></Users/patrickli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></Users/patrickli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></Users/patrickli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></Users/patrickli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></Users/patrickli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></Users/patrickli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></Users/patrickli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt8.pfb></Users/patrickli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></Users/patrickli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm7.pfb>
-Output written on paper.pdf (41 pages, 2779484 bytes).
+Output written on paper.pdf (42 pages, 3084046 bytes).
 PDF statistics:
- 834 PDF objects out of 1000 (max. 8388607)
- 709 compressed objects within 8 object streams
- 177 named destinations out of 1000 (max. 500000)
- 322 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 891 PDF objects out of 1000 (max. 8388607)
+ 759 compressed objects within 8 object streams
+ 181 named destinations out of 1000 (max. 500000)
+ 345 words of extra memory for PDF output out of 10000 (max. 10000000)
 

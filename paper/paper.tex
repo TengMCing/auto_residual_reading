@@ -1227,7 +1227,7 @@ best-performing model evaluated on the test set, namely the
 \caption{\label{tab:performance-sub}The training and test performance of the $32 \times 32$ model presented with different model violations.  The best metrics are colored in red.}
 \centering
 \resizebox{\linewidth}{!}{
-\begin{tabular}[t]{lr>{}l>{}l>{}l>{}l}
+\begin{tabular}[t]{ll>{}l>{}l>{}l>{}l}
 \toprule
 Violations & \#samples & RMSE & $R^2$ & MAE & Huber loss\\
 \midrule
@@ -1283,32 +1283,11 @@ generating process which is a special case of Equation
 introduced separately, meaning non-linearity and heteroskedasticity will
 not co-exist in one lineup but assigned uniformly to all lineups.
 Additionally, non-normality and multiple predictors are not considered
-in their experimental design.
+in the experimental design.
 
 \hypertarget{model-performance-on-the-human-data}{%
 \subsubsection{Model performance on the human
 data}\label{model-performance-on-the-human-data}}
-
-For each lineup used in \citet{li2023plot}, there are one actual
-residual plot and \(19\) null plots. While the distance \(D\) for the
-actual residual plot depends on the underlying data generating process,
-the distance \(D\) for the null plots are zeros. We have used our
-optimized computer vision model to predict \(\hat{D}\) for both the
-actual residual plots and the null plots.
-
-The performance metrics of \(\hat{D}\) for actual residual plots are
-provided in Table \ref{tab:experiment-performance}. It can be observed
-that all the performance metrics are slightly worse than the metrics
-evaluated on the test data. Still, the mean absolute error remains at a
-low level, and the linearly correlation between the prediction and the
-true value is still very high. Lineups with non-linearity issues are
-more difficult to be predicted than those with heteroskedasticity
-issues.
-
-For null plots, a histogram of the prediction is provided in Figure
-\ref{fig:hist-null-human}. In most cases, \(\hat{D}\) will be predicted
-at around \(1\). And as \(\hat{D}\) increases, the number of predictions
-decreases. There are some outliers with \(\hat{D} > 5\).
 
 \begin{table}
 
@@ -1324,7 +1303,78 @@ non-linearity & 0.738 & 0.770 & 0.566 & 0.246\\
 \end{tabular}
 \end{table}
 
-\begin{figure}
+For each lineup used in \citet{li2023plot}, there is one actual residual
+plot and 19 null plots. While the distance \(D\) for the actual residual
+plot depends on the underlying data generating process, the distance
+\(D\) for the null plots is zero. We have used our optimized computer
+vision model to predict \(\hat{D}\) for both the actual residual plots
+and the null plots.
+
+The performance metrics of \(\hat{D}\) for actual residual plots are
+outlined in Table \ref{tab:experiment-performance}. It's notable that
+all performance metrics are slightly worse than those evaluated on the
+test data. Nevertheless, the mean absolute error remains at a low level,
+and the linear correlation between the prediction and the true value
+remains very high. Lineups with non-linearity issues are more
+challenging to predict than those with heteroskedasticity issues.
+
+For null plots, a histogram of the predictions is provided in Figure
+\ref{fig:hist-null-human}. In most cases, \(\hat{D}\) is predicted to be
+around \(1\). As \(\hat{D}\) increases, the number of predictions
+decreases. The 90\% and 95\% sample quantiles are approximately at
+\(2\), and the 99\% sample quantile is around \(2.5\). These sample
+quantiles can serve as global critical values for determining whether a
+residual plot needs to be rejected. We have also computed the 95\%
+sample quantiles by assessing 200 null plots for each fitted model used
+in the experiment. The difference between decisions based on these two
+types of critical values is minor, with decisions aligning 93.8\% of the
+time. Therefore, we will be using the 95\% sample quantiles obtained
+from each fitted model in the following analysis.
+
+Figure \ref{fig:human-mosaic} and Table \ref{tab:human-table} provide
+insights into the agreement between decisions made by the computer
+vision model and visual tests conducted by humans. It can be observed
+that visual tests are less sensitive than the computer vision model, as
+they reject almost only when the computer vision model does. The
+agreement rates between visual tests and the computer vision model are
+67.96\% and 66.84\% for residual plots containing heteroskedasticity and
+non-linearity patterns, respectively.
+
+When plotting the decision against the distance, as depicted in Figure
+\ref{fig:power}, we observe that for the computer vision model, when the
+distance \(D > 3\), almost all residual plots will be rejected. However,
+for visual tests conducted by humans, the threshold is higher at
+\(D > 5\). Visual tests also demonstrate low sensitivity to residual
+plots with small distances compared to the computer vision model.
+
+Figure \ref{fig:delta} displays the scatter plot of the weighted
+detection rate vs the \(\delta\)-difference. In the experiment conducted
+in \citet{li2023plot}, participants were allowed to make multiple
+selections for a lineup. The weighted detection rate is computed by
+assigning weights to each detection. If the participant selects zero
+plots, the corresponding weight is 0.05; otherwise, the weight is 1
+divided by the number of selections. The \(\delta\)-difference is
+defined by \citet{chowdhury2018measuring} as
+
+\begin{equation}
+\delta = \hat{D} - \underset{j}{max}\left(\hat{D}_{null}^{(j)}\right) \quad \text{for}~j = 1,...,m-1,
+\end{equation}
+
+\noindent where \(\hat{D}_{null}^{(j)}\) is the approximated distance
+for the \(j\)-th null plot, and \(m\) is the number of plots in a
+lineup.
+
+Figure \ref{fig:delta} indicates that the weighted detection rate
+increases as the \(\delta\)-difference increases, particularly when the
+\(\delta\)-difference is greater than zero. A negative
+\(\delta\)-difference suggests that there is at least one null plot in
+the lineup with a stronger visual signal than the actual residual plot.
+In some instances, the weighted detection rate is close to one, yet the
+\(\delta\)-difference is negative. This discrepancy implies that the
+distance measure, or the approximated distance, may not perfectly
+reflect actual human behavior.
+
+\begin{figure}[!h]
 
 {\centering \includegraphics[width=1\linewidth]{paper_files/figure-latex/hist-null-human-1} 
 
@@ -1333,78 +1383,69 @@ non-linearity & 0.738 & 0.770 & 0.566 & 0.246\\
 \caption{Histogram of predicted distance on null plots used in the human subject experiment. Sample quantiles are drawn in different colors.}\label{fig:hist-null-human}
 \end{figure}
 
-\begin{figure}
+\begin{table}
 
-{\centering \includegraphics[width=1\linewidth]{paper_files/figure-latex/unnamed-chunk-4-1} 
+\caption{\label{tab:human-table}Summary of decisions made by the visual test conducted by human and decisions made by the computer vision model.}
+\centering
+\begin{tabular}[t]{llll}
+\toprule
+Violations & \#Samples & \#Agreements & Agreement rate\\
+\midrule
+heteroskedasticity & 540 & 367 & 0.6796\\
+non-linearity & 576 & 385 & 0.6684\\
+\bottomrule
+\end{tabular}
+\end{table}
 
-}
+\begin{figure}[!h]
 
-\caption{A weighted detection rate vs $\delta$-differnence plot.}\label{fig:unnamed-chunk-4}
-\end{figure}
-
-\begin{figure}
-
-{\centering \includegraphics[width=1\linewidth]{paper_files/figure-latex/unnamed-chunk-5-1} 
-
-}
-
-\caption{A weighted detection rate vs $\gamma$-number of extreme nulls plot.}\label{fig:unnamed-chunk-5}
-\end{figure}
-
-\begin{figure}
-
-{\centering \includegraphics[width=1\linewidth]{paper_files/figure-latex/unnamed-chunk-6-1} 
+{\centering \includegraphics[width=1\linewidth]{paper_files/figure-latex/human-mosaic-1} 
 
 }
 
-\caption{A weighted detection rate vs $\delta$-differnence plot for lineups evaluated by 11 people.}\label{fig:unnamed-chunk-6}
+\caption{Rejection rate ($p$-value $\leq0.05$) of visual test conditional on the computer vision model decision on non-linearity (left) and heteroskedasticity (right) lineups displayed using a mosaic plot. The visual test rejects less frequently than the computer vision model, and (almost) only rejects when the computer vision model does.}\label{fig:human-mosaic}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[!h]
 
-{\centering \includegraphics[width=1\linewidth]{paper_files/figure-latex/unnamed-chunk-7-1} 
+{\centering \includegraphics[width=1\linewidth]{paper_files/figure-latex/power-1} 
 
 }
 
-\caption{A weighted detection rate vs $\gamma$-number of extreme nulls plot for lineups evaluated by 11 people.}\label{fig:unnamed-chunk-7}
+\caption{Comparison of decisions made by visual tests and the computer vision model. The data points are fitted with logistic regression models with no intercept but an offset equals to $log(0.05/0.95)$.}\label{fig:power}
 \end{figure}
 
-\hypertarget{when-the-model-works}{%
-\subsection{When the model works}\label{when-the-model-works}}
+\begin{figure}[!h]
 
-\begin{itemize}
-\tightlist
-\item
-  simple examples (non-linearity, heteroskedasticity, \ldots)
-\item
-  datasaurus
-\end{itemize}
+{\centering \includegraphics[width=1\linewidth]{paper_files/figure-latex/delta-1} 
 
-\hypertarget{when-the-model-does-not-work}{%
-\subsection{When the model does not
-work}\label{when-the-model-does-not-work}}
+}
 
-\begin{itemize}
-\tightlist
-\item
-  human detect but model does not
-\item
-  cartoon residuals?
-\end{itemize}
+\caption{A weighted detection rate vs $\delta$-differnence plot.}\label{fig:delta}
+\end{figure}
 
-\hypertarget{workflow-how-one-use-this-model-small-showcase}{%
-\subsection{Workflow: how one use this model? (small
-showcase)}\label{workflow-how-one-use-this-model-small-showcase}}
+\hypertarget{data-examples}{%
+\subsection{Data examples}\label{data-examples}}
 
-\hypertarget{dicussion}{%
-\section{Dicussion}\label{dicussion}}
+\hypertarget{boston-housing}{%
+\subsubsection{Boston Housing}\label{boston-housing}}
 
-There are other kinds of residual departures like autocorrelation that
-are not considered in this study. The primary goal of this study is to
-establish a new way of evaluating residual plot and conducting visual
-test with computer vision models. Building computer vision models for
-other model violations and other types of diagnostic plots could be
-future directions of this field.
+\begin{center}\includegraphics[width=1\linewidth]{paper_files/figure-latex/unnamed-chunk-8-1} \end{center}
+
+\hypertarget{advertising}{%
+\subsubsection{Advertising}\label{advertising}}
+
+\begin{center}\includegraphics[width=1\linewidth]{paper_files/figure-latex/unnamed-chunk-12-1} \end{center}
+
+\hypertarget{wine-quality}{%
+\subsubsection{Wine Quality}\label{wine-quality}}
+
+\begin{center}\includegraphics[width=1\linewidth]{paper_files/figure-latex/unnamed-chunk-16-1} \end{center}
+
+\hypertarget{datasaurus}{%
+\subsubsection{Datasaurus}\label{datasaurus}}
+
+\begin{center}\includegraphics[width=1\linewidth]{paper_files/figure-latex/unnamed-chunk-20-1} \end{center}
 
 \hypertarget{conclusion}{%
 \section{Conclusion}\label{conclusion}}

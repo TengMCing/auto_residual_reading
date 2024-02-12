@@ -897,6 +897,7 @@ model_pred %>%
   select(type, violations, n, RMSE, R2, MAE, HUBER) %>%
   arrange(desc(type)) %>%
   select(-type) %>%
+  mutate(n = format(n)) %>%
   mutate(across(RMSE:MAE, ~format(.x, digits = 3))) %>%
   mutate(across(HUBER, ~format(.x, digits = 2))) %>%
   mutate(violations = ifelse(violations == "null", "no violations", violations)) %>%
@@ -919,23 +920,16 @@ model_pred %>%
                                        rep("black", 4), "red", rep("black", 3)))
 ```
 
-
 ## Comparison with human visual inference
 
 ### Overview of the human subject experiment
 
 In order to check the validity of the proposed computer vision model, residual plots presented in the human subject experiment conducted by @li2023plot will be assessed. This study has collected $7974$ human responses to $1152$ lineups. Each lineup contains one randomly placed actual residual plot and 19 null plots. Among the $1152$ lineups, $24$ are attention check lineups in which the visual patterns are designed to be extremely obvious and very different from the corresponding to null plots, $36$ are null lineups where all the lineups consist of only null plots, $279$ are lineups with uniform predictor distribution evaluated by $11$ participants, and the remaining $813$ are lineups with discrete, skewed or normal predictor distribution evaluated by $5$ participants. Attention check lineups and null lineups will not be assessed in the following analysis. 
 
-In @li2023plot, the residual plots are simulated from a data generating process which is a special case of Equation \ref{eq:data-sim}. The main characteristic is the model violations are introduced separately, meaning non-linearity and heteroskedasticity will not co-exist in one lineup but assigned uniformly to all lineups. Additionally, non-normality and multiple predictors are not considered in their experimental design.
+In @li2023plot, the residual plots are simulated from a data generating process which is a special case of Equation \ref{eq:data-sim}. The main characteristic is the model violations are introduced separately, meaning non-linearity and heteroskedasticity will not co-exist in one lineup but assigned uniformly to all lineups. Additionally, non-normality and multiple predictors are not considered in the experimental design.
 
 
 ### Model performance on the human data
-
-For each lineup used in @li2023plot, there are one actual residual plot and $19$ null plots. While the distance $D$ for the actual residual plot depends on the underlying data generating process, the distance $D$ for the null plots are zeros. We have used our optimized computer vision model to predict $\hat{D}$ for both the actual residual plots and the null plots. 
-
-The performance metrics of $\hat{D}$ for actual residual plots are provided in Table \ref{tab:experiment-performance}. It can be observed that all the performance metrics are slightly worse than the metrics evaluated on the test data. Still, the mean absolute error remains at a low level, and the linearly correlation between the prediction and the true value is still very high. Lineups with non-linearity issues are more difficult to be predicted than those with heteroskedasticity issues.
-
-For null plots, a histogram of the prediction is provided in Figure \ref{fig:hist-null-human}. In most cases, $\hat{D}$ will be predicted at around $1$. And as $\hat{D}$ increases, the number of predictions decreases. The 90%, 95% and 99% sample quantiles are at around  
 
 ```{r rd-human}
 vss_32 <- readRDS(here::here("paper/data/vss_32.rds"))
@@ -977,7 +971,28 @@ experiment %>%
                     caption = "The performance of the $32 \\times 32$ model on the data used in the human subject experiment.")
 ```
 
-```{r hist-null-human, fig.cap = "Histogram of predicted distance on null plots used in the human subject experiment. Sample quantiles are drawn in different colors."}
+For each lineup used in @li2023plot, there is one actual residual plot and 19 null plots. While the distance $D$ for the actual residual plot depends on the underlying data generating process, the distance $D$ for the null plots is zero. We have used our optimized computer vision model to predict $\hat{D}$ for both the actual residual plots and the null plots. 
+
+The performance metrics of $\hat{D}$ for actual residual plots are outlined in Table \ref{tab:experiment-performance}. It's notable that all performance metrics are slightly worse than those evaluated on the test data. Nevertheless, the mean absolute error remains at a low level, and the linear correlation between the prediction and the true value remains very high. Lineups with non-linearity issues are more challenging to predict than those with heteroskedasticity issues.
+
+For null plots, a histogram of the predictions is provided in Figure \ref{fig:hist-null-human}. In most cases, $\hat{D}$ is predicted to be around $1$. As $\hat{D}$ increases, the number of predictions decreases. The 90% and 95% sample quantiles are approximately at $2$, and the 99% sample quantile is around $2.5$. These sample quantiles can serve as global critical values for determining whether a residual plot needs to be rejected. We have also computed the 95% sample quantiles by assessing 200 null plots for each fitted model used in the experiment. The difference between decisions based on these two types of critical values is minor, with decisions aligning `r experiment %>% filter(!attention_check) %>% filter(!null_lineup) %>% summarise(q = mean(model_reject == (2.03 <= vss)) * 100) %>% pull(q) %>% format(digits = 3)`% of the time. Therefore, we will be using the 95% sample quantiles obtained from each fitted model in the following analysis. 
+
+Figure \ref{fig:human-mosaic} and Table \ref{tab:human-table} provide insights into the agreement between decisions made by the computer vision model and visual tests conducted by humans. It can be observed that visual tests are less sensitive than the computer vision model, as they reject almost only when the computer vision model does. The agreement rates between visual tests and the computer vision model are 67.96% and 66.84% for residual plots containing heteroskedasticity and non-linearity patterns, respectively.
+
+When plotting the decision against the distance, as depicted in Figure \ref{fig:power}, we observe that for the computer vision model, when the distance $D > 3$, almost all residual plots will be rejected. However, for visual tests conducted by humans, the threshold is higher at $D > 5$. Visual tests also demonstrate low sensitivity to residual plots with small distances compared to the computer vision model.
+
+Figure \ref{fig:delta} displays the scatter plot of the weighted detection rate vs the $\delta$-difference. In the experiment conducted in @li2023plot, participants were allowed to make multiple selections for a lineup. The weighted detection rate is computed by assigning weights to each detection. If the participant selects zero plots, the corresponding weight is 0.05; otherwise, the weight is 1 divided by the number of selections. The $\delta$-difference is defined by @chowdhury2018measuring as
+
+\begin{equation}
+\delta = \hat{D} - \underset{j}{max}\left(\hat{D}_{null}^{(j)}\right) \quad \text{for}~j = 1,...,m-1,
+\end{equation}
+
+\noindent where $\hat{D}_{null}^{(j)}$ is the approximated distance for the $j$-th null plot, and $m$ is the number of plots in a lineup.
+
+Figure \ref{fig:delta} indicates that the weighted detection rate increases as the $\delta$-difference increases, particularly when the $\delta$-difference is greater than zero. A negative $\delta$-difference suggests that there is at least one null plot in the lineup with a stronger visual signal than the actual residual plot. In some instances, the weighted detection rate is close to one, yet the $\delta$-difference is negative. This discrepancy implies that the distance measure, or the approximated distance, may not perfectly reflect actual human behavior.
+
+
+```{r hist-null-human, fig.pos =  "!h", fig.cap = "Histogram of predicted distance on null plots used in the human subject experiment. Sample quantiles are drawn in different colors."}
 lineup_vss <- readRDS(here::here("paper/data/lineup_vss.rds"))
 lineup_vss <- lineup_vss %>%
   group_by(unique_lineup_id) %>%
@@ -1010,46 +1025,140 @@ vi_lineup <- get_vi_lineup()
 ```
 
 
-
-```{r fig.cap = "A weighted detection rate vs $\\delta$-differnence plot."}
-
-
+```{r human-table}
 experiment %>%
-  left_join(lineup_vss %>%
-              group_by(unique_lineup_id) %>%
-              summarise(delta_diff = first(delta_diff), gamma_diff = first(gamma_diff))) %>%
-  ggplot() +
-  geom_point(aes(delta_diff, prop_detect)) +
-  geom_smooth(aes(delta_diff, prop_detect), se = FALSE) +
-  ylab("Weighted detection rate") +
-  xlab(expression(gamma-difference)) +
-  theme_light()
-```
-
-
-```{r fig.cap = "A weighted detection rate vs $\\gamma$-number of extreme nulls plot."}
-experiment %>%
-  left_join(lineup_vss %>%
-              group_by(unique_lineup_id) %>%
-              summarise(delta_diff = first(delta_diff), gamma_diff = first(gamma_diff))) %>%
-  ggplot() +
-  geom_point(aes(gamma_diff, prop_detect)) +
-  ylab("Weighted detection rate") +
-  xlab(expression(gamma-number~of~extreme~nulls)) +
-  theme_light()
-```
-
-
-```{r fig.cap = "A weighted detection rate vs $\\delta$-differnence plot for lineups evaluated by 11 people."}
-experiment %>%
-  filter(!null_lineup) %>%
   filter(!attention_check) %>%
-  filter(x_dist == "uniform") %>%
+  filter(!null_lineup) %>%
+  mutate(type = ifelse(type == "polynomial", "non-linearity", type)) %>%
+  group_by(type) %>%
+  summarise(n = format(n()), agree = format(sum(model_reject == reject)), rate = format(mean(model_reject == reject), digits = 4)) %>%
+  kableExtra::kable("latex", 
+                    booktabs = TRUE,
+                    escape = FALSE,
+                    col.names = c("Violations", "\\#Samples", "\\#Agreements", "Agreement rate"),
+                    caption = "Summary of decisions made by the visual test conducted by human and decisions made by the computer vision model.")
+```
+
+
+
+```{r human-mosaic, fig.pos = "!h", fig.cap = "Rejection rate ($p$-value $\\leq0.05$) of visual test conditional on the computer vision model decision on non-linearity (left) and heteroskedasticity (right) lineups displayed using a mosaic plot. The visual test rejects less frequently than the computer vision model, and (almost) only rejects when the computer vision model does."}
+library(ggmosaic)
+
+experiment %>%
+  filter(!attention_check) %>%
+  filter(!null_lineup) %>%
+  mutate(type = ifelse(type == "polynomial", "non-linearity", type)) %>%
+  mutate(type = ifelse(type == "non-linearity", "Non-linearity", "Heteroskedasticity")) %>%
+  mutate(type = factor(type, levels = c("Non-linearity", "Heteroskedasticity"))) %>%
+  mutate(model_reject = ifelse(model_reject, "Reject", "No")) %>%
+  mutate(reject = ifelse(reject, "Reject", "No")) %>%
+  mutate(across(c(model_reject, reject), ~factor(.x, levels = c("Reject", "No")))) %>%
+  ggplot() +
+  geom_mosaic(aes(x = ggmosaic::product(reject, model_reject), 
+                  fill = reject)) +
+  facet_grid(~type) +
+  ylab("Visual tests reject") +
+  xlab("Computer vision model rejects") +
+  # labs(fill = "Visual tests reject") +
+  scale_fill_brewer("", palette = "Dark2") +
+  theme_bw() +
+  theme(legend.position = "none") +
+  coord_fixed()
+```
+
+
+
+```{r power, fig.pos = "!h", fig.cap = "Comparison of decisions made by visual tests and the computer vision model. The data points are fitted with logistic regression models with no intercept but an offset equals to $log(0.05/0.95)$."}
+
+max_actual_ss <- max(filter(experiment, !attention_check, !null_lineup)$actual_ss)
+
+model_glm_pred_poly <- glm(model_reject ~ actual_ss - 1, 
+    data = filter(experiment, !attention_check, !null_lineup, type == "polynomial") %>% mutate(offset0 = log(0.05/0.95)), 
+    offset = offset0,
+    family = binomial()) %>%
+  predict(data.frame(actual_ss = seq(0, max_actual_ss, 0.01), offset0 = log(0.05/0.95)),
+          type = "response") %>%
+  data.frame(d = seq(0, max_actual_ss, 0.01), type = "Non-linearity", name = "Computer vision model", value = .) %>%
+  mutate(type = factor(type, levels = c("Non-linearity", "Heteroskedasticity")))
+
+visual_glm_pred_poly <- glm(reject ~ actual_ss - 1, 
+    data = filter(experiment, !attention_check, !null_lineup, type == "polynomial") %>% mutate(offset0 = log(0.05/0.95)), 
+    offset = offset0,
+    family = binomial()) %>%
+  predict(data.frame(actual_ss = seq(0, max_actual_ss, 0.01), offset0 = log(0.05/0.95)),
+          type = "response") %>%
+  data.frame(d = seq(0, max_actual_ss, 0.01), type = "Non-linearity", name = "Visual test", value = .) %>%
+  mutate(type = factor(type, levels = c("Non-linearity", "Heteroskedasticity")))
+
+conv_glm_pred_poly <- glm(conventional_reject ~ actual_ss - 1, 
+    data = filter(experiment, !attention_check, !null_lineup, type == "polynomial") %>% mutate(offset0 = log(0.05/0.95)), 
+    offset = offset0,
+    family = binomial()) %>%
+  predict(data.frame(actual_ss = seq(0, max_actual_ss, 0.01), offset0 = log(0.05/0.95)),
+          type = "response") %>%
+  data.frame(d = seq(0, max_actual_ss, 0.01), type = "Non-linearity", name = "conventional", value = .) %>%
+  mutate(type = factor(type, levels = c("Non-linearity", "Heteroskedasticity")))
+
+model_glm_pred_heter <- glm(model_reject ~ actual_ss - 1, 
+    data = filter(experiment, !attention_check, !null_lineup, type != "polynomial") %>% mutate(offset0 = log(0.05/0.95)), 
+    offset = offset0,
+    family = binomial()) %>%
+  predict(data.frame(actual_ss = seq(0, max_actual_ss, 0.01), offset0 = log(0.05/0.95)),
+          type = "response") %>%
+  data.frame(d = seq(0, max_actual_ss, 0.01), type = "Heteroskedasticity", name = "Computer vision model", value = .) %>%
+  mutate(type = factor(type, levels = c("Non-linearity", "Heteroskedasticity")))
+
+visual_glm_pred_heter <- glm(reject ~ actual_ss - 1, 
+    data = filter(experiment, !attention_check, !null_lineup, type != "polynomial") %>% mutate(offset0 = log(0.05/0.95)), 
+    offset = offset0,
+    family = binomial()) %>%
+  predict(data.frame(actual_ss = seq(0, max_actual_ss, 0.01), offset0 = log(0.05/0.95)),
+          type = "response") %>%
+  data.frame(d = seq(0, max_actual_ss, 0.01), type = "Heteroskedasticity", name = "Visual test", value = .) %>%
+  mutate(type = factor(type, levels = c("Non-linearity", "Heteroskedasticity")))
+
+conv_glm_pred_heter <- glm(conventional_reject ~ actual_ss - 1, 
+    data = filter(experiment, !attention_check, !null_lineup, type != "polynomial") %>% mutate(offset0 = log(0.05/0.95)), 
+    offset = offset0,
+    family = binomial()) %>%
+  predict(data.frame(actual_ss = seq(0, max_actual_ss, 0.01), offset0 = log(0.05/0.95)),
+          type = "response") %>%
+  data.frame(d = seq(0, max_actual_ss, 0.01), type = "Heteroskedasticity", name = "conventional", value = .) %>%
+  mutate(type = factor(type, levels = c("Non-linearity", "Heteroskedasticity")))
+
+mutate(experiment, type = ifelse(type == "polynomial", "Non-linearity", "Heteroskedasticity")) %>%
+  mutate(type = factor(type, levels = c("Non-linearity", "Heteroskedasticity"))) %>%
+  filter(!null_lineup, !attention_check) %>%
+  pivot_longer(c(model_reject, reject)) %>%
+  mutate(name = ifelse(name == "model_reject", "Computer vision model", "Visual test")) %>%
+  ggplot() +
+  ggbeeswarm::geom_quasirandom(aes(actual_ss, value), size = 0.5) +
+  geom_line(data = model_glm_pred_poly, aes(d, value + 1, col = "Computer vision model"), linewidth = 0.8) +
+  geom_line(data = model_glm_pred_heter, aes(d, value + 1, col = "Computer vision model"), linewidth = 0.8) +
+  geom_line(data = visual_glm_pred_poly, aes(d, value + 1, col = "Visual test"), linewidth = 0.8) +
+  geom_line(data = visual_glm_pred_heter, aes(d, value + 1, col = "Visual test"), linewidth = 0.8) +
+  geom_line(data = mutate(model_glm_pred_poly, name = "Visual test"), aes(d, value + 1, col = "Computer vision model"), linetype = 2, linewidth = 0.8) +
+  geom_line(data = mutate(model_glm_pred_heter, name = "Visual test"), aes(d, value + 1, col = "Computer vision model"), linetype = 2, linewidth = 0.8) +
+  geom_line(data = mutate(visual_glm_pred_poly, name = "Computer vision model"), aes(d, value + 1, col = "Visual test"), linetype = 2, linewidth = 0.8) +
+  geom_line(data = mutate(visual_glm_pred_heter, name = "Computer vision model"), aes(d, value + 1, col = "Visual test"), linetype = 2, linewidth = 0.8) +
+  facet_grid(name ~ type) +
+  theme_light() +
+  scale_color_brewer("", palette = "Dark2") +
+  theme(legend.position = "bottom") +
+  xlab("D") +
+  ylab("Reject")
+
+
+```
+
+
+```{r delta, fig.pos = "!h", fig.cap = "A weighted detection rate vs $\\delta$-differnence plot."}
+experiment %>%
   left_join(lineup_vss %>%
               group_by(unique_lineup_id) %>%
               summarise(delta_diff = first(delta_diff), gamma_diff = first(gamma_diff))) %>%
   ggplot() +
-  geom_point(aes(delta_diff, prop_detect)) +
+  geom_point(aes(delta_diff, prop_detect), alpha = 0.3) +
   geom_smooth(aes(delta_diff, prop_detect), se = FALSE) +
   ylab("Weighted detection rate") +
   xlab(expression(delta-difference)) +
@@ -1057,11 +1166,8 @@ experiment %>%
 ```
 
 
-```{r fig.cap = "A weighted detection rate vs $\\gamma$-number of extreme nulls plot for lineups evaluated by 11 people."}
+```{r fig.pos = "!h", fig.cap = "A weighted detection rate vs $\\gamma$-number of extreme nulls plot.", eval = FALSE}
 experiment %>%
-  filter(!null_lineup) %>%
-  filter(!attention_check) %>%
-  filter(x_dist == "uniform") %>%
   left_join(lineup_vss %>%
               group_by(unique_lineup_id) %>%
               summarise(delta_diff = first(delta_diff), gamma_diff = first(gamma_diff))) %>%
@@ -1073,22 +1179,157 @@ experiment %>%
 ```
 
 
-## When the model works
+## Data examples
 
-- simple examples (non-linearity, heteroskedasticity, ...)
-- datasaurus
+### Boston Housing
 
-## When the model does not work
+```{r fig.pos = "!h", fig.cap = "Residual plot of the regression model fitted on the Boston housing data."}
 
-- human detect but model does not
-- cartoon residuals?
+housing <- read_csv(here::here("paper/data/housing.csv"))
+mod <- lm(MEDV ~ ., data = housing)
+
+my_vi <- autovi::auto_vi(fitted_mod = mod)
+```
+
+```{r}
+if (!file.exists(here::here("paper/data/boston_check.rds"))) {
+  my_vi$keras_mod <- keras::load_model_tf(here::here("paper/data/phn_v2_32.keras"))
+  my_vi$check(null_draws = 200L, boot_draws = 200L)
+  saveRDS(my_vi$check_result, here::here("paper/data/boston_check.rds"))
+}
+
+```
+
+```{r}
+my_vi$check_result <- readRDS(here::here("paper/data/boston_check.rds"))
+```
 
 
-## Workflow: how one use this model? (small showcase) 
+```{r fig.pos = "!h"}
+p1 <- my_vi$plot_resid()
+p2 <- my_vi$summary_plot() +
+  ggtitle("", subtitle = "") +
+  theme(legend.position = "bottom", legend.box = "vertical") +
+  labs(linetype = "")
 
-# Dicussion
+patchwork::wrap_plots(p1, p2)
+```
 
-There are other kinds of residual departures like autocorrelation that are not considered in this study. The primary goal of this study is to establish a new way of evaluating residual plot and conducting visual test with computer vision models. Building computer vision models for other model violations and other types of diagnostic plots could be future directions of this field.   
+
+### Insurance
+
+```{r fig.pos = "!h", fig.cap = "Residual plot of the regression model fitted on the Boston housing data."}
+insurance <- read_csv(here::here("paper/data/insurance.csv"))
+mod <- lm(charges ~ ., data = insurance)
+
+
+my_vi <- autovi::auto_vi(fitted_mod = mod)
+```
+
+```{r}
+if (!file.exists(here::here("paper/data/insurance_check.rds"))) {
+  my_vi$keras_mod <- keras::load_model_tf(here::here("paper/data/phn_v2_32.keras"))
+  my_vi$check(null_draws = 200L, boot_draws = 200L)
+  saveRDS(my_vi$check_result, here::here("paper/data/insurance_check.rds"))
+}
+
+```
+
+```{r}
+my_vi$check_result <- readRDS(here::here("paper/data/insurance_check.rds"))
+```
+
+
+```{r fig.pos = "!h"}
+p1 <- my_vi$plot_resid()
+p2 <- my_vi$summary_plot() +
+  ggtitle("", subtitle = "") +
+  theme(legend.position = "bottom", legend.box = "vertical") +
+  labs(linetype = "")
+
+patchwork::wrap_plots(p1, p2)
+```
+
+### Wine Quality
+
+```{r}
+wine <- read_csv(here::here("paper/data/WineQT.csv"))
+mod <- lm(quality ~ ., data = select(wine, -Id))
+
+my_vi <- autovi::auto_vi(fitted_mod = mod)
+```
+
+
+```{r}
+if (!file.exists(here::here("paper/data/wine_check.rds"))) {
+  my_vi$keras_mod <- keras::load_model_tf(here::here("paper/data/phn_v2_32.keras"))
+  my_vi$check(null_draws = 200L, boot_draws = 200L)
+  saveRDS(my_vi$check_result, here::here("paper/data/wine_check.rds"))
+}
+```
+
+```{r}
+my_vi$check_result <- readRDS(here::here("paper/data/wine_check.rds"))
+```
+
+
+```{r fig.pos = "!h"}
+p1 <- my_vi$plot_resid()
+p2 <- my_vi$summary_plot() +
+  ggtitle("", subtitle = "") +
+  theme(legend.position = "bottom", legend.box = "vertical") +
+  labs(linetype = "")
+
+patchwork::wrap_plots(p1, p2)
+```
+
+### Datasaurus
+
+```{r}
+dino <- datasauRus::datasaurus_dozen %>% filter(dataset == "dino")
+mod <- lm(y ~ ., data = select(dino, -dataset))
+
+my_vi <- autovi::auto_vi(fitted_mod = mod)
+```
+
+```{r}
+if (!file.exists(here::here("paper/data/dino_check.rds"))) {
+  my_vi$keras_mod <- keras::load_model_tf(here::here("paper/data/phn_v2_32.keras"))
+  my_vi$check(null_draws = 200L, boot_draws = 200L)
+  saveRDS(my_vi$check_result, here::here("paper/data/dino_check.rds"))
+}
+```
+
+```{r}
+my_vi$check_result <- readRDS(here::here("paper/data/dino_check.rds"))
+```
+
+```{r fig.pos = "!h"}
+p1 <- my_vi$plot_resid()
+p2 <- my_vi$summary_plot() +
+  ggtitle("", subtitle = "") +
+  theme(legend.position = "bottom", legend.box = "vertical") +
+  labs(linetype = "")
+
+patchwork::wrap_plots(p1, p2)
+```
+
+<!-- ## When the model works -->
+
+<!-- - simple examples (non-linearity, heteroskedasticity, ...) -->
+<!-- - datasaurus -->
+
+<!-- ## When the model does not work -->
+
+<!-- - human detect but model does not -->
+<!-- - cartoon residuals? -->
+
+
+<!-- ## Workflow: how one use this model? (small showcase)  -->
+
+<!-- # Dicussion -->
+
+<!-- There are other kinds of residual departures like autocorrelation that are not considered in this study. The primary goal of this study is to establish a new way of evaluating residual plot and conducting visual test with computer vision models. Building computer vision models for other model violations and other types of diagnostic plots could be future directions of this field.    -->
 
 # Conclusion
 

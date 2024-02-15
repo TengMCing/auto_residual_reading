@@ -1,0 +1,35 @@
+\contentsline {section}{\numberline {1}Introduction}{4}{section.1}%
+\contentsline {section}{\numberline {2}Methodology}{6}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Different possible configurations of the model formula}{6}{subsection.2.1}%
+\contentsline {subsubsection}{\numberline {2.1.1}Input formats}{6}{subsubsection.2.1.1}%
+\contentsline {subsubsection}{\numberline {2.1.2}Output formats}{9}{subsubsection.2.1.2}%
+\contentsline {subsection}{\numberline {2.2}Distance from the good residual plots}{9}{subsection.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.1}Residual distribution}{10}{subsubsection.2.2.1}%
+\contentsline {subsubsection}{\numberline {2.2.2}Kullback-Leibler divergence of \(P\) from \(Q\)}{11}{subsubsection.2.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.3}Evaluation of Kullback-Leibler divergence for non-normal \(P\)}{12}{subsubsection.2.2.3}%
+\contentsline {subsubsection}{\numberline {2.2.4}Approximation of the distance measure}{14}{subsubsection.2.2.4}%
+\contentsline {subsubsection}{\numberline {2.2.5}Approximated distance as an Model Violations Index (MVI)}{15}{subsubsection.2.2.5}%
+\contentsline {subsection}{\numberline {2.3}Statistical testing based on the approximated distance}{16}{subsection.2.3}%
+\contentsline {subsubsection}{\numberline {2.3.1}Null distribution of the approximated distance}{16}{subsubsection.2.3.1}%
+\contentsline {subsubsection}{\numberline {2.3.2}Estimation of quantiles of the null distribution}{17}{subsubsection.2.3.2}%
+\contentsline {subsubsection}{\numberline {2.3.3}Bootstrapping the approximated distance}{17}{subsubsection.2.3.3}%
+\contentsline {subsection}{\numberline {2.4}Generation of training data}{18}{subsection.2.4}%
+\contentsline {subsubsection}{\numberline {2.4.1}Data generating process}{18}{subsubsection.2.4.1}%
+\contentsline {subsubsection}{\numberline {2.4.2}Computation of scagnostics}{22}{subsubsection.2.4.2}%
+\contentsline {subsubsection}{\numberline {2.4.3}Crafting a balanced training set}{23}{subsubsection.2.4.3}%
+\contentsline {subsection}{\numberline {2.5}Architecture of the computer vision model}{24}{subsection.2.5}%
+\contentsline {subsection}{\numberline {2.6}Training and hyperparameter tuning}{26}{subsection.2.6}%
+\contentsline {subsection}{\numberline {2.7}Model evaluation methods}{28}{subsection.2.7}%
+\contentsline {section}{\numberline {3}Results}{28}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Optimized hyperparameters}{28}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Model performance}{29}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Model Violations Index (MVI)}{31}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Comparison with human visual inference and conventional tests}{33}{subsection.3.4}%
+\contentsline {subsubsection}{\numberline {3.4.1}Overview of the human subject experiment}{33}{subsubsection.3.4.1}%
+\contentsline {subsubsection}{\numberline {3.4.2}Model performance on the human data}{34}{subsubsection.3.4.2}%
+\contentsline {subsection}{\numberline {3.5}Data examples}{37}{subsection.3.5}%
+\contentsline {subsubsection}{\numberline {3.5.1}Left-triangle}{38}{subsubsection.3.5.1}%
+\contentsline {subsubsection}{\numberline {3.5.2}Boston housing}{41}{subsubsection.3.5.2}%
+\contentsline {subsubsection}{\numberline {3.5.3}Datasaurus}{42}{subsubsection.3.5.3}%
+\contentsline {section}{\numberline {4}Conclusion}{44}{section.4}%
+\contentsline {section}{Acknowledgements}{45}{section*.2}%

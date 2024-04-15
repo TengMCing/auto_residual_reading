@@ -218,12 +218,11 @@ With the approximated distance $\hat{D}$, we will be able to know how different 
 
 The approximated distance $\hat{D}$ is not expected to be the same as the original distance $D$. This is largely because information contained in a single residual plot is limited and it may not be able to summarise all the important characteristics of the residual distribution. For a given residual distribution $P$, we can generate many different residual plots. Some of them share similar visual patterns, but some of them could be visually very different from the rest, especially for regression models with small $n$. This suggests the error of the approximation will vary depends on whether the observed residual plot is representative or not.
 
-### Approximated distance as an Model Violations Index (MVI)
+### Model Violations Index (MVI) {#sec:model-violations-index}
 
 
 In Section \ref{output-formats}, we discuss the output formats of the computer vision model presented in this paper. One notable advantage highlighted is its interpretability. The approximated distance $\hat{D}$ is an estimator of the difference between the actual residual distribution and the reference residual distribution. This difference primarily arises from deviations in model assumptions. The magnitude of $D$ directly reflects the degree of these deviations, thus making $\hat{D}$ instrumental in forming a model violation index.
 
-Note that since the Kullback-Leibler divergence could be affected by the number of random variables involved in the evaluation. In general, more observations will result in greater distance $D$. This does not mean $\hat{D}$ can not correctly represent the extent of the model violations since more observations in a residual plot usually lead to stronger visual signal strength as the underlying visual patterns will have higher chance to be revealed except for cases like serious overlapping. For the same data generating process, $D$ usually grows logarithmically as the number of observations increases. This is because $D = \text{log}(1 + D_{KL})$, and $D_{KL} = \sum_{i=1}^{n}D_{KL}^{(i)}$ under the independence assumption.
 
 Note that the Kullback-Leibler divergence might be influenced by the number of random variables involved in its evaluation. Generally, a larger number of observations will lead to a greater distance $D$. However, this does not imply that $\hat{D}$ fails to accurately represent the extent of model violations. In fact, when examining residual plots with more observations, we often observe a stronger visual signal strength, as the underlying patterns are more likely to be revealed, except in cases of significant overlapping.
 
@@ -240,20 +239,17 @@ Therefore, the Model Violations Index (MVI) can be proposed as
 
 ## Statistical testing based on the approximated distance
 
-### Null distribution of the approximated distance
+### Lineup evaluation
 
 Theoretically, the distance $D$ for a correctly specified model is $0$, because $P$ will be the same as $Q$. However, the computer vision model may not necessary predict $0$ for a null plot. Using Figure \ref{fig:false-finding} as an example, it contains a visual pattern which is an indication of heteroskedasticity. We would not expect the model to be able to magically tell if the suspicious pattern is caused by the skewed distribution of the fitted values or the existence of heteroskedasticity. Additionally, some null plots could have outliers or strong visual patterns due to randomness, and a reasonable model will try to summarise those information into the prediction, resulting in $\hat{D} > 0$.
 
 This property is not an issue if $\hat{D} \gg 0$ for which the visual signal of the residual plot is very strong, and we usually do not need any further examination of the significance of the result. However, if the visual pattern is weak or moderate, having $\hat{D}$ will not be sufficient to determine if $H_0$ should be rejected.
 
-To solve this issue while aligning with the principle of visual inference, $\hat{D}$ can be viewed as a test statistic. And the null distribution of this statistic can be approximated by the empirical distribution of $\hat{D}_{null}$, where $\hat{D}_{null}$ is the approximated distance for a null plot simulated from the fitted regression model. The approximation of the distribution involves applying the residual rotation technique [@buja2009statistical] on the fitted regression model to obtain null residuals. The null residuals are then used to make null plots and fed into the computer vision model to get predictions. The empirical distribution is constructed with the approximated distance.
+To address this issue while adhering to the principle of visual inference, we can compare the estimated distance $\hat{D}$ to the approximated distances for the null plots in a lineup. Specifically, if a lineup comprises 20 plots, the null hypothesis $H_0$ will be rejected if $\hat{D}$ exceeds the maximum approximated distance among the $m - 1$ null plots, denoted as $\max\limits_{1 \leq i \leq m-1} {\hat{D}_{null}^{(i)}}$, where $\hat{D}_{null}^{(i)}$ represents the approximated distance for the $i$-th null plot. This approach is equivalent to the typical lineup protocol requiring a 95% significance level, where $H_0$ is rejected if the data plot is identified as the most distinct plot by the sole participant. The approximated distance serves as a metric to quantify the difference between the data plot and the null plots, as intended.
 
-There are two types of error associated with the approximation of the null distribution. These include the sampling error and the estimation error for model parameters. Increasing the number of null plots within the distribution approximation can effectively reduce sampling error. However, the estimation error for model parameters remains irreducible. The residual rotation technique operates under the assumption of a correct fitted model, using the estimated variance instead of the unknown true variance to rescale rotated residuals. Consequently, under $H_0$, the true distribution of $\hat{D}_{null}$ will slightly deviate from the approximated null distribution.
+For lineups consisting of more than 20 plots, the 95% significance level can be maintained if the number of plots is a multiple of 20. Specifically, for lineups comprising $20p$ plots, where $p$ is a positive integer, we reject $H_0$ if $\hat{D}$ exceeds 95% ${\hat{D}_{null}^{(i)}}$ for $i = 1, \ldots, 20p-1$. The p-value in this case is given by $\frac{1}{m} + \frac{1}{m}\sum{i=1}^{m-1} I\left(\hat{D}_{null}^{(i)} > \hat{D}\right)$, where $I(\cdot)$ is the indicator function.
 
-
-### Estimation of quantiles of the null distribution
-
-Let $\hat{D}_{null}^{(i)}$ be the approximated distance of the $i$-th null plots, where $i = 1,...,n_{null}$ and $n_{null} \in \mathbb{N}^+$ is a sufficiently large number. Quantiles of the null distribution can then be estimated using the sample quantiles available in statistical software such as R. The details of the sample quantile computation can be found in @hyndman1996sample. In statistical testing, analysts often care about certain quantiles of the null distribution, such as the 90% quantile, the 95% quantile and the 99% quantile. These quantiles are used as critical values to decide if $H_0$ needs to be rejected. For example, if $\hat{D}$ is greater than and equal to the 95% sample quantile $Q_{null}(0.95)$, we could say the approximated distance for the actual residual plot is significantly different from the approximated distance for null plots with 95% significance level. Based on our experience, in order to get a stable estimate of the 95% quantile, $n_{null}$ usually needs to be at least $100$. And if the null distribution has a long tail, more null plots will be needed. Alternatively, a p-value can be used to represents the probability of observing an event equally or more extreme than the given event under $H_0$, and it can be estimated by $1/m\sum_{i=1}^{n_{null}}I\left(\hat{D}_{null}^{(i)} \geq \hat{D}\right)$.
+Moreover, if the number of plots in a lineup, denoted by $m$, is sufficiently large, the empirical distribution of ${\hat{D}_{null}^{(i)}}$ can be viewed as an approximation of the null distribution of the approximated distance. Consequently, quantiles of the null distribution can be estimated using the sample quantiles available in statistical software such as R, and these quantiles can be utilized for decision-making purposes. The details of the sample quantile computation can be found in @hyndman1996sample. For instance, if $\hat{D}$ is greater than or equal to the 95% sample quantile, denoted as $Q_{null}(0.95)$, we can conclude that the approximated distance for the actual residual plot is significantly different from the approximated distance for null plots with a 95% significance level. Based on our experience, to obtain a stable estimate of the 95% quantile, the number of null plots, $n_{null}$, typically needs to be at least 100. However, if the null distribution exhibits a long tail, a larger number of null plots may be required. Alternatively, a p-value can be used to represent the probability of observing an event equally or more extreme than the given event under the null hypothesis $H_0$, and it can be estimated by $\frac{1}{m}\sum_{i=1}^{m-1}I\left(\hat{D}_{null}^{(i)} \geq \hat{D}\right)$.
 
 If precision in sample quantiles is not the main priority, using a pre-calculated table of quantiles is an available option. Such a table offers pre-determined quantiles for a specified number of observations. It is generated by assessing numerous null plots derived from various simulated regression models and averaging them. Essentially, this shifts the computational burden from the user to the developer. 
 
@@ -516,7 +512,7 @@ This section remains incomplete as we may modify the "Results" section later on.
 
 Based on the tuning process described in Section \ref{training-and-hyperparameter-tuning}, the optimized hyperparameter values are presented in Table \ref{tab:best-hyperparameter}. It was observable that a minimum of $32$ base filters was necessary, with the preferable choice being $64$ base filters for both the $64 \times 64$ and $128 \times 128$ models, mirroring the original VGG16 architecture. The optimized dropout rate for convolutional blocks hovered around $0.4$, and incorporating batch normalization for convolutional blocks proved beneficial for performance.
 
-All optimized models chose to retain the additional inputs, contributing to the reduction of validation error. The number of units required for the fully-connected layer was $256$, a relatively modest number compared to the VGG16 classifier, suggesting that the problem at hand was relatively straightforward. The optimized learning rates were typically smaller than the default value recommended by Keras, which is 0.001.
+All optimized models chose to retain the additional inputs, contributing to the reduction of validation error. The number of units required for the fully-connected layer was $256$, a relatively modest number compared to the VGG16 classifier, suggesting that the problem at hand was less complex. The optimized learning rates were smaller than the default value recommended by Keras, which is 0.001.
 
 
 ```{r best-hyperparameter}
@@ -533,7 +529,7 @@ data.frame(`Hyperparameter` = c("Number of base filters", "Dropout rate for conv
 ```
 
 
-## Model performance
+## Summary of model performance
 
 The training and test performance for the optimized models with three different input sizes are summarized in Table \ref{tab:performance}. Among these models, the $64 \times 64$ model and the $32 \times 32$ model consistently exhibited the best training and test performance, respectively. The mean absolute error indicated that the difference between $\hat{D}$ and $D$ was approximately $0.43$ on the test set, a negligible deviation considering the normal range of $D$ typically falls between $0$ and $7$. The high $R^2$ values also suggested that the predictions were largely linearly correlated with the target.
 
@@ -541,11 +537,11 @@ Figure \ref{fig:model-performance} presents a hexagonal heatmap for $D - \hat{D}
 
 The figure highlights that most under-predictions occurred when $\hat{D} < 3$, while over-predictions occurred predominantly when $3 < \hat{D} < 6$. To comprehend the reasons behind these deviations, we fitted a regression tree using the `rpart` R package [@Terry2022rpart] on $D - \hat{D}$ for all factors used in the data generating process. The results of the regression tree are provided in the Appendix.
 
-The regression tree revealed that most issues arose from non-linearity problems and the presence of a second predictor in the regression model. When the error distribution had a very small variance, all computer vision models tended to under-predict the distance. Conversely, when the error distribution had a large variance, all models tended to over-predict the distance. Therefore, Additionally, for input images representing null plots, it was expected that the models will over-predict the distance, as explained in Section \ref{null-distribution-of-the-approximated-distance}.
+The regression tree revealed that most issues arose from non-linearity problems and the presence of a second predictor in the regression model. When the error distribution had a very small variance, all computer vision models tended to under-predict the distance. Conversely, when the error distribution had a large variance, all models tended to over-predict the distance. Furthermore, for input images representing null plots, it was expected that the models will over-predict the distance, as explained in Section \ref{lineup-evaluation}.
 
-Since most of the deviation stemmed from the presence of non-linearity violations, to further investigate this, we split the test set and re-evaluated the performance, as detailed in Table \ref{tab:performance-sub}. It was evident that metrics for null plots were notably worse compared to other categories. Furthermore, residual plots solely exhibiting non-normality issues were the easiest to predict, with very low test root mean square error (RMSE) around $0.3$, very low mean absolute error (MAE) around $0.2$, and very high $R^2$ around $0.94$. Residual plots with non-linearity issues were more challenging to assess than those with heteroskedasticity or non-normality issues. Assessing residual plots with heteroskedasticity was not as difficult as assessing those with non-linearity issues. When multiple violations were introduced to a residual plot, the performance metrics typically lay between the metrics for each individual violation.
+Since most of the deviation stemmed from the presence of non-linearity violations, to further investigate this, we split the test set and re-evaluated the performance, as detailed in Table \ref{tab:performance-sub}. It was evident that metrics for null plots were notably worse compared to other categories. Furthermore, residual plots solely exhibiting non-normality issues were the easiest to predict, with very low test root mean square error (RMSE) at around $0.3$. Residual plots with non-linearity issues were more challenging to assess than those with heteroskedasticity or non-normality issues. Assessing residual plots with heteroskedasticity was not as difficult as assessing those with non-linearity issues. When multiple violations were introduced to a residual plot, the performance metrics typically lay between the metrics for each individual violation.
 
-Based on the model performance metrics, we will only use the best-performing model evaluated on the test set, namely the $32 \times 32$ model, for the subsequent analysis.
+Based on the model performance metrics, we chose to use the best-performing model evaluated on the test set, namely the $32 \times 32$ model, for the subsequent analysis.
 
 
 ```{r performance}
@@ -582,13 +578,11 @@ train_summary %>%
                     booktabs = TRUE, 
                     escape = FALSE,
                     col.names = c("", "RMSE", "$R^2$", "MAE", "Huber loss"),
-                    caption = "The training and test performance of three optimized models with different input sizes. The best metrics are colored in red.") %>%
+                    caption = "The training and test performance of three optimized models with different input sizes.") %>%
   kableExtra::pack_rows("Training set", 1, 3) %>%
-  kableExtra::pack_rows("Test set", 4, 6) %>%
-  kableExtra::column_spec(2:5, color = c("black", "red", "black",
-                                       "red", "black", "black"))
-                                         
+  kableExtra::pack_rows("Test set", 4, 6)
 ```
+
 
 ```{r model-performance, fig.pos="!h", fig.cap = "Hexagonal heatmap for residuals vs predicted distance on training and test data for three optimized models with different input sizes. The red lines are smoothing curves produced by fitting gnealized additive models. The area over the zero line in light pink indicates under-prediction, and the area under the zero line in light green indicates over-prediction.", dev = 'png', dpi = 300}
 model_pred <- train_pred %>% 
@@ -633,305 +627,40 @@ model_pred %>%
 ```
 
 
-```{r eval = FALSE}
-
- # 1) root 8000 3466.12800  0.04808905  
- #   2) e_sigma>=4.108756 3288 1146.50300 -0.09147268  
- #     4) include_non_normal=FALSE 1983  817.30850 -0.22151770  
- #       8) include_heter=FALSE 1210  416.16970 -0.39866830  
- #        16) include_z=FALSE 49   20.28332 -1.22777500 * (only non-normal and large error sigma -> large over-prediction)
- #        17) include_z=TRUE 1161  360.78130 -0.36367590 *
- #       9) include_heter=TRUE 773  303.72640  0.05578156 *
- #     5) include_non_normal=TRUE 1305  244.69960  0.10613590 *
- #   3) e_sigma< 4.108756 4712 2210.89500  0.14547420  
- #     6) include_z=FALSE 2030  568.99490 -0.04100357 *
- #     7) include_z=TRUE 2682 1517.87900  0.28661890  
- #      14) include_x2=FALSE 1432  377.35510  0.07228115 *
- #      15) include_x2=TRUE 1250  999.37090  0.53216420  
- #        30) e_sigma>=0.1149429 1202  829.80300  0.49933640 *
- #        31) e_sigma< 0.1149429 48  135.83470  1.35422700  (non-linearity, second predictor, small error sigma)
- #          62) measure_striped< 0.44 40   54.18083  0.92957180 *
- #          63) measure_striped>=0.44 8   38.37423  3.47750200 * (high discreteness -> large under-prediction)
-
-# n= 8000 
-# 
-# node), split, n, deviance, yval
-#       * denotes terminal node
-# 
-#     1) root 8000 3466.1280000  0.04808905  
-#       2) e_sigma>=4.108756 3288 1146.5030000 -0.09147268  
-#         4) include_non_normal=FALSE 1983  817.3085000 -0.22151770  
-#           8) include_heter=FALSE 1210  416.1697000 -0.39866830  
-#            16) include_z=FALSE 49   20.2833200 -1.22777500  
-#              32) measure_sparse< 0.3630358 7    8.9396360 -2.12605300 * (large e_sigma, null plots, not very sparse -> large over-prediction)
-#              33) measure_sparse>=0.3630358 42    4.7539680 -1.07806200 * (large e_sigma, null plots, sparse -> large over-prediction)
-#            17) include_z=TRUE 1161  360.7813000 -0.36367590  
-#              34) measure_splines>=0.02606246 376  134.3999000 -0.59957120  
-#                68) n< 143.5 116   39.6936700 -0.84719690  
-#                 136) measure_monotonic>=0.07456592 7    1.3762680 -1.55893700 * (non-linearity only, small n, large e_sigma -> large over-prediction)
-#                 137) measure_monotonic< 0.07456592 109   34.5436600 -0.80148880 *
-#                69) n>=143.5 260   84.4197800 -0.48909200  
-#                 138) e_sigma>=7.367384 63   15.0193100 -0.79693070 *
-#                 139) e_sigma< 7.367384 197   61.5210600 -0.39064610  
-#                   278) include_x2=FALSE 90   19.5837000 -0.53918530 *
-#                   279) include_x2=TRUE 107   38.2813500 -0.26570670  
-#                     558) measure_sparse< 0.5586777 84   27.3861700 -0.37645850 *
-#                     559) measure_sparse>=0.5586777 23    6.1018500  0.13877850 *
-#              35) measure_splines< 0.02606246 785  195.4365000 -0.25068660  
-#                70) e_sigma>=5.64113 529  100.6972000 -0.37916600  
-#                 140) n< 109 41   11.8877000 -0.73213180 *
-#                 141) n>=109 488   83.2723700 -0.34951110  
-#                   282) e_sigma>=7.90547 154   26.5350800 -0.48055150 *
-#                   283) e_sigma< 7.90547 334   52.8735800 -0.28909130 *
-#                71) e_sigma< 5.64113 256   67.9628700  0.01480427  
-#                 142) include_x2=FALSE 113   23.8143300 -0.15341150 *
-#                 143) include_x2=TRUE 143   38.4243300  0.14773000  
-#                   286) n< 72.5 7    2.6335630 -0.69382120 *
-#                   287) n>=72.5 136   30.5781400  0.19104510 *
-#           9) include_heter=TRUE 773  303.7264000  0.05578156  
-#            18) b< 32.23487 487  221.2986000 -0.09202344  
-#              36) b< 0.2107948 67   26.8944500 -0.51926710  
-#                72) n< 126 7    3.3765570 -1.24628700 * (large e_sigma, heteroskedasticity, small b, small n -> over-prediction)
-#                73) n>=126 60   19.3863300 -0.43444810 *
-#              37) b>=0.2107948 420  180.2232000 -0.02386791  
-#                74) measure_splines>=0.05482434 223   77.7820400 -0.18200180  
-#                 148) b< 7.647324 119   51.8788300 -0.32137070  
-#                   296) measure_sparse>=0.4117995 111   43.0150500 -0.38433220 *
-#                   297) measure_sparse< 0.4117995 8    2.3184780  0.55221930 *
-#                 149) b>=7.647324 104   20.9469900 -0.02253160 *
-#                75) measure_splines< 0.05482434 197   90.5523700  0.15513650  
-#                 150) b>=5.165768 63   26.5340300 -0.02749363  
-#                   300) include_x2=FALSE 35    7.9867080 -0.19247040 *
-#                   301) include_x2=TRUE 28   16.4039600  0.17872730  
-#                     602) measure_monotonic< 0.03127537 21    4.3016860 -0.07172379 *
-#                     603) measure_monotonic>=0.03127537 7    6.8333090  0.93008060 *
-#                 151) b< 5.165768 134   60.9291300  0.24099990  
-#                   302) x2_sigma< 0.5865284 126   52.7919200  0.19154170  
-#                     604) x2_k>=5.5 106   43.2640200  0.11519510  
-#                      1208) j< 17.5 93   38.5219100  0.05750563  
-#                        2416) e_even=TRUE 41   15.2536200 -0.17697420  
-#                          4832) measure_sparse>=0.5392181 29    8.8138120 -0.40043160 *
-#                          4833) measure_sparse< 0.5392181 12    1.4922590  0.36304760 *
-#                        2417) e_even=FALSE 52   19.2367200  0.24238400  
-#                          4834) measure_splines>=0.01044483 31    7.8888290 -0.02089042 *
-#                          4835) measure_splines< 0.01044483 21    6.0272570  0.63102720 *
-#                      1209) j>=17.5 13    2.2184070  0.52789690 *
-#                     605) x2_k< 5.5 20    5.6354220  0.59617870 *
-#                   303) x2_sigma>=0.5865284 8    2.9747040  1.01996600 * (large e_sigma, small spline dependence, heteroskedasticity, large x2_sigma -> large under-prediction)
-#            19) b>=32.23487 286   53.6723400  0.30746350  
-#              38) include_x2=FALSE 139   17.0423600  0.13425010 *
-#              39) include_x2=TRUE 147   28.5161400  0.47125030 *
-#         5) include_non_normal=TRUE 1305  244.6996000  0.10613590  
-#          10) measure_splines>=0.08262098 455   47.2275500  0.00622856 *
-#          11) measure_splines< 0.08262098 850  190.4994000  0.15961570  
-#            22) include_heter=FALSE 594   22.8029300  0.08838938 *
-#            23) include_heter=TRUE 256  157.6908000  0.32488300  
-#              46) measure_striped>=0.47 185   31.8984100  0.17734340 *
-#              47) measure_striped< 0.47 71  111.2723000  0.70931710  
-#                94) e_even=FALSE 32   18.0084200  0.22023240  
-#                 188) a>=-0.205314 21    5.0433870 -0.06070074 *
-#                 189) a< -0.205314 11    8.1435320  0.75655920 *
-#                95) e_even=TRUE 39   79.3286800  1.11061700  
-#                 190) b< 2.373839 11    0.2423938  0.06215229 *
-#                 191) b>=2.373839 28   62.2437600  1.52251400  (discrete e_dist,  high discreteness, heteroskedasticity, small splines dependence, non-normality, large e_sigma -> large under-prediction)
-#                   382) x2_dist=even_discrete,lognormal,uniform 19   33.0782400  1.01336800 *
-#                   383) x2_dist=normal 9   13.8421700  2.59737800 *
-#       3) e_sigma< 4.108756 4712 2210.8950000  0.14547420  
-#         6) include_z=FALSE 2030  568.9949000 -0.04100357  
-#          12) b< 28.58967 1159  316.0764000 -0.12131010  
-#            24) include_non_normal=FALSE 441  185.6341000 -0.33971870  
-#              48) include_heter=FALSE 60    8.3705760 -1.15981800 * (null plots, small e_sigma -> large over-prediction)
-#              49) include_heter=TRUE 381  130.5548000 -0.21056910  
-#                98) b< 0.4619795 85   22.8319800 -0.60512210 *
-#                99) b>=0.4619795 296   90.6909300 -0.09726844  
-#                 198) b>=1.080411 252   72.3919200 -0.15604160  
-#                   396) b< 2.878015 65   20.2765800 -0.37135770 *
-#                   397) b>=2.878015 187   48.0544100 -0.08119905 *
-#                 199) b< 1.080411 44   12.4430700  0.23934130 *
-#            25) include_non_normal=TRUE 718   96.4846700  0.01283772 *
-#          13) b>=28.58967 871  235.4979000  0.06585671  
-#            26) include_heter=FALSE 361  111.6977000 -0.10528680  
-#              52) include_non_normal=FALSE 46    6.2078660 -1.13547200 * (null plots, small e_sigma -> large over-prediction)
-#              53) include_non_normal=TRUE 315   49.5417500  0.04515286  
-#               106) e_sigma>=0.2273127 247   17.7293100 -0.01172324 *
-#               107) e_sigma< 0.2273127 68   28.1111100  0.25174690  
-#                 214) measure_splines>=0.03710735 23   10.7097800 -0.09471551 *
-#                 215) measure_splines< 0.03710735 45   13.2294000  0.42882770 *
-#            27) include_heter=TRUE 510  105.7420000  0.18699950  
-#              54) include_non_normal=TRUE 235   41.6282300  0.05417806 *
-#              55) include_non_normal=FALSE 275   56.4252500  0.30050140  
-#               110) include_x2=FALSE 137   20.9155600  0.17983570 *
-#               111) include_x2=TRUE 138   31.5346400  0.42029280  
-#                 222) b< 70.08912 96   17.2702500  0.30834030 *
-#                 223) b>=70.08912 42   10.3110100  0.67618420 *
-#         7) include_z=TRUE 2682 1517.8790000  0.28661890  
-#          14) include_x2=FALSE 1432  377.3551000  0.07228115  
-#            28) measure_splines>=0.07058104 731  178.2000000 -0.01483915  
-#              56) e_sigma>=2.44726 138   40.9281500 -0.18500620  
-#               112) include_heter=FALSE 59   25.9010700 -0.41304000  
-#                 224) include_non_normal=FALSE 38   17.2724700 -0.68141390  
-#                   448) measure_splines>=0.1003984 20    5.6757540 -1.07654300 * (non-linearity only, moderate e_sigma -> large over-prediction)
-#                   449) measure_splines< 0.1003984 18    5.0046810 -0.24238140 *
-#                 225) include_non_normal=TRUE 21    0.9391262  0.07258882 *
-#               113) include_heter=TRUE 79    9.6678490 -0.01470237 *
-#              57) e_sigma< 2.44726 593  132.3458000  0.02476126  
-#               114) e_sigma>=0.158351 527  105.6393000 -0.00147316 *
-#               115) e_sigma< 0.158351 66   23.4476700  0.23423920  
-#                 230) b< 71.04535 55   15.9627800  0.12578350 *
-#                 231) b>=71.04535 11    3.6032230  0.77651720 *
-#            29) measure_splines< 0.07058104 701  187.8212000  0.16312990  
-#              58) n< 62.5 33   14.3260500 -0.31035730 *
-#              59) n>=62.5 668  165.7314000  0.18652070 *
-#          15) include_x2=TRUE 1250  999.3709000  0.53216420  
-#            30) e_sigma>=0.1149429 1202  829.8030000  0.49933640  
-#              60) e_sigma>=2.906419 328  129.1838000  0.27288400  
-#               120) measure_splines>=0.04413018 134   50.5691600  0.09851024  
-#                 240) b< 2.910823 23   10.1825400 -0.20213530  
-#                   480) x2_k>=6.5 15    4.3945260 -0.49662390 *
-#                   481) x2_k< 6.5 8    2.0480610  0.35003080 *
-#                 241) b>=2.910823 111   37.8769400  0.16080620  
-#                   482) b>=7.320158 97   22.8753700  0.08661750 *
-#                   483) b< 7.320158 14   10.7686400  0.67482760 *
-#               121) measure_splines< 0.04413018 194   71.7259100  0.39332780  
-#                 242) j< 7.5 60   32.0807400  0.19368700  
-#                   484) x2_sigma< 0.343438 10   12.3504400 -0.51629950 *
-#                   485) x2_sigma>=0.343438 50   13.6813400  0.33568430 *
-#                 243) j>=7.5 134   36.1830100  0.48271920 *
-#              61) e_sigma< 2.906419 874  677.4868000  0.58432080  
-#               122) measure_splines>=0.04519141 613  424.1886000  0.45960850  
-#                 244) n>=202.5 393  209.4163000  0.32432050  
-#                   488) include_non_normal=TRUE 188   90.6250100  0.18780810  
-#                     976) x2_k< 7.5 101   41.5156400  0.04431936 *
-#                     977) x2_k>=7.5 87   44.6157600  0.35438700  
-#                      1954) measure_sparse>=0.391553 80   35.8617500  0.29057300 *
-#                      1955) measure_sparse< 0.391553 7    4.7050420  1.08369000 * (not sparse, non-normality, large n, small e_sigma, second predictor, non-linearity -> large under-prediction)
-#                   489) include_non_normal=FALSE 205  112.0748000  0.44951240  
-#                     978) e_sigma>=0.2441489 175   86.5106600  0.36295000  
-#                      1956) measure_splines>=0.07729252 127   55.6660800  0.25807550 *
-#                      1957) measure_splines< 0.07729252 48   25.7519700  0.64043040  
-#                        3914) b>=21.95702 24    7.5694370  0.34280130 *
-#                        3915) b< 21.95702 24   13.9305500  0.93805950  
-#                          7830) x2_dist=even_discrete,uniform 13    2.6412500  0.51209270 *
-#                          7831) x2_dist=lognormal,normal 11    6.1427810  1.44147500 *
-#                     979) e_sigma< 0.2441489 30   16.6036900  0.95445990  
-#                      1958) a< -0.6962934 8    1.2723410  0.16916930 *
-#                      1959) a>=-0.6962934 22    8.6039200  1.24002000 *
-#                 245) n< 202.5 220  194.7300000  0.70128210  
-#                   490) measure_sparse>=0.6256282 81   38.6326300  0.36079080  
-#                     980) measure_monotonic>=0.237124 8    0.2987567 -0.26782100 *
-#                     981) measure_monotonic< 0.237124 73   34.8262100  0.42967980 *
-#                   491) measure_sparse< 0.6256282 139  141.2344000  0.89969790  
-#                     982) n>=97 88   72.2102700  0.72131320  
-#                      1964) x1_sigma>=0.4241299 54   26.0940300  0.51943470  
-#                        3928) e_sigma>=0.2485052 45   19.5310800  0.39828410  
-#                          7856) x1_sigma< 0.5588507 38   11.8880800  0.26476900 *
-#                          7857) x1_sigma>=0.5588507 7    3.2882920  1.12308000 *
-#                        3929) e_sigma< 0.2485052 9    2.6000360  1.12518800 *
-#                      1965) x1_sigma< 0.4241299 34   40.4201400  1.04194400  
-#                        3930) j< 7.5 11    8.6545230  0.32377180 *
-#                        3931) j>=7.5 23   23.3787300  1.38541700  
-#                          7862) b< 20.93247 14   10.8261000  0.95400130 *
-#                          7863) b>=20.93247 9    5.8936770  2.05650900 * (moderate b, large j, small x1_sigma, small n, small sparse, second predictor, non-linearity -> large under-prediction)
-#                     983) n< 97 51   61.3921000  1.20749900  
-#                      1966) e_dist=uniform 16    6.5588030  0.49547860 *
-#                      1967) e_dist=even_discrete,lognormal 35   43.0135900  1.53299400  
-#                        3934) measure_monotonic>=0.04508442 17   19.7133200  0.99850550 *
-#                        3935) measure_monotonic< 0.04508442 18   13.8570300  2.03778800 *
-#               123) measure_splines< 0.04519141 261  221.3718000  0.87722750  
-#                 246) measure_sparse>=0.654522 53   26.6382500  0.36906170  
-#                   492) measure_striped>=0.57 11    2.8015390 -0.20941000 *
-#                   493) measure_striped< 0.57 42   19.1917400  0.52056620 *
-#                 247) measure_sparse< 0.654522 208  177.5598000  1.00671200  
-#                   494) e_sigma>=2.064604 95   37.3057400  0.73978960  
-#                     988) n< 94.5 10    2.7534790  0.01814227 *
-#                     989) n>=94.5 85   28.7318400  0.82468930  
-#                      1978) measure_sparse< 0.3468051 11    2.5461540  0.27928850 *
-#                      1979) measure_sparse>=0.3468051 74   22.4272100  0.90576240 *
-#                   495) e_sigma< 2.064604 113  127.7952000  1.23111600  
-#                     990) measure_splines>=0.03040418 40   30.6303500  0.78917000  
-#                      1980) include_non_normal=TRUE 16    4.6253120  0.29159560 *
-#                      1981) include_non_normal=FALSE 24   19.4029000  1.12088600 *
-#                     991) measure_splines< 0.03040418 73   85.0712900  1.47327800  
-#                      1982) b< 90.99624 66   59.3920200  1.35710600  
-#                        3964) a>=-0.6695046 52   41.5200500  1.19796400  
-#                          7928) x2_sigma< 0.4287885 20   11.8256700  0.80120150  
-#                           15856) measure_splines>=0.009178431 7    2.5265790  0.21136300 *
-#                           15857) measure_splines< 0.009178431 13    5.5523770  1.11880700 *
-#                          7929) x2_sigma>=0.4287885 32   24.5782200  1.44594000  
-#                           15858) x2_sigma>=0.4851646 24   12.4345200  1.18424600  
-#                             31716) e_dist=uniform 7    0.5259639  0.41482310 *
-#                             31717) e_dist=even_discrete,lognormal 17    6.0580960  1.50106700 *
-#                           15859) x2_sigma< 0.4851646 8    5.5692240  2.23102400 * (small x2_sigma, small b, small splines dependence, small e_sigma, small sparse, second predictor, non-linearity -> large under-prediction)
-#                        3965) a< -0.6695046 14   11.6634200  1.94820600 *
-#                      1983) b>=90.99624 7   16.3901800  2.56861600 * (large b, small splines dependence, small e_sigma, small sparse, second predictor, non-linearity -> large under-prediction)
-#            31) e_sigma< 0.1149429 48  135.8347000  1.35422700  
-#              62) measure_striped< 0.44 40   54.1808300  0.92957180  
-#               124) include_non_normal=TRUE 21   14.0872600  0.39910760  
-#                 248) include_heter=TRUE 13    5.7917480  0.06683663 *
-#                 249) include_heter=FALSE 8    4.5279800  0.93904800 *
-#               125) include_non_normal=FALSE 19   27.6530600  1.51587400 *
-#              63) measure_striped>=0.44 8   38.3742300  3.47750200 * (high discreteness, small e_sigma, second predictor, non-linearity -> large under-prediction)
-
-model_pred %>%
-  filter(res == 32L) %>%
-  filter(type == "test") %>%
-  mutate(.resid = effect_size - vss) %>%
-  mutate(include_z = factor(include_z),
-         include_heter = factor(include_heter),
-         include_x2 = factor(include_x2),
-         include_non_normal = factor(include_non_normal),
-         e_even = factor(e_even),
-         x1_even = factor(x1_even),
-         x2_even = factor(x2_even)) %>%
-  select(-filename, -vss, -res, -plot_uid, -data_type, -effect_size, -type) %>%
-  rpart::rpart(.resid ~ ., data = ., control = rpart::rpart.control(cp = 0.001), model = TRUE) -> test_tree
-```
 
 
 ```{r performance-sub}
 
 model_pred %>%
   filter(res == 32L) %>%
-  group_by(type, include_non_normal, include_heter, include_z) %>%
-  summarise(n = n(), 
-            RMSE = yardstick::rmse_vec(effect_size, vss),
-            R2 = yardstick::rsq_vec(effect_size, vss),
-            MAE = yardstick::mae_vec(effect_size, vss),
-            HUBER = yardstick::huber_loss_vec(effect_size, vss)) %>%
+  group_by(include_non_normal, include_heter, include_z) %>%
+  summarise(train_n = sum(type == "train"),
+            train_RMSE = yardstick::rmse_vec(effect_size[type == "train"], vss[type == "train"]),
+            test_n = sum(type == "test"),
+            test_RMSE = yardstick::rmse_vec(effect_size[type == "test"], vss[type == "test"])) %>%
   mutate(violations = ifelse(include_z, "non-linearity", "null")) %>%
   mutate(violations = ifelse(include_heter, glue("{violations} + heteroskedasticity"), violations)) %>%
   mutate(violations = ifelse(include_non_normal, glue("{violations} + non-normality"), violations)) %>%
   mutate(violations = gsub("null \\+ ", "", violations)) %>%
   ungroup() %>%
-  select(type, violations, n, RMSE, R2, MAE, HUBER) %>%
-  arrange(desc(type)) %>%
-  select(-type) %>%
-  mutate(n = format(n)) %>%
-  mutate(across(RMSE:MAE, ~format(.x, digits = 3))) %>%
-  mutate(across(HUBER, ~format(.x, digits = 2))) %>%
+  select(violations, train_n, train_RMSE, test_n, test_RMSE) %>%
+  mutate(train_n = format(train_n)) %>%
+  mutate(test_n = format(test_n)) %>%
+  mutate(across(c(train_RMSE, test_RMSE), ~format(.x, digits = 3))) %>%
   mutate(violations = ifelse(violations == "null", "no violations", violations)) %>%
-  mutate(R2 = gsub(".*NA.*", "", R2)) %>%
   kableExtra::kable("latex", 
                     booktabs = TRUE,
                     escape = FALSE,
-                    col.names = c("Violations", "\\#samples", "RMSE", "$R^2$", "MAE", "Huber loss"),
-                    caption = "The training and test performance of the $32 \\times 32$ model presented with different model violations.  The best metrics are colored in red.") %>%
-  kableExtra::kable_styling(latex_options = c("scale_down")) %>%
-  kableExtra::pack_rows("Training set", 1, 8) %>%
-  kableExtra::pack_rows("Test set", 9, 16) %>%
-  kableExtra::column_spec(3, color = c(rep("black", 4), "red", rep("black", 3),
-                                       rep("black", 4), "red", rep("black", 3))) %>%
-  kableExtra::column_spec(4, color = c(rep("black", 4), "red", rep("black", 3),
-                                       rep("black", 4), "red", rep("black", 3))) %>%
-  kableExtra::column_spec(5, color = c(rep("black", 4), "red", rep("black", 3),
-                                       rep("black", 4), "red", rep("black", 3))) %>%
-  kableExtra::column_spec(6, color = c(rep("black", 4), "red", rep("black", 3),
-                                       rep("black", 4), "red", rep("black", 3)))
+                    col.names = c("Violations", "\\#training samples", "Training RMSE", "\\#test samples", "Test RMSE"),
+                    caption = "The training and test performance of the $32 \\times 32$ model presented with different model violations.") %>%
+  kableExtra::kable_styling(latex_options = c("scale_down"))
 ```
 
-## Model Violations Index (MVI)
+## Demostration of MVI
 
-Figures \ref{fig:poly-index} and \ref{fig:heter-index} display the residual plots for fitted models exhibiting varying degrees of non-linearity and heteroskedasticity. Each residual plot's Model Violation Index (MVI) is computed using Equation \ref{eq:mvi} with $C = 10$. When $\text{MVI} > 8$, the visual patterns are notably strong and easily discernible by humans. In the range $6 < \text{MVI} < 8$, the visibility of the visual pattern diminishes as MVI decreases. Conversely, when $\text{MVI} < 6$, the visual pattern tends to become relatively faint and challenging to observe. Table \ref{tab:mvi} provides a summary of the MVI usage and it is applicable to other linear regression models.
+As described in Section \ref{sec:model-violations-index} a Model Violations Index (MVI) can be constructed using $\hat{D}$. This section provides guidelines and examples of MVI. 
+
+Figures \ref{fig:poly-index} and \ref{fig:heter-index} display the residual plots for fitted models exhibiting varying degrees of non-linearity and heteroskedasticity. Each residual plot's MVI is computed using Equation \ref{eq:mvi} with $C = 10$. When $\text{MVI} > 8$, the visual patterns are notably strong and easily discernible by humans. In the range $6 < \text{MVI} < 8$, the visibility of the visual pattern diminishes as MVI decreases. Conversely, when $\text{MVI} < 6$, the visual pattern tends to become relatively faint and challenging to observe. Table \ref{tab:mvi} provides a summary of the MVI usage and it is applicable to other linear regression models.
 
 ```{r mvi}
 data.frame(degree = c("Strong", "Moderate", "Weak"),
@@ -1077,16 +806,17 @@ experiment %>%
                     caption = "The performance of the $32 \\times 32$ model on the data used in the human subject experiment.")
 ```
 
-For each lineup used in @li2023plot, there is one actual residual plot and 19 null plots. While the distance $D$ for the actual residual plot depends on the underlying data generating process, the distance $D$ for the null plots is zero. We have used our optimized computer vision model to predict $\hat{D}$ for both the actual residual plots and the null plots. Additionally, the appropriate conventional tests including the Ramsey Regression Equation Specification Error Test (RESET) [@ramsey1969tests] for non-linearity and the Breusch-Pagan test  [@breusch1979simple] for heteroskedasticity were applied on the same data for comparison.
+For each lineup used in @li2023plot, there is one actual residual plot and 19 null plots. While the distance $D$ for the actual residual plot depends on the underlying data generating process, the distance $D$ for the null plots is zero. We have used our optimized computer vision model to predict the approximated distance for both the actual residual plots and the null plots. To have a fair comparison, $H_0$ will be rejected if the actual residual plot has the greatest approximated distance among all plots in a lineup. Additionally, the appropriate conventional tests including the Ramsey Regression Equation Specification Error Test (RESET) [@ramsey1969tests] for non-linearity and the Breusch-Pagan test  [@breusch1979simple] for heteroskedasticity were applied on the same data for comparison.
 
 The performance metrics of $\hat{D}$ for actual residual plots are outlined in Table \ref{tab:experiment-performance}. It's notable that all performance metrics are slightly worse than those evaluated on the test data. Nevertheless, the mean absolute error remains at a low level, and the linear correlation between the prediction and the true value remains very high. Lineups with non-linearity issues are more challenging to predict than those with heteroskedasticity issues.
 
-For null plots, a histogram of the predictions is provided in Figure \ref{fig:hist-null-human}. In most cases, $\hat{D}$ is predicted to be around $1$. As $\hat{D}$ increases, the number of predictions decreases. The 90% and 95% sample quantiles are approximately at $2$, and the 99% sample quantile is around $2.5$. These sample quantiles can serve as global critical values for determining whether a residual plot needs to be rejected. We have also computed the 95% sample quantiles by assessing 200 null plots for each fitted model used in the experiment. The difference between decisions based on these two types of critical values is minor, with decisions aligning `r experiment %>% filter(!attention_check) %>% filter(!null_lineup) %>% summarise(q = mean(model_reject == (2.03 <= vss)) * 100) %>% pull(q) %>% format(digits = 3)`% of the time. Therefore, we will be using the 95% sample quantiles obtained from each fitted model in the following analysis. 
+<!-- For null plots, a histogram of the predictions is provided in Figure \ref{fig:hist-null-human}. In most cases, $\hat{D}$ is predicted to be around $1$. As $\hat{D}$ increases, the number of predictions decreases. The 90% and 95% sample quantiles are approximately at $2$, and the 99% sample quantile is around $2.5$. These sample quantiles can serve as global critical values for determining whether a residual plot needs to be rejected. We have also computed the 95% sample quantiles by assessing 200 null plots for each fitted model used in the experiment. The difference between decisions based on these two types of critical values is minor, with decisions aligning `r experiment %>% filter(!attention_check) %>% filter(!null_lineup) %>% summarise(q = mean(model_reject == (2.03 <= vss)) * 100) %>% pull(q) %>% format(digits = 3)`% of the time. Therefore, we will be using the 95% sample quantiles obtained from each fitted model in the following analysis.  -->
+
+Table \ref{tab:human-conv-table} provides a summary of the agreement between decisions made by the computer vision model and conventional tests. The agreement rates between conventional tests and the computer vision model are 85.95% and 79.69% for residual plots containing heteroskedasticity and non-linearity patterns, respectively. These figures are higher than those calculated for visual tests conducted by human, indicating that the computer vision model exhibits behaviour more akin to the best available conventional tests. However, Figure \ref{fig:conv-mosaic} shows that conventional tests tend to reject residual plots almost exclusively when the computer vision model does, but they also reject plots when the computer vision model does not. This suggests that conventional tests are more sensitive than the computer vision model.
+
+When plotting the decision against the distance, as illustrated in Figure \ref{fig:power}, several observations emerge. Firstly, for the computer vision model, when the distance $D > 4$, almost all residual plots are rejected. However, for visual tests conducted by humans, the threshold is higher, set at $D > 5$. And conventional tests exhibit some non-rejection cases for $D > 3$. Moreover, the computer vision model tends to have fewer rejected cases than conventional tests when $D < 2$. However, visual tests demonstrate the lowest sensitivity to residual plots with small distances. Therefore, tests based on the computer vision model are less sensitive to small deviations from model assumptions than conventional tests but more sensitive to moderate deviations. Rejection decisions are fitted by logistic regression models with no intercept terms but an offset equals to $\text{log}(0.05/0/95)$. The fitting curves for the computer vision model fall between those of conventional tests and visual tests for both non-linearity and heteroskedasticity. There is still potential to refine the computer vision model to better align its behaviour with visual tests.
 
 
-Likewise, Figure \ref{fig:conv-mosaic} and Table \ref{tab:conv-table} provide a summary of the agreement between decisions made by the computer vision model and conventional tests. The agreement rates between conventional tests and the computer vision model are 65.37% and 57.29% for residual plots containing heteroskedasticity and non-linearity patterns, respectively. These figures are lower than those presented in Table \ref{tab:human-table}, indicating that the computer vision model exhibits behaviour more akin to visual tests than conventional tests. Additionally, conventional tests tend to reject residual plots almost exclusively when the computer vision model does, but they also reject plots when the computer vision model does not. This suggests that conventional tests are more sensitive than the computer vision model.
-
-When plotting the decision against the distance, as illustrated in Figure \ref{fig:power}, several observations emerge. Firstly, for the computer vision model, when the distance $D > 3$, almost all residual plots are rejected. However, for visual tests conducted by humans, the threshold is higher, set at $D > 5$. And conventional tests exhibit some non-rejection cases for $D > 3$. Moreover, the computer vision model tends to have fewer rejected cases than conventional tests when $D < 2$. However, visual tests demonstrate the lowest sensitivity to residual plots with small distances. Therefore, tests based on the computer vision model are less sensitive to small deviations from model assumptions than conventional tests but more sensitive to moderate deviations. Rejection decisions are fitted by logistic regression models with no intercept terms but an offset equals to $\text{log}(0.05/0/95)$. The fitting curves for the computer vision model fall between those of conventional tests and visual tests for non-linearity and are slightly below conventional tests for heteroskedasticity. There is still potential to refine the computer vision model to better align its behaviour with visual tests.
 
 Figure \ref{fig:delta} displays the scatter plot of the weighted detection rate vs the $\delta$-difference. In the experiment conducted in @li2023plot, participants were allowed to make multiple selections for a lineup. The weighted detection rate is computed by assigning weights to each detection. If the participant selects zero plots, the corresponding weight is 0.05; otherwise, the weight is 1 divided by the number of selections. The $\delta$-difference is defined by @chowdhury2018measuring as
 
@@ -1098,7 +828,6 @@ Figure \ref{fig:delta} displays the scatter plot of the weighted detection rate 
 
 Figure \ref{fig:delta} indicates that the weighted detection rate increases as the $\delta$-difference increases, particularly when the $\delta$-difference is greater than zero. A negative $\delta$-difference suggests that there is at least one null plot in the lineup with a stronger visual signal than the actual residual plot. In some instances, the weighted detection rate is close to one, yet the $\delta$-difference is negative. This discrepancy implies that the distance measure, or the approximated distance, may not perfectly reflect actual human behaviour.
 
-
 ```{r hist-null-human, fig.pos =  "!h", fig.cap = "Histogram of predicted distance on null plots used in the human subject experiment. Sample quantiles are drawn in different colors."}
 lineup_vss <- readRDS(here::here("paper/data/lineup_vss.rds"))
 lineup_vss <- lineup_vss %>%
@@ -1106,25 +835,32 @@ lineup_vss <- lineup_vss %>%
   mutate(delta_diff = vss[!null] - max(vss[null])) %>%
   mutate(gamma_diff = sum(vss[null] > vss[!null]))
 
-lineup_vss %>%
-  filter(null) %>%
-  left_join(vi_survey %>%
-              group_by(unique_lineup_id) %>% 
-              summarise(type = first(type), 
-                        attention_check = first(attention_check),
-                        null_lineup = first(null_lineup))) %>%
-  filter(!attention_check) %>%
-  filter(!null_lineup) %>%
-  mutate(type = ifelse(type == "polynomial", "non-linearity", type)) %>%
-  ggplot() +
-  geom_histogram(aes(vss)) +
-  geom_vline(aes(xintercept = quantile(vss, 0.9), col = "Q(0.90)")) +
-  geom_vline(aes(xintercept = quantile(vss, 0.95), col = "Q(0.95)")) +
-  geom_vline(aes(xintercept = quantile(vss, 0.99), col = "Q(0.99)")) +
-  xlab(expression(hat(D))) +
-  theme_light() +
-  facet_wrap(~type) +
-  labs(col = "")
+
+experiment <- experiment %>%
+  left_join(lineup_vss %>%
+  filter(null == FALSE) %>%
+  mutate(model_reject_20 = rank == 1) %>%
+  select(unique_lineup_id, rank, model_reject_20))
+
+# lineup_vss %>%
+#   filter(null) %>%
+#   left_join(vi_survey %>%
+#               group_by(unique_lineup_id) %>% 
+#               summarise(type = first(type), 
+#                         attention_check = first(attention_check),
+#                         null_lineup = first(null_lineup))) %>%
+#   filter(!attention_check) %>%
+#   filter(!null_lineup) %>%
+#   mutate(type = ifelse(type == "polynomial", "non-linearity", type)) %>%
+#   ggplot() +
+#   geom_histogram(aes(vss)) +
+#   geom_vline(aes(xintercept = quantile(vss, 0.9), col = "Q(0.90)")) +
+#   geom_vline(aes(xintercept = quantile(vss, 0.95), col = "Q(0.95)")) +
+#   geom_vline(aes(xintercept = quantile(vss, 0.99), col = "Q(0.99)")) +
+#   xlab(expression(hat(D))) +
+#   theme_light() +
+#   facet_wrap(~type) +
+#   labs(col = "")
 ```
 
 ```{r cache = TRUE}
@@ -1132,35 +868,89 @@ vi_lineup <- get_vi_lineup()
 ```
 
 
-```{r human-table}
-experiment %>%
+```{r eval = FALSE}
+library(visage)
+conv_experiment <- vi_lineup %>%
+  map_df(function(.x) {
+    reset_p_value <- c()
+    bp_p_value <- c()
+    sw_p_value <- c()
+    
+    for (i in 1:20) {
+      this_dat <- .x$data %>% filter(k == i)
+      reset_p_value <- c(reset_p_value, POLY_MODEL$test(this_dat, test = "RESET")$p_value)
+      bp_p_value <- c(bp_p_value, HETER_MODEL$test(this_dat)$p_value)
+      sw_p_value <- c(sw_p_value, shapiro.test(this_dat$.resid)$p.value)
+    }
+    return(tibble(unique_lineup_id = rep(.x$metadata$name, 20),
+                  ans = .x$metadata$answer,
+                  pos = 1:20,
+                  reset_p_value = reset_p_value,
+                  reset_rank = rank(reset_p_value, ties.method = "first"),
+                  bp_p_value = bp_p_value,
+                  bp_rank = rank(bp_p_value, ties.method = "first"),
+                  sw_p_value = sw_p_value,
+                  sw_rank = rank(sw_p_value, ties.method = "first")))
+  })
+
+conv_experiment %>%
+  filter(ans == pos) %>%
+  mutate(reset_reject_20 = reset_rank == 1,
+         bp_reject_20 = bp_rank == 1,
+         sw_reject_20 = sw_rank == 1) %>%
+  select(-ans, -pos, -c(reset_p_value:sw_rank)) %>%
+  right_join(experiment) %>%
   filter(!attention_check) %>%
   filter(!null_lineup) %>%
-  mutate(type = ifelse(type == "polynomial", "non-linearity", type)) %>%
-  group_by(type) %>%
-  summarise(n = format(n()), agree = format(sum(model_reject == reject)), rate = format(mean(model_reject == reject), digits = 4)) %>%
+  pivot_longer(c(reject, model_reject_20, reset_reject_20, bp_reject_20, conventional_reject, model_reject)) %>%
+  select(type, actual_ss, name, value) %>%
+  mutate(offset0 = log(0.05/0.95)) %>%
+  nest(dat = c(offset0, actual_ss, value)) %>%
+  mutate(mod = map(dat, 
+                   ~glm(value ~ actual_ss - 1, 
+                        family = binomial(), 
+                        data = .x,
+                        offset = offset0))) %>%
+  mutate(power = map(mod, function(mod) {
+    result <- data.frame(actual_ss = seq(0, 10, 0.1),
+                         offset0 = log(0.05/0.95))
+    result$power <- predict(mod, type = "response", newdata = result)
+    result
+  })) %>%
+  select(-dat, -mod) %>%
+  unnest(power) %>%
+  ggplot() +
+  geom_line(aes(actual_ss, power, col = name)) +
+  facet_wrap(~type, scales = "free_x")
+```
+
+
+```{r human-conv-table, eval = TRUE}
+bind_rows(
+  experiment %>%
+    filter(!attention_check) %>%
+    filter(!null_lineup) %>%
+    mutate(type = ifelse(type == "polynomial", "non-linearity", type)) %>%
+    group_by(type) %>%
+    summarise(n = format(n()), agree = format(sum(model_reject == conventional_reject)), rate = format(mean(conventional_reject == model_reject), digits = 4)),
+  experiment %>%
+    filter(!attention_check) %>%
+    filter(!null_lineup) %>%
+    mutate(type = ifelse(type == "polynomial", "non-linearity", type)) %>%
+    group_by(type) %>%
+    summarise(n = format(n()), agree = format(sum(model_reject == reject)), rate = format(mean(model_reject == reject), digits = 4))
+  ) %>%
   kableExtra::kable("latex", 
                     booktabs = TRUE,
                     escape = FALSE,
                     col.names = c("Violations", "\\#Samples", "\\#Agreements", "Agreement rate"),
-                    caption = "Summary of decisions made by visual tests conducted by human and decisions made by the computer vision model.")
+                    caption = "Summary of the comparison of decisions made by computer vision model with decisions made by conventional tests and visual tests conducted by human.") %>%
+  kableExtra::pack_rows("Compared with conventional tests", 1, 2) %>%
+  kableExtra::pack_rows("Compared with visual tests conducted by human", 3, 4)
 ```
 
-```{r conv-table}
-experiment %>%
-  filter(!attention_check) %>%
-  filter(!null_lineup) %>%
-  mutate(type = ifelse(type == "polynomial", "non-linearity", type)) %>%
-  group_by(type) %>%
-  summarise(n = format(n()), agree = format(sum(model_reject == conventional_reject)), rate = format(mean(conventional_reject == reject), digits = 4)) %>%
-  kableExtra::kable("latex", 
-                    booktabs = TRUE,
-                    escape = FALSE,
-                    col.names = c("Violations", "\\#Samples", "\\#Agreements", "Agreement rate"),
-                    caption = "Summary of decisions made by conventional tests and decisions made by the computer vision model.")
-```
 
-```{r human-mosaic, fig.pos = "!h", fig.cap = "Rejection rate ($p$-value $\\leq0.05$) of visual test conditional on the computer vision model decision on non-linearity (left) and heteroskedasticity (right) lineups displayed using a mosaic plot. The visual test rejects less frequently than the computer vision model, and (almost) only rejects when the computer vision model does."}
+```{r human-mosaic, fig.pos = "!h", fig.cap = "Rejection rate ($p$-value $\\leq0.05$) of visual test conditional on the computer vision model decision on non-linearity (left) and heteroskedasticity (right) lineups displayed using a mosaic plot. The visual test rejects less frequently than the computer vision model, and (almost) only rejects when the computer vision model does.", eval = FALSE}
 library(ggmosaic)
 
 experiment %>%
@@ -1169,15 +959,15 @@ experiment %>%
   mutate(type = ifelse(type == "polynomial", "non-linearity", type)) %>%
   mutate(type = ifelse(type == "non-linearity", "Non-linearity", "Heteroskedasticity")) %>%
   mutate(type = factor(type, levels = c("Non-linearity", "Heteroskedasticity"))) %>%
-  mutate(model_reject = ifelse(model_reject, "Reject", "No")) %>%
+  mutate(model_reject_20 = ifelse(model_reject_20, "Reject", "No")) %>%
   mutate(reject = ifelse(reject, "Reject", "No")) %>%
-  mutate(across(c(model_reject, reject), ~factor(.x, levels = c("Reject", "No")))) %>%
+  mutate(across(c(model_reject_20, reject), ~factor(.x, levels = c("Reject", "No")))) %>%
   ggplot() +
-  geom_mosaic(aes(x = ggmosaic::product(reject, model_reject), 
-                  fill = reject)) +
+  geom_mosaic(aes(x = ggmosaic::product(model_reject_20, reject), 
+                  fill = model_reject_20)) +
   facet_grid(~type) +
-  ylab("Visual tests reject") +
-  xlab("Computer vision model rejects") +
+  xlab("Visual tests reject") +
+  ylab("Computer vision model rejects") +
   # labs(fill = "Visual tests reject") +
   scale_fill_brewer("", palette = "Dark2") +
   theme_bw() +
@@ -1194,15 +984,15 @@ experiment %>%
   mutate(type = ifelse(type == "polynomial", "non-linearity", type)) %>%
   mutate(type = ifelse(type == "non-linearity", "Non-linearity", "Heteroskedasticity")) %>%
   mutate(type = factor(type, levels = c("Non-linearity", "Heteroskedasticity"))) %>%
-  mutate(model_reject = ifelse(model_reject, "Reject", "No")) %>%
+  mutate(model_reject_20 = ifelse(model_reject_20, "Reject", "No")) %>%
   mutate(conventional_reject = ifelse(conventional_reject, "Reject", "No")) %>%
-  mutate(across(c(model_reject, conventional_reject), ~factor(.x, levels = c("Reject", "No")))) %>%
+  mutate(across(c(model_reject_20, conventional_reject), ~factor(.x, levels = c("Reject", "No")))) %>%
   ggplot() +
-  geom_mosaic(aes(x = ggmosaic::product(conventional_reject, model_reject), 
+  geom_mosaic(aes(x = ggmosaic::product(conventional_reject, model_reject_20), 
                   fill = conventional_reject)) +
   facet_grid(~type) +
-  ylab("Conventional tests reject") +
   xlab("Computer vision model rejects") +
+  ylab("Conventional tests reject ") +
   # labs(fill = "Visual tests reject") +
   scale_fill_brewer("", palette = "Dark2") +
   theme_bw() +
@@ -1211,13 +1001,13 @@ experiment %>%
 ```
 
 
-```{r power, fig.pos = "!h", fig.cap = "Comparison of decisions made by visual tests, conventional tests and the computer vision model. The data points are fitted with logistic regression models with no intercept but an offset equals to $\\text{log}(0.05/0.95)$."}
+```{r power, fig.pos = "!h", fig.cap = "Comparison of power of visual tests, conventional tests and the computer vision model. Marks along the x-axis at the bottom of the plot represent rejections made by each type of test. Marks at the top of the plot represent acceptances. Power curves are fitted by logistic regression models with no intercept but an offset equals to $\\text{log}(0.05/0.95)$."}
 
 max_actual_ss <- max(filter(experiment, !attention_check, !null_lineup)$actual_ss)
 max_poly_ss <- max(filter(experiment, !attention_check, !null_lineup, type == "polynomial")$actual_ss)
 max_heter_ss <- max(filter(experiment, !attention_check, !null_lineup, type != "polynomial")$actual_ss)
 
-model_glm_pred_poly <- glm(model_reject ~ actual_ss - 1, 
+model_glm_pred_poly <- glm(model_reject_20 ~ actual_ss - 1, 
     data = filter(experiment, !attention_check, !null_lineup, type == "polynomial") %>% mutate(offset0 = log(0.05/0.95)), 
     offset = offset0,
     family = binomial()) %>%
@@ -1244,7 +1034,7 @@ conv_glm_pred_poly <- glm(conventional_reject ~ actual_ss - 1,
   data.frame(d = seq(0, max_poly_ss, 0.01), type = "Non-linearity", name = "Conventional test", value = .) %>%
   mutate(type = factor(type, levels = c("Non-linearity", "Heteroskedasticity")))
 
-model_glm_pred_heter <- glm(model_reject ~ actual_ss - 1, 
+model_glm_pred_heter <- glm(model_reject_20 ~ actual_ss - 1, 
     data = filter(experiment, !attention_check, !null_lineup, type != "polynomial") %>% mutate(offset0 = log(0.05/0.95)), 
     offset = offset0,
     family = binomial()) %>%
@@ -1274,12 +1064,146 @@ conv_glm_pred_heter <- glm(conventional_reject ~ actual_ss - 1,
 mutate(experiment, type = ifelse(type == "polynomial", "Non-linearity", "Heteroskedasticity")) %>%
   mutate(type = factor(type, levels = c("Non-linearity", "Heteroskedasticity"))) %>%
   filter(!null_lineup, !attention_check) %>%
-  pivot_longer(c(model_reject, reject, conventional_reject)) %>%
-  mutate(name = ifelse(name == "model_reject", "Computer vision model", name)) %>%
+ggplot() +
+  geom_line(data = model_glm_pred_poly, aes(d, value, col = "Computer vision model"), linewidth = 0.8) +
+  geom_line(data = model_glm_pred_heter, aes(d, value, col = "Computer vision model"), linewidth = 0.8) +
+  geom_line(data = visual_glm_pred_poly, aes(d, value, col = "Visual test"), linewidth = 0.8) +
+  geom_line(data = visual_glm_pred_heter, aes(d, value, col = "Visual test"), linewidth = 0.8) +
+  geom_line(data = conv_glm_pred_poly, aes(d, value, col = "Conventional test"), linewidth = 0.8) +
+  geom_line(data = conv_glm_pred_heter, aes(d, value, col = "Conventional test"), linewidth = 0.8) +
+  geom_segment(data = ~filter(.x, !reject), aes(x = actual_ss, xend = actual_ss, y = -0.1, yend = -0.1 + 0.03, col = "Visual test"), alpha = 0.4) +
+  geom_segment(data = ~filter(.x, reject), aes(x = actual_ss, xend = actual_ss, y = 1.1 - 0.03 * 2, yend = 1.1 - 0.03 * 3, col = "Visual test"), alpha = 0.4) +
+  geom_segment(data = ~filter(.x, !model_reject_20), aes(x = actual_ss, xend = actual_ss, y = -0.1 + 0.03, yend = -0.1 + 0.03 * 2, col = "Computer vision model"), alpha = 0.4) +
+  geom_segment(data = ~filter(.x, model_reject_20), aes(x = actual_ss, xend = actual_ss, y = 1.1 - 0.03, yend = 1.1 - 0.03 * 2, col = "Computer vision model"), alpha = 0.4) +
+  geom_segment(data = ~filter(.x, !conventional_reject), aes(x = actual_ss, xend = actual_ss, y = -0.1 + 0.03 * 2, yend = -0.1 + 0.03 * 3, col = "Conventional test"), alpha = 0.4) +
+  geom_segment(data = ~filter(.x, conventional_reject), aes(x = actual_ss, xend = actual_ss, y = 1.1, yend = 1.1 - 0.03, col = "Conventional test"), alpha = 0.4) +
+  facet_grid(~type, scales = "free_x") +
+  theme_light() +
+  scale_color_brewer("", palette = "Dark2") +
+  theme(legend.position = "bottom") +
+  xlab("D") +
+  ylab("Reject")
+```
+
+```{r pcp, fig.cap = "Parallel coordinate plots of decisions made by computer vision model, conventional tests and visual tests made by human.", eval = TRUE}
+library(ggpcp)
+mutate(experiment, type = ifelse(type == "polynomial", "Non-linearity", "Heteroskedasticity")) %>%
+  mutate(type = factor(type, levels = c("Non-linearity", "Heteroskedasticity"))) %>%
+  filter(!null_lineup, !attention_check) %>%
+  select(type, actual_ss, model_reject_20, reject, conventional_reject) %>%
+  mutate(test = rnorm(n())) %>%
+  mutate(across(c(model_reject_20, conventional_reject, reject), ~ifelse(.x, "Reject", "Not reject"))) %>%
+  mutate(agree = model_reject_20 == reject) %>%
+  pcp_select(c(reject, model_reject_20, conventional_reject)) %>%
+  group_by(type) %>%
+  pcp_scale() %>%
+  ungroup() %>%
+  pcp_arrange(method = "from-right") %>%
+  ggplot() +
+  geom_pcp(aes_pcp(), linewidth = 0.1) +
+  geom_pcp_labels(aes_pcp()) +
+  geom_pcp_boxes(aes_pcp(), boxwidth = 0.1) +
+  facet_wrap(~type) +
+  theme_light() +
+  scale_x_discrete(labels = c("Visual test", "Computer vision model", "Conventional test")) +
+  labs(col = "D") +
+  ylab("") +
+  xlab("") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), 
+        axis.text.y = element_blank(), 
+        axis.ticks.y = element_blank(), 
+        axis.title = element_blank())
+```
+
+```{r results = "hide"}
+library(VennDiagram)
+mutate(experiment, type = ifelse(type == "polynomial", "Non-linearity", "Heteroskedasticity")) %>%
+  filter(type == "Non-linearity") %>%
+  filter(!null_lineup, !attention_check) %>%
+  select(unique_lineup_id, type, actual_ss, model_reject_20, reject, conventional_reject) %>%
+  mutate(across(c(model_reject_20, conventional_reject, reject), ~ifelse(.x, "Reject", "Not reject"))) %>%
+  pivot_longer(c(model_reject_20, reject, conventional_reject)) %>%
+  group_by(name) %>%
+  summarise(ids = list(unique_lineup_id[value != "Reject"])) %>%
+  pull(ids) %>%
+  venn.diagram(
+    category.names = c("Conventional test" , "Computer vision model" , "Visual tests"),
+    filename = here::here('paper/diagram/poly_venn_diagramm.png'),
+    disable.logging = TRUE,
+    lwd = 1,
+    col = RColorBrewer::brewer.pal(3, "Dark2"),
+    fill = alpha(RColorBrewer::brewer.pal(3, "Dark2"), 0.3),
+    cex = 0.5,
+    fontfamily = "sans",
+    cat.cex = 0.5,
+    cat.default.pos = "outer",
+    cat.fontfamily = "sans",
+    cat.pos = c(330, 30, 180),
+    cat.dist = c(0, 0, 0.03),
+    cat.col = RColorBrewer::brewer.pal(3, "Dark2"),
+    height = 800,
+    width = 800,
+    resolution = 300,
+    main.fontfamily = "sans",
+    main.cex = 0.6,
+    main = "Non-linearity",
+    main.pos = c(0.25, 1.1)
+  )
+
+mutate(experiment, type = ifelse(type == "polynomial", "Non-linearity", "Heteroskedasticity")) %>%
+  filter(type != "Non-linearity") %>%
+  filter(!null_lineup, !attention_check) %>%
+  select(unique_lineup_id, type, actual_ss, model_reject_20, reject, conventional_reject) %>%
+  mutate(across(c(model_reject_20, conventional_reject, reject), ~ifelse(.x, "Reject", "Not reject"))) %>%
+  pivot_longer(c(model_reject_20, reject, conventional_reject)) %>%
+  group_by(name) %>%
+  summarise(ids = list(unique_lineup_id[value != "Reject"])) %>%
+  pull(ids) %>%
+  venn.diagram(
+    category.names = c("Conventional test" , "Computer vision model" , "Visual tests"),
+    filename = here::here('paper/diagram/heter_venn_diagramm.png'),
+    disable.logging = TRUE,
+    lwd = 1,
+    col = RColorBrewer::brewer.pal(3, "Dark2"),
+    fill = alpha(RColorBrewer::brewer.pal(3, "Dark2"), 0.3),
+    cex = 0.5,
+    fontfamily = "sans",
+    cat.cex = 0.5,
+    cat.default.pos = "outer",
+    cat.fontfamily = "sans",
+    cat.pos = c(330, 30, 180),
+    cat.dist = c(0, 0, 0.03),
+    cat.col = RColorBrewer::brewer.pal(3, "Dark2"),
+    height = 800,
+    width = 800,
+    resolution = 300,
+    main.fontfamily = "sans",
+    main.cex = 0.6,
+    main = "Heteroskedasticity",
+    main.pos = c(0.25, 1.1)
+  )
+```
+
+
+```{r venn, fig.pos = "!h", fig.cap = "Venn diagram for non-rejection decisions made by conventional tests, computer vision model, and visual tests conducted by human."}
+poly_venn <- magick::image_read(here::here("paper/diagram/poly_venn_diagramm.png")) %>%
+  magick::image_ggplot()
+heter_venn <- magick::image_read(here::here("paper/diagram/heter_venn_diagramm.png")) %>%
+  magick::image_ggplot()
+patchwork::wrap_plots(poly_venn, heter_venn, ncol = 2)
+```
+
+
+```{r eval = FALSE}
+mutate(experiment, type = ifelse(type == "polynomial", "Non-linearity", "Heteroskedasticity")) %>%
+  mutate(type = factor(type, levels = c("Non-linearity", "Heteroskedasticity"))) %>%
+  filter(!null_lineup, !attention_check) %>%
+  pivot_longer(c(model_reject_20, reject, conventional_reject)) %>%
+  mutate(name = ifelse(name == "model_reject_20", "Computer vision model", name)) %>%
   mutate(name = ifelse(name == "reject", "Visual test", name)) %>%
   mutate(name = ifelse(name == "conventional_reject", "Conventional test", name)) %>%
   ggplot() +
-  ggbeeswarm::geom_quasirandom(aes(actual_ss, value), size = 0.5, alpha = 0.4) +
+  ggbeeswarm::geom_quasirandom(aes(actual_ss, value, col = name), size = 0.5, alpha = 0.4) +
   geom_line(data = model_glm_pred_poly, aes(d, value + 1, col = "Computer vision model"), linewidth = 0.8) +
   geom_line(data = model_glm_pred_heter, aes(d, value + 1, col = "Computer vision model"), linewidth = 0.8) +
   geom_line(data = visual_glm_pred_poly, aes(d, value + 1, col = "Visual test"), linewidth = 0.8) +
@@ -1483,6 +1407,68 @@ result %>%
                        theme = theme_light())
 ```
 
+```{r eval = FALSE}
+plot_path <- my_vi$plot_resid() %>%
+  my_vi$save_plot()
+input_auxiliary <- my_vi$auxiliary()
+
+
+reticulate::py$get_raw_gradient(keras_mod = keras_mod, 
+                                plot_path = plot_path, 
+                                target_size = c(32L, 32L), 
+                                input_auxiliary = input_auxiliary) -> raw_g
+
+reticulate::py$get_smooth_gradient(keras_mod = keras_mod, 
+                                   plot_path = plot_path, 
+                                   target_size = c(32L, 32L), 
+                                   input_auxiliary = input_auxiliary,
+                                   noise_level = 0.45,
+                                   n = 200L) -> smooth_g
+
+x_range <- ggplot2::ggplot_build(my_vi$plot_resid())$layout$panel_params[[1]]$x.range
+y_range <- ggplot2::ggplot_build(my_vi$plot_resid())$layout$panel_params[[1]]$y.range
+
+raw_att_map <- raw_g[[1]] |> 
+  as.data.frame() |>
+  dplyr::mutate(row = rev(1:32)) |>
+  tidyr::pivot_longer(V1:V32, names_to = "column", values_to = "gradient") |>
+  dplyr::mutate(column = as.integer(gsub("V", "", column))) |>
+  dplyr::mutate(column = x_range[1] + column * (x_range[2] - x_range[1])/(32 - 1)) |>
+  dplyr::mutate(row = y_range[1] + row * (y_range[2] - y_range[1])/(32 - 1))
+
+
+my_vi$plot_resid() +
+  ggplot() +
+  ggplot2::geom_raster(data = raw_att_map, ggplot2::aes(column, row, fill = gradient), alpha = 0.7) +
+  scale_fill_gradient(low = "black", high = "white") +
+  # viridis::scale_fill_viridis(option = "D") +
+  ggplot2::theme_void() +
+  ggplot2::ggtitle(paste0(gsub("measure_", "", names(input_auxiliary)), ": ", format(raw_g[[2]], digits = 2), 
+                          collapse = ", ")) -> p1
+
+
+smooth_att_map <- smooth_g[[1]] |> 
+  as.data.frame() |>
+  dplyr::mutate(row = rev(1:32)) |>
+  tidyr::pivot_longer(V1:V32, names_to = "column", values_to = "gradient") |>
+  dplyr::mutate(column = as.integer(gsub("V", "", column))) |>
+  dplyr::mutate(column = x_range[1] + column * (x_range[2] - x_range[1])/(32 - 1)) |>
+  dplyr::mutate(row = y_range[1] + row * (y_range[2] - y_range[1])/(32 - 1))
+
+scale_zero_one <- function(x) (x - min(x))/(max(x) - min(x))
+
+# my_vi$plot_resid() +
+  ggplot() +
+  ggplot2::geom_raster(data = mutate(smooth_att_map, gradient = scale_zero_one(gradient)), ggplot2::aes(column, row, fill = gradient), alpha = 0.7) +
+  scale_fill_gradient(low = "black", high = "white") +
+  # viridis::scale_fill_viridis(option = "D") +
+  ggplot2::theme_void() +
+  ggplot2::ggtitle(paste0(gsub("measure_", "", names(input_auxiliary)), ": ", format(raw_g[[2]], digits = 2), 
+                          collapse = ", ")) -> p2
+
+p1 + p2
+```
+
 
 ### Datasaurus
 
@@ -1588,3 +1574,49 @@ Our method holds significant value as it helps alleviate a portion of analysts' 
 
 - Packages used
 - Website link
+
+
+```{r eval = FALSE}
+
+# This shows that even if the model can 100% accurately predict the distance for not null plots, 
+# the statistical tests based on approximated distance will still reject more cases than visual tests
+# So it has very little to do with the accuracy of the prediction
+experiment %>%
+  filter(!null_lineup) %>%
+  filter(!attention_check) %>%
+  mutate(model_reject_true = actual_ss > vss_null_95) %>%
+  filter(model_reject_true != reject) %>%
+  ggplot() +
+  ggbeeswarm::geom_quasirandom(aes(actual_ss, reject)) +
+  ggtitle("Unmatched cases") +
+  ylab("Visual tests reject") +
+  xlab("D")
+```
+
+```{r eval = FALSE}
+
+map_dbl(10^seq(-10, 0, 0.01), function(crt) {
+  experiment %>%
+    filter(!null_lineup) %>%
+    filter(!attention_check) %>%
+    mutate(mvi = vss - log(n) + 10) %>%
+    mutate(actual_ss_cut = conventional_p_value <= crt) %>%
+    mutate(agree = actual_ss_cut == reject) %>%
+    pull(agree) %>%
+    mean()
+}) %>%
+  max()
+
+experiment %>%
+  filter(!null_lineup) %>%
+  filter(!attention_check) %>%
+  mutate(mvi = vss - log(n) + 10) %>%
+  ggplot() +
+  ggbeeswarm::geom_quasirandom(aes(vss, reject)) +
+  ggtitle("Unmatched cases") +
+  ylab("Visual tests reject") +
+  xlab("D")
+  mutate(model_reject_true = actual_ss > vss_null_95) %>%
+  filter(model_reject_true != reject)
+```
+

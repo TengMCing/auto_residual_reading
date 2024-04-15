@@ -5,225 +5,135 @@
 \providecommand{\urlprefix}{}
 
 \bibitem[Abadi et~al.(2016)]{abadi2016tensorflow}
-Abadi, Mart{\'\i}n, Ashish Agarwal, Paul Barham, Eugene Brevdo, Zhifeng Chen,
-  Craig Citro, Greg~S Corrado, et~al. 2016. ``Tensorflow: Large-scale machine
-  learning on heterogeneous distributed systems.'' \emph{arXiv preprint
-  arXiv:1603.04467} .
+Abadi, Mart{\'\i}n, Ashish Agarwal, Paul Barham, Eugene Brevdo, Zhifeng Chen, Craig Citro, Greg~S Corrado, et~al. 2016. ``Tensorflow: Large-scale machine learning on heterogeneous distributed systems.'' \emph{arXiv preprint arXiv:1603.04467} .
 
 \bibitem[Belsley, Kuh, and Welsch(1980)]{belsley1980regression}
-Belsley, David~A, Edwin Kuh, and Roy~E Welsch. 1980. \emph{Regression
-  diagnostics: Identifying influential data and sources of collinearity}. John
-  Wiley \& Sons.
+Belsley, David~A, Edwin Kuh, and Roy~E Welsch. 1980. \emph{Regression diagnostics: Identifying influential data and sources of collinearity}. John Wiley \& Sons.
 
 \bibitem[Breusch and Pagan(1979)]{breusch1979simple}
-Breusch, Trevor~S, and Adrian~R Pagan. 1979. ``A simple test for
-  heteroscedasticity and random coefficient variation.'' \emph{Econometrica:
-  Journal of the Econometric Society} 1287--1294.
+Breusch, Trevor~S, and Adrian~R Pagan. 1979. ``A simple test for heteroscedasticity and random coefficient variation.'' \emph{Econometrica: Journal of the Econometric Society} 1287--1294.
 
 \bibitem[Brunetti et~al.(2018)]{brunetti2018computer}
-Brunetti, Antonio, Domenico Buongiorno, Gianpaolo~Francesco Trotta, and
-  Vitoantonio Bevilacqua. 2018. ``Computer vision and deep learning techniques
-  for pedestrian detection and tracking: A survey.'' \emph{Neurocomputing} 300:
-  17--33.
+Brunetti, Antonio, Domenico Buongiorno, Gianpaolo~Francesco Trotta, and Vitoantonio Bevilacqua. 2018. ``Computer vision and deep learning techniques for pedestrian detection and tracking: A survey.'' \emph{Neurocomputing} 300: 17--33.
 
 \bibitem[Buja et~al.(2009)]{buja2009statistical}
-Buja, Andreas, Dianne Cook, Heike Hofmann, Michael Lawrence, Eun-Kyung Lee,
-  Deborah~F Swayne, and Hadley Wickham. 2009. ``Statistical inference for
-  exploratory data analysis and model diagnostics.'' \emph{Philosophical
-  Transactions of the Royal Society A: Mathematical, Physical and Engineering
-  Sciences} 367 (1906): 4361--4383.
+Buja, Andreas, Dianne Cook, Heike Hofmann, Michael Lawrence, Eun-Kyung Lee, Deborah~F Swayne, and Hadley Wickham. 2009. ``Statistical inference for exploratory data analysis and model diagnostics.'' \emph{Philosophical Transactions of the Royal Society A: Mathematical, Physical and Engineering Sciences} 367 (1906): 4361--4383.
 
 \bibitem[Chen, Su, and Yang(2020)]{chen2020convolutional}
-Chen, Yun, Shijie Su, and Hui Yang. 2020. ``Convolutional neural network
-  analysis of recurrence plots for anomaly detection.'' \emph{International
-  Journal of Bifurcation and Chaos} 30 (01): 2050002.
+Chen, Yun, Shijie Su, and Hui Yang. 2020. ``Convolutional neural network analysis of recurrence plots for anomaly detection.'' \emph{International Journal of Bifurcation and Chaos} 30 (01): 2050002.
 
 \bibitem[Chopra, Hadsell, and LeCun(2005)]{chopra2005learning}
-Chopra, Sumit, Raia Hadsell, and Yann LeCun. 2005. ``Learning a similarity
-  metric discriminatively, with application to face verification.'' In
-  \emph{2005 IEEE computer society conference on computer vision and pattern
-  recognition (CVPR'05)}, Vol.~1, 539--546. IEEE.
+Chopra, Sumit, Raia Hadsell, and Yann LeCun. 2005. ``Learning a similarity metric discriminatively, with application to face verification.'' In \emph{2005 IEEE computer society conference on computer vision and pattern recognition (CVPR'05)}, Vol.~1, 539--546. IEEE.
 
 \bibitem[Chowdhury et~al.(2018)]{chowdhury2018measuring}
-Chowdhury, Niladri~Roy, Dianne Cook, Heike Hofmann, and Mahbubul Majumder.
-  2018. ``Measuring lineup difficulty by matching distance metrics with subject
-  choices in crowd-sourced data.'' \emph{Journal of Computational and Graphical
-  Statistics} 27 (1): 132--145.
+Chowdhury, Niladri~Roy, Dianne Cook, Heike Hofmann, and Mahbubul Majumder. 2018. ``Measuring lineup difficulty by matching distance metrics with subject choices in crowd-sourced data.'' \emph{Journal of Computational and Graphical Statistics} 27 (1): 132--145.
 
 \bibitem[Chu et~al.(2019)]{chu2019automatic}
-Chu, Hongyang, Xinwei Liao, Peng Dong, Zhiming Chen, Xiaoliang Zhao, and
-  Jiandong Zou. 2019. ``An automatic classification method of well testing plot
-  based on convolutional neural network (CNN).'' \emph{Energies} 12 (15): 2846.
+Chu, Hongyang, Xinwei Liao, Peng Dong, Zhiming Chen, Xiaoliang Zhao, and Jiandong Zou. 2019. ``An automatic classification method of well testing plot based on convolutional neural network (CNN).'' \emph{Energies} 12 (15): 2846.
 
 \bibitem[Cook and Weisberg(1982)]{cook1982residuals}
-Cook, R~Dennis, and Sanford Weisberg. 1982. \emph{Residuals and influence in
-  regression}. New York: Chapman and Hall.
+Cook, R~Dennis, and Sanford Weisberg. 1982. \emph{Residuals and influence in regression}. New York: Chapman and Hall.
 
 \bibitem[Emami and Suciu(2012)]{emami2012facial}
-Emami, Shervin, and Valentin~Petrut Suciu. 2012. ``Facial recognition using
-  OpenCV.'' \emph{Journal of Mobile, Embedded and Distributed Systems} 4 (1):
-  38--43.
+Emami, Shervin, and Valentin~Petrut Suciu. 2012. ``Facial recognition using OpenCV.'' \emph{Journal of Mobile, Embedded and Distributed Systems} 4 (1): 38--43.
 
 \bibitem[Frisch and Waugh(1933)]{frisch1933partial}
-Frisch, Ragnar, and Frederick~V Waugh. 1933. ``Partial time regressions as
-  compared with individual trends.'' \emph{Econometrica: Journal of the
-  Econometric Society} 387--401.
+Frisch, Ragnar, and Frederick~V Waugh. 1933. ``Partial time regressions as compared with individual trends.'' \emph{Econometrica: Journal of the Econometric Society} 387--401.
 
 \bibitem[Fukushima and Miyake(1982)]{fukushima1982neocognitron}
-Fukushima, Kunihiko, and Sei Miyake. 1982. ``Neocognitron: A new algorithm for
-  pattern recognition tolerant of deformations and shifts in position.''
-  \emph{Pattern recognition} 15 (6): 455--469.
+Fukushima, Kunihiko, and Sei Miyake. 1982. ``Neocognitron: A new algorithm for pattern recognition tolerant of deformations and shifts in position.'' \emph{Pattern recognition} 15 (6): 455--469.
 
 \bibitem[Gebhardt, Bivand, and Sinclair(2023)]{Albrecht2023interp}
-Gebhardt, Albrecht, Roger Bivand, and David Sinclair. 2023. \emph{interp:
-  Interpolation Methods}. R package version 1.1-5,
-  \urlprefix\url{https://CRAN.R-project.org/package=interp}.
+Gebhardt, Albrecht, Roger Bivand, and David Sinclair. 2023. \emph{interp: Interpolation Methods}. R package version 1.1-5,  \urlprefix\url{https://CRAN.R-project.org/package=interp}.
 
 \bibitem[Hailesilassie(2019)]{hailesilassie2019financial}
-Hailesilassie, Tameru. 2019. ``Financial Market Prediction Using Recurrence
-  Plot and Convolutional Neural Network.''  .
+Hailesilassie, Tameru. 2019. ``Financial Market Prediction Using Recurrence Plot and Convolutional Neural Network.''  .
 
 \bibitem[Harrison~Jr and Rubinfeld(1978)]{harrison1978hedonic}
-Harrison~Jr, David, and Daniel~L Rubinfeld. 1978. ``Hedonic housing prices and
-  the demand for clean air.'' \emph{Journal of environmental economics and
-  management} 5 (1): 81--102.
+Harrison~Jr, David, and Daniel~L Rubinfeld. 1978. ``Hedonic housing prices and the demand for clean air.'' \emph{Journal of environmental economics and management} 5 (1): 81--102.
 
 \bibitem[Hastie(2017)]{hastie2017generalized}
-Hastie, Trevor~J. 2017. ``Generalized additive models.'' In \emph{Statistical
-  models in S}, 249--307. Routledge.
+Hastie, Trevor~J. 2017. ``Generalized additive models.'' In \emph{Statistical models in S}, 249--307. Routledge.
 
 \bibitem[Hatami, Gavet, and Debayle(2018)]{hatami2018classification}
-Hatami, Nima, Yann Gavet, and Johan Debayle. 2018. ``Classification of
-  time-series images using deep convolutional neural networks.'' In \emph{Tenth
-  international conference on machine vision (ICMV 2017)}, Vol. 10696,
-  242--249. SPIE.
+Hatami, Nima, Yann Gavet, and Johan Debayle. 2018. ``Classification of time-series images using deep convolutional neural networks.'' In \emph{Tenth international conference on machine vision (ICMV 2017)}, Vol. 10696, 242--249. SPIE.
 
 \bibitem[Hermite(1864)]{hermite1864nouveau}
-Hermite, M. 1864. \emph{Sur un nouveau d{\'e}veloppement en s{\'e}rie des
-  fonctions}. Imprimerie de Gauthier-Villars.
+Hermite, M. 1864. \emph{Sur un nouveau d{\'e}veloppement en s{\'e}rie des fonctions}. Imprimerie de Gauthier-Villars.
 
 \bibitem[Hyndman and Fan(1996)]{hyndman1996sample}
-Hyndman, Rob~J, and Yanan Fan. 1996. ``Sample quantiles in statistical
-  packages.'' \emph{The American Statistician} 50 (4): 361--365.
+Hyndman, Rob~J, and Yanan Fan. 1996. ``Sample quantiles in statistical packages.'' \emph{The American Statistician} 50 (4): 361--365.
 
 \bibitem[Krishnan and Hofmann(2021)]{krishnan2021hierarchical}
-Krishnan, Ganesh, and Heike Hofmann. 2021. ``Hierarchical Decision Ensembles-An
-  inferential framework for uncertain Human-AI collaboration in forensic
-  examinations.'' \emph{arXiv preprint arXiv:2111.01131} .
+Krishnan, Ganesh, and Heike Hofmann. 2021. ``Hierarchical Decision Ensembles-An inferential framework for uncertain Human-AI collaboration in forensic examinations.'' \emph{arXiv preprint arXiv:2111.01131} .
 
 \bibitem[Kullback and Leibler(1951)]{kullback1951information}
-Kullback, Solomon, and Richard~A Leibler. 1951. ``On information and
-  sufficiency.'' \emph{The Annals of Mathematical Statistics} 22 (1): 79--86.
+Kullback, Solomon, and Richard~A Leibler. 1951. ``On information and sufficiency.'' \emph{The Annals of Mathematical Statistics} 22 (1): 79--86.
 
 \bibitem[Langsrud(2005)]{langsrud2005rotation}
-Langsrud, {\O}yvind. 2005. ``Rotation tests.'' \emph{Statistics and computing}
-  15: 53--60.
+Langsrud, {\O}yvind. 2005. ``Rotation tests.'' \emph{Statistics and computing} 15: 53--60.
 
 \bibitem[Lee and Chen(2015)]{lee2015image}
-Lee, Howard, and Yi-Ping~Phoebe Chen. 2015. ``Image based computer aided
-  diagnosis system for cancer detection.'' \emph{Expert Systems with
-  Applications} 42 (12): 5356--5365.
+Lee, Howard, and Yi-Ping~Phoebe Chen. 2015. ``Image based computer aided diagnosis system for cancer detection.'' \emph{Expert Systems with Applications} 42 (12): 5356--5365.
 
 \bibitem[Li et~al.(2023)]{li2023plot}
-Li, Weihao, Dianne Cook, Emi Tanaka, and Susan VanderPlas. 2023. ``A Plot is
-  Worth a Thousand Tests: Assessing Residual Diagnostics with the Lineup
-  Protocol.'' \emph{arXiv preprint arXiv:2308.05964} .
+Li, Weihao, Dianne Cook, Emi Tanaka, and Susan VanderPlas. 2023. ``A Plot is Worth a Thousand Tests: Assessing Residual Diagnostics with the Lineup Protocol.'' \emph{arXiv preprint arXiv:2308.05964} .
 
 \bibitem[Loy and Hofmann(2013)]{loy2013diagnostic}
-Loy, Adam, and Heike Hofmann. 2013. ``Diagnostic tools for hierarchical linear
-  models.'' \emph{Wiley Interdisciplinary Reviews: Computational Statistics} 5
-  (1): 48--61.
+Loy, Adam, and Heike Hofmann. 2013. ``Diagnostic tools for hierarchical linear models.'' \emph{Wiley Interdisciplinary Reviews: Computational Statistics} 5 (1): 48--61.
 
 \bibitem[Loy and Hofmann(2014)]{loy2014hlmdiag}
-Loy, Adam, and Heike Hofmann. 2014. ``HLMdiag: A suite of diagnostics for
-  hierarchical linear models in R.'' \emph{Journal of Statistical Software} 56:
-  1--28.
+Loy, Adam, and Heike Hofmann. 2014. ``HLMdiag: A suite of diagnostics for hierarchical linear models in R.'' \emph{Journal of Statistical Software} 56: 1--28.
 
 \bibitem[Loy and Hofmann(2015)]{loy2015you}
-Loy, Adam, and Heike Hofmann. 2015. ``Are you normal? The problem of confounded
-  residual structures in hierarchical linear models.'' \emph{Journal of
-  Computational and Graphical Statistics} 24 (4): 1191--1209.
+Loy, Adam, and Heike Hofmann. 2015. ``Are you normal? The problem of confounded residual structures in hierarchical linear models.'' \emph{Journal of Computational and Graphical Statistics} 24 (4): 1191--1209.
 
 \bibitem[Mason et~al.(2022)]{mason2022cassowaryr}
-Mason, Harriet, Stuart Lee, Ursula Laa, and Dianne Cook. 2022.
-  \emph{cassowaryr: Compute Scagnostics on Pairs of Numeric Variables in a Data
-  Set}. R package version 2.0.0,
-  \urlprefix\url{https://CRAN.R-project.org/package=cassowary}.
+Mason, Harriet, Stuart Lee, Ursula Laa, and Dianne Cook. 2022. \emph{cassowaryr: Compute Scagnostics on Pairs of Numeric Variables in a Data Set}. R package version 2.0.0,  \urlprefix\url{https://CRAN.R-project.org/package=cassowary}.
 
 \bibitem[Ojeda, Solano, and Peramo(2020)]{ojeda2020multivariate}
-Ojeda, Sun Arthur~A, Geoffrey~A Solano, and Elmer~C Peramo. 2020.
-  ``Multivariate time series imaging for short-term precipitation forecasting
-  using convolutional neural networks.'' In \emph{2020 International Conference
-  on Artificial Intelligence in Information and Communication (ICAIIC)},
-  33--38. IEEE.
+Ojeda, Sun Arthur~A, Geoffrey~A Solano, and Elmer~C Peramo. 2020. ``Multivariate time series imaging for short-term precipitation forecasting using convolutional neural networks.'' In \emph{2020 International Conference on Artificial Intelligence in Information and Communication (ICAIIC)}, 33--38. IEEE.
 
 \bibitem[O'Malley et~al.(2019)]{omalley2019kerastuner}
-O'Malley, Tom, Elie Bursztein, James Long, Fran\c{c}ois Chollet, Haifeng Jin,
-  Luca Invernizzi, et~al. 2019. ``Keras {Tuner}.''
-  \url{https://github.com/keras-team/keras-tuner}.
+O'Malley, Tom, Elie Bursztein, James Long, Fran\c{c}ois Chollet, Haifeng Jin, Luca Invernizzi, et~al. 2019. ``Keras {Tuner}.'' \url{https://github.com/keras-team/keras-tuner}.
 
 \bibitem[Ramsey(1969)]{ramsey1969tests}
-Ramsey, James~Bernard. 1969. ``Tests for specification errors in classical
-  linear least-squares regression analysis.'' \emph{Journal of the Royal
-  Statistical Society: Series B (Methodological)} 31 (2): 350--371.
+Ramsey, James~Bernard. 1969. ``Tests for specification errors in classical linear least-squares regression analysis.'' \emph{Journal of the Royal Statistical Society: Series B (Methodological)} 31 (2): 350--371.
 
 \bibitem[Rawat and Wang(2017)]{rawat2017deep}
-Rawat, Waseem, and Zenghui Wang. 2017. ``Deep convolutional neural networks for
-  image classification: A comprehensive review.'' \emph{Neural computation} 29
-  (9): 2352--2449.
+Rawat, Waseem, and Zenghui Wang. 2017. ``Deep convolutional neural networks for image classification: A comprehensive review.'' \emph{Neural computation} 29 (9): 2352--2449.
 
 \bibitem[Shapiro and Wilk(1965)]{shapiro1965analysis}
-Shapiro, Samuel~Sanford, and Martin~B Wilk. 1965. ``An analysis of variance
-  test for normality (complete samples).'' \emph{Biometrika} 52 (3/4):
-  591--611.
+Shapiro, Samuel~Sanford, and Martin~B Wilk. 1965. ``An analysis of variance test for normality (complete samples).'' \emph{Biometrika} 52 (3/4): 591--611.
 
 \bibitem[Silverman(2018)]{silverman2018density}
-Silverman, Bernard~W. 2018. \emph{Density estimation for statistics and data
-  analysis}. Routledge.
+Silverman, Bernard~W. 2018. \emph{Density estimation for statistics and data analysis}. Routledge.
 
 \bibitem[Simonyan and Zisserman(2014)]{simonyan2014very}
-Simonyan, Karen, and Andrew Zisserman. 2014. ``Very deep convolutional networks
-  for large-scale image recognition.'' \emph{arXiv preprint arXiv:1409.1556} .
+Simonyan, Karen, and Andrew Zisserman. 2014. ``Very deep convolutional networks for large-scale image recognition.'' \emph{arXiv preprint arXiv:1409.1556} .
 
 \bibitem[Singh et~al.(2017)]{singh2017deep}
-Singh, Karamjit, Garima Gupta, Lovekesh Vig, Gautam Shroff, and Puneet Agarwal.
-  2017. ``Deep convolutional neural networks for pairwise causality.''
-  \emph{arXiv preprint arXiv:1701.00597} .
+Singh, Karamjit, Garima Gupta, Lovekesh Vig, Gautam Shroff, and Puneet Agarwal. 2017. ``Deep convolutional neural networks for pairwise causality.'' \emph{arXiv preprint arXiv:1701.00597} .
 
 \bibitem[Therneau and Atkinson(2022)]{Terry2022rpart}
-Therneau, Terry, and Beth Atkinson. 2022. \emph{rpart: Recursive Partitioning
-  and Regression Trees}. R package version 4.1.19,
-  \urlprefix\url{https://CRAN.R-project.org/package=rpart}.
+Therneau, Terry, and Beth Atkinson. 2022. \emph{rpart: Recursive Partitioning and Regression Trees}. R package version 4.1.19,  \urlprefix\url{https://CRAN.R-project.org/package=rpart}.
 
 \bibitem[Tukey and Tukey(1985)]{tukey1985computer}
-Tukey, John~W, and Paul~A Tukey. 1985. ``Computer graphics and exploratory data
-  analysis: An introduction.'' In \emph{Proceedings of the sixth annual
-  conference and exposition: computer graphics}, Vol.~85, 773--785.
+Tukey, John~W, and Paul~A Tukey. 1985. ``Computer graphics and exploratory data analysis: An introduction.'' In \emph{Proceedings of the sixth annual conference and exposition: computer graphics}, Vol.~85, 773--785.
 
 \bibitem[Vo and Hays(2016)]{vo2016localizing}
-Vo, Nam~N, and James Hays. 2016. ``Localizing and orienting street views using
-  overhead imagery.'' In \emph{Computer Vision--ECCV 2016: 14th European
-  Conference, Amsterdam, The Netherlands, October 11--14, 2016, Proceedings,
-  Part I 14}, 494--509. Springer.
+Vo, Nam~N, and James Hays. 2016. ``Localizing and orienting street views using overhead imagery.'' In \emph{Computer Vision--ECCV 2016: 14th European Conference, Amsterdam, The Netherlands, October 11--14, 2016, Proceedings, Part I 14}, 494--509. Springer.
 
 \bibitem[Wang et~al.(2004)]{wang2004image}
-Wang, Zhou, Alan~C Bovik, Hamid~R Sheikh, and Eero~P Simoncelli. 2004. ``Image
-  quality assessment: from error visibility to structural similarity.''
-  \emph{IEEE transactions on image processing} 13 (4): 600--612.
+Wang, Zhou, Alan~C Bovik, Hamid~R Sheikh, and Eero~P Simoncelli. 2004. ``Image quality assessment: from error visibility to structural similarity.'' \emph{IEEE transactions on image processing} 13 (4): 600--612.
 
 \bibitem[Widen et~al.(2016)]{widen2016graphical}
-Widen, Holly~M, James~B Elsner, Stephanie Pau, and Christopher~K Uejio. 2016.
-  ``Graphical inference in geographical research.'' \emph{Geographical
-  Analysis} 48 (2): 115--131.
+Widen, Holly~M, James~B Elsner, Stephanie Pau, and Christopher~K Uejio. 2016. ``Graphical inference in geographical research.'' \emph{Geographical Analysis} 48 (2): 115--131.
 
 \bibitem[Wilkinson, Anand, and Grossman(2005)]{wilkinson2005graph}
-Wilkinson, Leland, Anushka Anand, and Robert Grossman. 2005. ``Graph-theoretic
-  scagnostics.'' In \emph{Information Visualization, IEEE Symposium on},
-  21--21. IEEE Computer Society.
+Wilkinson, Leland, Anushka Anand, and Robert Grossman. 2005. ``Graph-theoretic scagnostics.'' In \emph{Information Visualization, IEEE Symposium on}, 21--21. IEEE Computer Society.
 
 \bibitem[Zhang et~al.(2020)]{zhang2020encoding}
-Zhang, Ye, Yi~Hou, Shilin Zhou, and Kewei Ouyang. 2020. ``Encoding time series
-  as multi-scale signed recurrence plots for classification using fully
-  convolutional networks.'' \emph{Sensors} 20 (14): 3818.
+Zhang, Ye, Yi~Hou, Shilin Zhou, and Kewei Ouyang. 2020. ``Encoding time series as multi-scale signed recurrence plots for classification using fully convolutional networks.'' \emph{Sensors} 20 (14): 3818.
 
 \end{thebibliography}

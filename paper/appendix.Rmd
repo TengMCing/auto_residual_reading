@@ -1,0 +1,70 @@
+---
+title: |
+  Appendix: Automated assessment of residual plots with computer vision models
+type: Draft paper (Incomplete)
+author:
+  - name: Weihao Li
+    affil: a
+    email: weihao.li@monash.edu
+  - name: Dianne Cook
+    affil: a
+    email: dicook@monash.edu
+  - name: Emi Tanaka
+    affil: b, c
+    email: emi.tanaka@anu.edu.au
+  - name: Susan VanderPlas
+    affil: d
+    email: susan.vanderplas@unl.edu
+  - name: Klaus Ackermann
+    affil: a
+    email: Klaus.Ackermann@monash.edu
+affiliation:
+  - num: a
+    address: |
+      Department of Econometrics and Business Statistics, Monash University, Clayton, VIC, Australia
+  - num: b
+    address: |
+      Biological Data Science Institute, Australian National University, Acton, ACT, Australia
+  - num: c
+    address: |
+      Research School of Finance, Actuarial Studies and Statistics, Australian National University, Acton, ACT, Australia
+  - num: d
+    address: |
+      Department of Statistics, University of Nebraska, Lincoln, Nebraska, USA
+bibliography: ref.bib
+abstract: |
+  TBD.
+keywords: |
+  TBD
+header-includes: |
+  \usepackage{lscape}
+  \usepackage{hyperref}
+  \usepackage[utf8]{inputenc}
+  \def\tightlist{}
+  \usepackage{setspace}
+  \doublespacing
+output: rticles::tf_article
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  message = FALSE, 
+  warning = FALSE, 
+  echo = FALSE,
+  fig.width = 8,
+  fig.height = 6,
+  out.width = "100%",
+  fig.align = "center")
+```
+
+# Additional details about data generation
+
+## Computation of scagnostics
+
+In Section \ref{introduction}, we mentioned that scagnostics consist of a set of manually designed visual feature extraction functions. While our computer vision model will learn its own feature extraction function during training, leveraging additional information from scagnostics can enhance the model's predictive accuracy.
+
+For each generated residual plot, we computed four scagnostics – "Monotonic," "Sparse," "Splines," and "Striped" – using the `cassowaryr` R package [@mason2022cassowaryr]. These computed measures, along with the number of observations from the fitted model, were provided as the second input for the computer vision model. Although other scagnostics are informative, they are currently unavailable due to a fatal bug in the compiled C program of the `interp` R package [@Albrecht2023interp], which may unpredictably crash the process. For reproducibility, we excluded these scagnostics from the training data.
+
+

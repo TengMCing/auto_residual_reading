@@ -37,13 +37,13 @@
 \newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
 \newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
 \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
 \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
 \newcommand{\BuiltInTok}[1]{#1}
 \newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
 \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
 \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
 \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
 \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
 \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
@@ -51,7 +51,7 @@
 \newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
 \newcommand{\ExtensionTok}[1]{#1}
 \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
-\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
 \newcommand{\ImportTok}[1]{#1}
 \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
 \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
@@ -60,7 +60,7 @@
 \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
 \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
 \newcommand{\RegionMarkerTok}[1]{#1}
-\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
 \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
 \newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
 \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
@@ -132,8 +132,7 @@ TBD.
 TBD
 \end{keywords}
 
-\hypertarget{introduction}{%
-\section{Introduction}\label{introduction}}
+\section{Introduction}\label{introduction}
 
 Plotting residuals is commonly regarded as a standard practice in linear
 regression diagnostics
@@ -246,20 +245,17 @@ paper is structured as follows: \ldots{}
 \caption{An example residual vs fitted values plot (red line indicates 0). The vertical spread of the data points varies with the fitted values. This often indicates the existence of heteroskedasticity. The Breusch-Pagan test rejects this residual plot at 95\% significance level ($p\text{-value} = 0.046$).}\label{fig:false-finding}
 \end{figure}
 
-\hypertarget{methodology}{%
-\section{Methodology}\label{methodology}}
+\section{Methodology}\label{methodology}
 
-\hypertarget{different-possible-configurations-of-the-model-formula}{%
 \subsection{Different possible configurations of the model
-formula}\label{different-possible-configurations-of-the-model-formula}}
+formula}\label{different-possible-configurations-of-the-model-formula}
 
 There are various configurations of the computer vision model that can
 be used to assess residual plots. We discuss these configurations below
 based on two key components of the model formula: the input and the
 output format.
 
-\hypertarget{input-formats}{%
-\subsubsection{Input formats}\label{input-formats}}
+\subsubsection{Input formats}\label{input-formats}
 
 Deep learning models are in general very sensitive to the input data.
 The quality and relevance of the input data greatly influence the
@@ -328,8 +324,7 @@ costs associated with data preparation and model training. Considering
 the implementation cost and the interpretability of the model, we
 settled on the single residual plot input format.
 
-\hypertarget{output-formats}{%
-\subsubsection{Output formats}\label{output-formats}}
+\subsubsection{Output formats}\label{output-formats}
 
 Given that the input is a single residual plot represented as a
 fixed-resolution image, the output from the computer vision model can
@@ -360,9 +355,8 @@ the difference between the residual plot and the null plots.
 distance between images can enhance the matching accuracy in image
 search compared to a binary outcome model.
 
-\hypertarget{distance-from-the-good-residual-plots}{%
 \subsection{Distance from the good residual
-plots}\label{distance-from-the-good-residual-plots}}
+plots}\label{distance-from-the-good-residual-plots}
 
 In a visual test, the observer will be asked to choose one or more plots
 that stand out as most distinct from others in a given lineup. To
@@ -380,8 +374,7 @@ Section \ref{introduction} could be used to construct distance metrics
 for residual plots comparison, but the functional form still needs to be
 carefully refined to accurately reflect the extent of the violations.
 
-\hypertarget{residual-distribution}{%
-\subsubsection{Residual distribution}\label{residual-distribution}}
+\subsubsection{Residual distribution}\label{residual-distribution}
 
 The distance measure proposed in this study takes into account the fact
 that we tried to measure how different a residual plot is from a good
@@ -438,9 +431,8 @@ will not be the same as \(\boldsymbol{R}\). Besides, if the
 multivariate log-normal distribution, \(P\) will usually be skewed and
 has a long tail.
 
-\hypertarget{kullback-leibler-divergence-of-p-from-q}{%
 \subsubsection{\texorpdfstring{Kullback-Leibler divergence of \(P\) from
-\(Q\)}{Kullback-Leibler divergence of P from Q}}\label{kullback-leibler-divergence-of-p-from-q}}
+\(Q\)}{Kullback-Leibler divergence of P from Q}}\label{kullback-leibler-divergence-of-p-from-q}
 
 Define a proper distance between distributions is usually easier than
 define a proper distance between data plots. Given the actual residual
@@ -490,10 +482,9 @@ assumed error variance \(\sigma^2\) is set to be
 \(\text{tr}(\boldsymbol{V})/n\), which is the expectation of the
 estimated variance.
 
-\hypertarget{evaluation-of-kullback-leibler-divergence-for-non-normal-p}{%
 \subsubsection{\texorpdfstring{Evaluation of Kullback-Leibler divergence
 for non-normal
-\(P\)}{Evaluation of Kullback-Leibler divergence for non-normal P}}\label{evaluation-of-kullback-leibler-divergence-for-non-normal-p}}
+\(P\)}{Evaluation of Kullback-Leibler divergence for non-normal P}}\label{evaluation-of-kullback-leibler-divergence-for-non-normal-p}
 
 For non-normal error \(\boldsymbol{\varepsilon}\), the actual residual
 distribution \(P\) is unlikely to be a multivariate normal distribution.
@@ -567,9 +558,8 @@ and \(vec(.)\) is the vectorization operator which turns a
 \(n \times m\) matrix into a \(nm \times 1\) column vector by stacking
 the columns of the matrix on top of each other.
 
-\hypertarget{approximation-of-the-distance-measure}{%
 \subsubsection{Approximation of the distance
-measure}\label{approximation-of-the-distance-measure}}
+measure}\label{approximation-of-the-distance-measure}
 
 In the previous sections, we have defined a distance measure given in
 equation \ref{eq:kl-0} for quantifying the difference between the actual
@@ -611,9 +601,8 @@ rest, especially for regression models with small \(n\). This suggests
 the error of the approximation will vary depends on whether the observed
 residual plot is representative or not.
 
-\hypertarget{approximated-distance-as-an-model-violations-index-mvi}{%
-\subsubsection{Approximated distance as an Model Violations Index
-(MVI)}\label{approximated-distance-as-an-model-violations-index-mvi}}
+\subsubsection{Model Violations Index
+(MVI)}\label{sec:model-violations-index}
 
 In Section \ref{output-formats}, we discuss the output formats of the
 computer vision model presented in this paper. One notable advantage
@@ -623,19 +612,6 @@ residual distribution and the reference residual distribution. This
 difference primarily arises from deviations in model assumptions. The
 magnitude of \(D\) directly reflects the degree of these deviations,
 thus making \(\hat{D}\) instrumental in forming a model violation index.
-
-Note that since the Kullback-Leibler divergence could be affected by the
-number of random variables involved in the evaluation. In general, more
-observations will result in greater distance \(D\). This does not mean
-\(\hat{D}\) can not correctly represent the extent of the model
-violations since more observations in a residual plot usually lead to
-stronger visual signal strength as the underlying visual patterns will
-have higher chance to be revealed except for cases like serious
-overlapping. For the same data generating process, \(D\) usually grows
-logarithmically as the number of observations increases. This is because
-\(D = \text{log}(1 + D_{KL})\), and
-\(D_{KL} = \sum_{i=1}^{n}D_{KL}^{(i)}\) under the independence
-assumption.
 
 Note that the Kullback-Leibler divergence might be influenced by the
 number of random variables involved in its evaluation. Generally, a
@@ -662,13 +638,10 @@ Therefore, the Model Violations Index (MVI) can be proposed as
 \noindent where \(C\) is a large enough constant keeping the result
 positive.
 
-\hypertarget{statistical-testing-based-on-the-approximated-distance}{%
 \subsection{Statistical testing based on the approximated
-distance}\label{statistical-testing-based-on-the-approximated-distance}}
+distance}\label{statistical-testing-based-on-the-approximated-distance}
 
-\hypertarget{null-distribution-of-the-approximated-distance}{%
-\subsubsection{Null distribution of the approximated
-distance}\label{null-distribution-of-the-approximated-distance}}
+\subsubsection{Lineup evaluation}\label{lineup-evaluation}
 
 Theoretically, the distance \(D\) for a correctly specified model is
 \(0\), because \(P\) will be the same as \(Q\). However, the computer
@@ -688,54 +661,49 @@ any further examination of the significance of the result. However, if
 the visual pattern is weak or moderate, having \(\hat{D}\) will not be
 sufficient to determine if \(H_0\) should be rejected.
 
-To solve this issue while aligning with the principle of visual
-inference, \(\hat{D}\) can be viewed as a test statistic. And the null
-distribution of this statistic can be approximated by the empirical
-distribution of \(\hat{D}_{null}\), where \(\hat{D}_{null}\) is the
-approximated distance for a null plot simulated from the fitted
-regression model. The approximation of the distribution involves
-applying the residual rotation technique \citep{buja2009statistical} on
-the fitted regression model to obtain null residuals. The null residuals
-are then used to make null plots and fed into the computer vision model
-to get predictions. The empirical distribution is constructed with the
-approximated distance.
+To address this issue while adhering to the principle of visual
+inference, we can compare the estimated distance \(\hat{D}\) to the
+approximated distances for the null plots in a lineup. Specifically, if
+a lineup comprises 20 plots, the null hypothesis \(H_0\) will be
+rejected if \(\hat{D}\) exceeds the maximum approximated distance among
+the \(m - 1\) null plots, denoted as
+\(\max\limits_{1 \leq i \leq m-1} {\hat{D}_{null}^{(i)}}\), where
+\(\hat{D}_{null}^{(i)}\) represents the approximated distance for the
+\(i\)-th null plot. This approach is equivalent to the typical lineup
+protocol requiring a 95\% significance level, where \(H_0\) is rejected
+if the data plot is identified as the most distinct plot by the sole
+participant. The approximated distance serves as a metric to quantify
+the difference between the data plot and the null plots, as intended.
 
-There are two types of error associated with the approximation of the
-null distribution. These include the sampling error and the estimation
-error for model parameters. Increasing the number of null plots within
-the distribution approximation can effectively reduce sampling error.
-However, the estimation error for model parameters remains irreducible.
-The residual rotation technique operates under the assumption of a
-correct fitted model, using the estimated variance instead of the
-unknown true variance to rescale rotated residuals. Consequently, under
-\(H_0\), the true distribution of \(\hat{D}_{null}\) will slightly
-deviate from the approximated null distribution.
+For lineups consisting of more than 20 plots, the 95\% significance
+level can be maintained if the number of plots is a multiple of 20.
+Specifically, for lineups comprising \(20p\) plots, where \(p\) is a
+positive integer, we reject \(H_0\) if \(\hat{D}\) exceeds 95\%
+\({\hat{D}_{null}^{(i)}}\) for \(i = 1, \ldots, 20p-1\). The p-value in
+this case is given by
+\(\frac{1}{m} + \frac{1}{m}\sum{i=1}^{m-1} I\left(\hat{D}_{null}^{(i)} > \hat{D}\right)\),
+where \(I(\cdot)\) is the indicator function.
 
-\hypertarget{estimation-of-quantiles-of-the-null-distribution}{%
-\subsubsection{Estimation of quantiles of the null
-distribution}\label{estimation-of-quantiles-of-the-null-distribution}}
-
-Let \(\hat{D}_{null}^{(i)}\) be the approximated distance of the
-\(i\)-th null plots, where \(i = 1,...,n_{null}\) and
-\(n_{null} \in \mathbb{N}^+\) is a sufficiently large number. Quantiles
-of the null distribution can then be estimated using the sample
-quantiles available in statistical software such as R. The details of
-the sample quantile computation can be found in
-\citet{hyndman1996sample}. In statistical testing, analysts often care
-about certain quantiles of the null distribution, such as the 90\%
-quantile, the 95\% quantile and the 99\% quantile. These quantiles are
-used as critical values to decide if \(H_0\) needs to be rejected. For
-example, if \(\hat{D}\) is greater than and equal to the 95\% sample
-quantile \(Q_{null}(0.95)\), we could say the approximated distance for
-the actual residual plot is significantly different from the
-approximated distance for null plots with 95\% significance level. Based
-on our experience, in order to get a stable estimate of the 95\%
-quantile, \(n_{null}\) usually needs to be at least \(100\). And if the
-null distribution has a long tail, more null plots will be needed.
-Alternatively, a p-value can be used to represents the probability of
-observing an event equally or more extreme than the given event under
+Moreover, if the number of plots in a lineup, denoted by \(m\), is
+sufficiently large, the empirical distribution of
+\({\hat{D}_{null}^{(i)}}\) can be viewed as an approximation of the null
+distribution of the approximated distance. Consequently, quantiles of
+the null distribution can be estimated using the sample quantiles
+available in statistical software such as R, and these quantiles can be
+utilized for decision-making purposes. The details of the sample
+quantile computation can be found in \citet{hyndman1996sample}. For
+instance, if \(\hat{D}\) is greater than or equal to the 95\% sample
+quantile, denoted as \(Q_{null}(0.95)\), we can conclude that the
+approximated distance for the actual residual plot is significantly
+different from the approximated distance for null plots with a 95\%
+significance level. Based on our experience, to obtain a stable estimate
+of the 95\% quantile, the number of null plots, \(n_{null}\), typically
+needs to be at least 100. However, if the null distribution exhibits a
+long tail, a larger number of null plots may be required. Alternatively,
+a p-value can be used to represent the probability of observing an event
+equally or more extreme than the given event under the null hypothesis
 \(H_0\), and it can be estimated by
-\(1/m\sum_{i=1}^{n_{null}}I\left(\hat{D}_{null}^{(i)} \geq \hat{D}\right)\).
+\(\frac{1}{m}\sum_{i=1}^{m-1}I\left(\hat{D}_{null}^{(i)} \geq \hat{D}\right)\).
 
 If precision in sample quantiles is not the main priority, using a
 pre-calculated table of quantiles is an available option. Such a table
@@ -744,9 +712,8 @@ It is generated by assessing numerous null plots derived from various
 simulated regression models and averaging them. Essentially, this shifts
 the computational burden from the user to the developer.
 
-\hypertarget{bootstrapping-the-approximated-distance}{%
 \subsubsection{Bootstrapping the approximated
-distance}\label{bootstrapping-the-approximated-distance}}
+distance}\label{bootstrapping-the-approximated-distance}
 
 Bootstrap is often employed in linear regression when conducting
 inference for estimated parameters. It is typically done by sampling
@@ -779,12 +746,10 @@ requires \(n_{boot} \times n_{null}\) times of residual plot assessment.
 In practice, \(Q_{null}(0.95)\) can be used to replace
 \(Q_{boot}^{(i)}(0.95)\) in the computation.
 
-\hypertarget{generation-of-training-data}{%
 \subsection{Generation of training
-data}\label{generation-of-training-data}}
+data}\label{generation-of-training-data}
 
-\hypertarget{data-generating-process}{%
-\subsubsection{Data generating process}\label{data-generating-process}}
+\subsubsection{Data generating process}\label{data-generating-process}
 
 While observational data is frequently employed in training models for
 real-world applications, the data generating process of observational
@@ -960,9 +925,8 @@ different types of model violations. Figure \ref{fig:different-j-heter}
 and \ref{fig:different-e-heter} show the visual patterns of models with
 multiple model violations.
 
-\hypertarget{computation-of-scagnostics}{%
 \subsubsection{Computation of
-scagnostics}\label{computation-of-scagnostics}}
+scagnostics}\label{computation-of-scagnostics}
 
 In Section \ref{introduction}, we mentioned that scagnostics consist of
 a set of manually designed visual feature extraction functions. While
@@ -981,9 +945,8 @@ unavailable due to a fatal bug in the compiled C program of the
 unpredictably crash the process. For reproducibility, we excluded these
 scagnostics from the training data.
 
-\hypertarget{crafting-a-balanced-training-set}{%
 \subsubsection{Crafting a balanced training
-set}\label{crafting-a-balanced-training-set}}
+set}\label{crafting-a-balanced-training-set}
 
 To train a robust computer vision model, we deliberately controlled the
 distribution of the target variable \(D\) in the training data. We
@@ -1004,9 +967,8 @@ bucket. This process continued until all buckets were filled.
 Similarly, we adopted the same methodology to prepare 8000 test images
 for performance evaluation and model diagnostics.
 
-\hypertarget{architecture-of-the-computer-vision-model}{%
 \subsection{Architecture of the computer vision
-model}\label{architecture-of-the-computer-vision-model}}
+model}\label{architecture-of-the-computer-vision-model}
 
 The architecture of the computer vision model is adapted from a
 well-established architecture known as VGG16, which has demonstrated
@@ -1066,9 +1028,8 @@ is the \(i\)-th residual plot and \(S_i\) is the additional information
 about the \(i\)-th residual plot including four scagnostics and the
 number of observations.
 
-\hypertarget{training-and-hyperparameter-tuning}{%
 \subsection{Training and hyperparameter
-tuning}\label{training-and-hyperparameter-tuning}}
+tuning}\label{training-and-hyperparameter-tuning}
 
 To achieve an optimal deep learning model, hyperparameters like the
 learning rate often need to be fine-tuned using a tuner. In our study,
@@ -1145,17 +1106,14 @@ Learning rate & {}[1e-8, 1e-1]\\
 \end{tabular}
 \end{table}
 
-\hypertarget{model-evaluation-methods}{%
-\subsection{Model evaluation methods}\label{model-evaluation-methods}}
+\subsection{Model evaluation methods}\label{model-evaluation-methods}
 
 This section remains incomplete as we may modify the ``Results'' section
 later on.
 
-\hypertarget{results}{%
-\section{Results}\label{results}}
+\section{Results}\label{results}
 
-\hypertarget{optimized-hyperparameters}{%
-\subsection{Optimized hyperparameters}\label{optimized-hyperparameters}}
+\subsection{Optimized hyperparameters}\label{optimized-hyperparameters}
 
 Based on the tuning process described in Section
 \ref{training-and-hyperparameter-tuning}, the optimized hyperparameter
@@ -1171,9 +1129,8 @@ All optimized models chose to retain the additional inputs, contributing
 to the reduction of validation error. The number of units required for
 the fully-connected layer was \(256\), a relatively modest number
 compared to the VGG16 classifier, suggesting that the problem at hand
-was relatively straightforward. The optimized learning rates were
-typically smaller than the default value recommended by Keras, which is
-0.001.
+was less complex. The optimized learning rates were smaller than the
+default value recommended by Keras, which is 0.001.
 
 \begin{table}
 
@@ -1198,8 +1155,8 @@ Learning rate & 0.0003 & 0.0006 & 0.0052\\
 \end{tabular}}
 \end{table}
 
-\hypertarget{model-performance}{%
-\subsection{Model performance}\label{model-performance}}
+\subsection{Summary of model
+performance}\label{summary-of-model-performance}
 
 The training and test performance for the optimized models with three
 different input sizes are summarized in Table \ref{tab:performance}.
@@ -1233,10 +1190,9 @@ problems and the presence of a second predictor in the regression model.
 When the error distribution had a very small variance, all computer
 vision models tended to under-predict the distance. Conversely, when the
 error distribution had a large variance, all models tended to
-over-predict the distance. Therefore, Additionally, for input images
-representing null plots, it was expected that the models will
-over-predict the distance, as explained in Section
-\ref{null-distribution-of-the-approximated-distance}.
+over-predict the distance. Furthermore, for input images representing
+null plots, it was expected that the models will over-predict the
+distance, as explained in Section \ref{lineup-evaluation}.
 
 Since most of the deviation stemmed from the presence of non-linearity
 violations, to further investigate this, we split the test set and
@@ -1244,37 +1200,36 @@ re-evaluated the performance, as detailed in Table
 \ref{tab:performance-sub}. It was evident that metrics for null plots
 were notably worse compared to other categories. Furthermore, residual
 plots solely exhibiting non-normality issues were the easiest to
-predict, with very low test root mean square error (RMSE) around
-\(0.3\), very low mean absolute error (MAE) around \(0.2\), and very
-high \(R^2\) around \(0.94\). Residual plots with non-linearity issues
-were more challenging to assess than those with heteroskedasticity or
-non-normality issues. Assessing residual plots with heteroskedasticity
-was not as difficult as assessing those with non-linearity issues. When
-multiple violations were introduced to a residual plot, the performance
-metrics typically lay between the metrics for each individual violation.
+predict, with very low test root mean square error (RMSE) at around
+\(0.3\). Residual plots with non-linearity issues were more challenging
+to assess than those with heteroskedasticity or non-normality issues.
+Assessing residual plots with heteroskedasticity was not as difficult as
+assessing those with non-linearity issues. When multiple violations were
+introduced to a residual plot, the performance metrics typically lay
+between the metrics for each individual violation.
 
-Based on the model performance metrics, we will only use the
+Based on the model performance metrics, we chose to use the
 best-performing model evaluated on the test set, namely the
 \(32 \times 32\) model, for the subsequent analysis.
 
 \begin{table}
 
-\caption{\label{tab:performance}The training and test performance of three optimized models with different input sizes. The best metrics are colored in red.}
+\caption{\label{tab:performance}The training and test performance of three optimized models with different input sizes.}
 \centering
-\begin{tabular}[t]{l>{}l>{}l>{}l>{}l}
+\begin{tabular}[t]{lllll}
 \toprule
  & RMSE & $R^2$ & MAE & Huber loss\\
 \midrule
 \addlinespace[0.3em]
 \multicolumn{5}{l}{\textbf{Training set}}\\
-\hspace{1em}$32 \times 32$ & \textcolor{black}{0.531} & \textcolor{black}{0.937} & \textcolor{black}{0.364} & \textcolor{black}{0.126}\\
-\hspace{1em}$64 \times 64$ & \textcolor{red}{0.405} & \textcolor{red}{0.963} & \textcolor{red}{0.260} & \textcolor{red}{0.072}\\
-\hspace{1em}$128 \times 128$ & \textcolor{black}{0.432} & \textcolor{black}{0.959} & \textcolor{black}{0.290} & \textcolor{black}{0.084}\\
+\hspace{1em}$32 \times 32$ & 0.531 & 0.937 & 0.364 & 0.126\\
+\hspace{1em}$64 \times 64$ & 0.405 & 0.963 & 0.260 & 0.072\\
+\hspace{1em}$128 \times 128$ & 0.432 & 0.959 & 0.290 & 0.084\\
 \addlinespace[0.3em]
 \multicolumn{5}{l}{\textbf{Test set}}\\
-\hspace{1em}$32 \times 32$ & \textcolor{red}{0.660} & \textcolor{red}{0.901} & \textcolor{red}{0.434} & \textcolor{red}{0.181}\\
-\hspace{1em}$64 \times 64$ & \textcolor{black}{0.674} & \textcolor{black}{0.897} & \textcolor{black}{0.438} & \textcolor{black}{0.186}\\
-\hspace{1em}$128 \times 128$ & \textcolor{black}{0.692} & \textcolor{black}{0.892} & \textcolor{black}{0.460} & \textcolor{black}{0.199}\\
+\hspace{1em}$32 \times 32$ & 0.660 & 0.901 & 0.434 & 0.181\\
+\hspace{1em}$64 \times 64$ & 0.674 & 0.897 & 0.438 & 0.186\\
+\hspace{1em}$128 \times 128$ & 0.692 & 0.892 & 0.460 & 0.199\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1290,52 +1245,43 @@ best-performing model evaluated on the test set, namely the
 
 \begin{table}
 
-\caption{\label{tab:performance-sub}The training and test performance of the $32 \times 32$ model presented with different model violations.  The best metrics are colored in red.}
+\caption{\label{tab:performance-sub}The training and test performance of the $32 \times 32$ model presented with different model violations.}
 \centering
 \resizebox{\linewidth}{!}{
-\begin{tabular}[t]{ll>{}l>{}l>{}l>{}l}
+\begin{tabular}[t]{lllll}
 \toprule
-Violations & \#samples & RMSE & $R^2$ & MAE & Huber loss\\
+Violations & \#training samples & Training RMSE & \#test samples & Test RMSE\\
 \midrule
-\addlinespace[0.3em]
-\multicolumn{6}{l}{\textbf{Training set}}\\
-\hspace{1em}no violations & 1546 & \textcolor{black}{1.149} & \textcolor{black}{} & \textcolor{black}{1.080} & \textcolor{black}{0.592}\\
-\hspace{1em}non-linearity & 22184 & \textcolor{black}{0.625} & \textcolor{black}{0.851} & \textcolor{black}{0.474} & \textcolor{black}{0.177}\\
-\hspace{1em}heteroskedasticity & 10826 & \textcolor{black}{0.528} & \textcolor{black}{0.942} & \textcolor{black}{0.407} & \textcolor{black}{0.133}\\
-\hspace{1em}non-linearity + heteroskedasticity & 10221 & \textcolor{black}{0.593} & \textcolor{black}{0.920} & \textcolor{black}{0.439} & \textcolor{black}{0.158}\\
-\hspace{1em}non-normality & 10797 & \textcolor{red}{0.279} & \textcolor{red}{0.955} & \textcolor{red}{0.177} & \textcolor{red}{0.038}\\
-\hspace{1em}non-linearity + non-normality & 8835 & \textcolor{black}{0.472} & \textcolor{black}{0.923} & \textcolor{black}{0.274} & \textcolor{black}{0.090}\\
-\hspace{1em}heteroskedasticity + non-normality & 7870 & \textcolor{black}{0.354} & \textcolor{black}{0.905} & \textcolor{black}{0.211} & \textcolor{black}{0.052}\\
-\hspace{1em}non-linearity + heteroskedasticity + non-normality & 7721 & \textcolor{black}{0.432} & \textcolor{black}{0.874} & \textcolor{black}{0.261} & \textcolor{black}{0.078}\\
-\addlinespace[0.3em]
-\multicolumn{6}{l}{\textbf{Test set}}\\
-\hspace{1em}no violations & 155 & \textcolor{black}{1.267} & \textcolor{black}{} & \textcolor{black}{1.174} & \textcolor{black}{0.685}\\
-\hspace{1em}non-linearity & 2218 & \textcolor{black}{0.787} & \textcolor{black}{0.771} & \textcolor{black}{0.578} & \textcolor{black}{0.257}\\
-\hspace{1em}heteroskedasticity & 1067 & \textcolor{black}{0.602} & \textcolor{black}{0.922} & \textcolor{black}{0.461} & \textcolor{black}{0.170}\\
-\hspace{1em}non-linearity + heteroskedasticity & 985 & \textcolor{black}{0.751} & \textcolor{black}{0.868} & \textcolor{black}{0.541} & \textcolor{black}{0.236}\\
-\hspace{1em}non-normality & 1111 & \textcolor{red}{0.320} & \textcolor{red}{0.942} & \textcolor{red}{0.194} & \textcolor{red}{0.049}\\
-\hspace{1em}non-linearity + non-normality & 928 & \textcolor{black}{0.600} & \textcolor{black}{0.879} & \textcolor{black}{0.335} & \textcolor{black}{0.133}\\
-\hspace{1em}heteroskedasticity + non-normality & 819 & \textcolor{black}{0.489} & \textcolor{black}{0.832} & \textcolor{black}{0.267} & \textcolor{black}{0.093}\\
-\hspace{1em}non-linearity + heteroskedasticity + non-normality & 717 & \textcolor{black}{0.620} & \textcolor{black}{0.762} & \textcolor{black}{0.339} & \textcolor{black}{0.140}\\
+no violations & 1546 & 1.149 & 155 & 1.267\\
+non-linearity & 22184 & 0.625 & 2218 & 0.787\\
+heteroskedasticity & 10826 & 0.528 & 1067 & 0.602\\
+non-linearity + heteroskedasticity & 10221 & 0.593 & 985 & 0.751\\
+non-normality & 10797 & 0.279 & 1111 & 0.320\\
+\addlinespace
+non-linearity + non-normality & 8835 & 0.472 & 928 & 0.600\\
+heteroskedasticity + non-normality & 7870 & 0.354 & 819 & 0.489\\
+non-linearity + heteroskedasticity + non-normality & 7721 & 0.432 & 717 & 0.620\\
 \bottomrule
 \end{tabular}}
 \end{table}
 
-\hypertarget{model-violations-index-mvi}{%
-\subsection{Model Violations Index
-(MVI)}\label{model-violations-index-mvi}}
+\subsection{Demostration of MVI}\label{demostration-of-mvi}
+
+As described in Section \ref{sec:model-violations-index} a Model
+Violations Index (MVI) can be constructed using \(\hat{D}\). This
+section provides guidelines and examples of MVI.
 
 Figures \ref{fig:poly-index} and \ref{fig:heter-index} display the
 residual plots for fitted models exhibiting varying degrees of
-non-linearity and heteroskedasticity. Each residual plot's Model
-Violation Index (MVI) is computed using Equation \ref{eq:mvi} with
-\(C = 10\). When \(\text{MVI} > 8\), the visual patterns are notably
-strong and easily discernible by humans. In the range
-\(6 < \text{MVI} < 8\), the visibility of the visual pattern diminishes
-as MVI decreases. Conversely, when \(\text{MVI} < 6\), the visual
-pattern tends to become relatively faint and challenging to observe.
-Table \ref{tab:mvi} provides a summary of the MVI usage and it is
-applicable to other linear regression models.
+non-linearity and heteroskedasticity. Each residual plot's MVI is
+computed using Equation \ref{eq:mvi} with \(C = 10\). When
+\(\text{MVI} > 8\), the visual patterns are notably strong and easily
+discernible by humans. In the range \(6 < \text{MVI} < 8\), the
+visibility of the visual pattern diminishes as MVI decreases.
+Conversely, when \(\text{MVI} < 6\), the visual pattern tends to become
+relatively faint and challenging to observe. Table \ref{tab:mvi}
+provides a summary of the MVI usage and it is applicable to other linear
+regression models.
 
 \begin{table}
 
@@ -1370,13 +1316,11 @@ Weak & $\text{MVI} < 6$\\
 \caption{Residual plots generated from fitted models exhibiting varying degrees of heteroskedasticity violations. The Model violations index (MVI) is displayed atop each residual plot. The heteroskedasticity patterns are relatively strong for $MVI > 8$, and relatively weak for $MVI < 6$.}\label{fig:heter-index}
 \end{figure}
 
-\hypertarget{comparison-with-human-visual-inference-and-conventional-tests}{%
 \subsection{Comparison with human visual inference and conventional
-tests}\label{comparison-with-human-visual-inference-and-conventional-tests}}
+tests}\label{comparison-with-human-visual-inference-and-conventional-tests}
 
-\hypertarget{overview-of-the-human-subject-experiment}{%
 \subsubsection{Overview of the human subject
-experiment}\label{overview-of-the-human-subject-experiment}}
+experiment}\label{overview-of-the-human-subject-experiment}
 
 In order to check the validity of the proposed computer vision model,
 residual plots presented in the human subject experiment conducted by
@@ -1400,9 +1344,8 @@ not co-exist in one lineup but assigned uniformly to all lineups.
 Additionally, non-normality and multiple predictors are not considered
 in the experimental design.
 
-\hypertarget{model-performance-on-the-human-data}{%
 \subsubsection{Model performance on the human
-data}\label{model-performance-on-the-human-data}}
+data}\label{model-performance-on-the-human-data}
 
 \begin{table}
 
@@ -1422,12 +1365,14 @@ For each lineup used in \citet{li2023plot}, there is one actual residual
 plot and 19 null plots. While the distance \(D\) for the actual residual
 plot depends on the underlying data generating process, the distance
 \(D\) for the null plots is zero. We have used our optimized computer
-vision model to predict \(\hat{D}\) for both the actual residual plots
-and the null plots. Additionally, the appropriate conventional tests
-including the Ramsey Regression Equation Specification Error Test
-(RESET) \citep{ramsey1969tests} for non-linearity and the Breusch-Pagan
-test \citep{breusch1979simple} for heteroskedasticity were applied on
-the same data for comparison.
+vision model to predict the approximated distance for both the actual
+residual plots and the null plots. To have a fair comparison, \(H_0\)
+will be rejected if the actual residual plot has the greatest
+approximated distance among all plots in a lineup. Additionally, the
+appropriate conventional tests including the Ramsey Regression Equation
+Specification Error Test (RESET) \citep{ramsey1969tests} for
+non-linearity and the Breusch-Pagan test \citep{breusch1979simple} for
+heteroskedasticity were applied on the same data for comparison.
 
 The performance metrics of \(\hat{D}\) for actual residual plots are
 outlined in Table \ref{tab:experiment-performance}. It's notable that
@@ -1437,28 +1382,15 @@ and the linear correlation between the prediction and the true value
 remains very high. Lineups with non-linearity issues are more
 challenging to predict than those with heteroskedasticity issues.
 
-For null plots, a histogram of the predictions is provided in Figure
-\ref{fig:hist-null-human}. In most cases, \(\hat{D}\) is predicted to be
-around \(1\). As \(\hat{D}\) increases, the number of predictions
-decreases. The 90\% and 95\% sample quantiles are approximately at
-\(2\), and the 99\% sample quantile is around \(2.5\). These sample
-quantiles can serve as global critical values for determining whether a
-residual plot needs to be rejected. We have also computed the 95\%
-sample quantiles by assessing 200 null plots for each fitted model used
-in the experiment. The difference between decisions based on these two
-types of critical values is minor, with decisions aligning 93.8\% of the
-time. Therefore, we will be using the 95\% sample quantiles obtained
-from each fitted model in the following analysis.
-
-Likewise, Figure \ref{fig:conv-mosaic} and Table \ref{tab:conv-table}
-provide a summary of the agreement between decisions made by the
-computer vision model and conventional tests. The agreement rates
-between conventional tests and the computer vision model are 65.37\% and
-57.29\% for residual plots containing heteroskedasticity and
-non-linearity patterns, respectively. These figures are lower than those
-presented in Table \ref{tab:human-table}, indicating that the computer
-vision model exhibits behaviour more akin to visual tests than
-conventional tests. Additionally, conventional tests tend to reject
+Table \ref{tab:human-conv-table} provides a summary of the agreement
+between decisions made by the computer vision model and conventional
+tests. The agreement rates between conventional tests and the computer
+vision model are 85.95\% and 79.69\% for residual plots containing
+heteroskedasticity and non-linearity patterns, respectively. These
+figures are higher than those calculated for visual tests conducted by
+human, indicating that the computer vision model exhibits behaviour more
+akin to the best available conventional tests. However, Figure
+\ref{fig:conv-mosaic} shows that conventional tests tend to reject
 residual plots almost exclusively when the computer vision model does,
 but they also reject plots when the computer vision model does not. This
 suggests that conventional tests are more sensitive than the computer
@@ -1466,7 +1398,7 @@ vision model.
 
 When plotting the decision against the distance, as illustrated in
 Figure \ref{fig:power}, several observations emerge. Firstly, for the
-computer vision model, when the distance \(D > 3\), almost all residual
+computer vision model, when the distance \(D > 4\), almost all residual
 plots are rejected. However, for visual tests conducted by humans, the
 threshold is higher, set at \(D > 5\). And conventional tests exhibit
 some non-rejection cases for \(D > 3\). Moreover, the computer vision
@@ -1478,10 +1410,10 @@ assumptions than conventional tests but more sensitive to moderate
 deviations. Rejection decisions are fitted by logistic regression models
 with no intercept terms but an offset equals to
 \(\text{log}(0.05/0/95)\). The fitting curves for the computer vision
-model fall between those of conventional tests and visual tests for
-non-linearity and are slightly below conventional tests for
-heteroskedasticity. There is still potential to refine the computer
-vision model to better align its behaviour with visual tests.
+model fall between those of conventional tests and visual tests for both
+non-linearity and heteroskedasticity. There is still potential to refine
+the computer vision model to better align its behaviour with visual
+tests.
 
 Figure \ref{fig:delta} displays the scatter plot of the weighted
 detection rate vs the \(\delta\)-difference. In the experiment conducted
@@ -1510,51 +1442,25 @@ In some instances, the weighted detection rate is close to one, yet the
 distance measure, or the approximated distance, may not perfectly
 reflect actual human behaviour.
 
-\begin{figure}[!h]
-
-{\centering \includegraphics[width=1\linewidth]{paper_files/figure-latex/hist-null-human-1} 
-
-}
-
-\caption{Histogram of predicted distance on null plots used in the human subject experiment. Sample quantiles are drawn in different colors.}\label{fig:hist-null-human}
-\end{figure}
-
 \begin{table}
 
-\caption{\label{tab:human-table}Summary of decisions made by visual tests conducted by human and decisions made by the computer vision model.}
+\caption{\label{tab:human-conv-table}Summary of the comparison of decisions made by computer vision model with decisions made by conventional tests and visual tests conducted by human.}
 \centering
 \begin{tabular}[t]{llll}
 \toprule
 Violations & \#Samples & \#Agreements & Agreement rate\\
 \midrule
-heteroskedasticity & 540 & 367 & 0.6796\\
-non-linearity & 576 & 385 & 0.6684\\
+\addlinespace[0.3em]
+\multicolumn{4}{l}{\textbf{Compared with conventional tests}}\\
+\hspace{1em}heteroskedasticity & 540 & 464 & 0.8593\\
+\hspace{1em}non-linearity & 576 & 459 & 0.7969\\
+\addlinespace[0.3em]
+\multicolumn{4}{l}{\textbf{Compared with visual tests conducted by human}}\\
+\hspace{1em}heteroskedasticity & 540 & 367 & 0.6796\\
+\hspace{1em}non-linearity & 576 & 385 & 0.6684\\
 \bottomrule
 \end{tabular}
 \end{table}
-
-\begin{table}
-
-\caption{\label{tab:conv-table}Summary of decisions made by conventional tests and decisions made by the computer vision model.}
-\centering
-\begin{tabular}[t]{llll}
-\toprule
-Violations & \#Samples & \#Agreements & Agreement rate\\
-\midrule
-heteroskedasticity & 540 & 464 & 0.6537\\
-non-linearity & 576 & 459 & 0.5729\\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\begin{figure}[!h]
-
-{\centering \includegraphics[width=1\linewidth]{paper_files/figure-latex/human-mosaic-1} 
-
-}
-
-\caption{Rejection rate ($p$-value $\leq0.05$) of visual test conditional on the computer vision model decision on non-linearity (left) and heteroskedasticity (right) lineups displayed using a mosaic plot. The visual test rejects less frequently than the computer vision model, and (almost) only rejects when the computer vision model does.}\label{fig:human-mosaic}
-\end{figure}
 
 \begin{figure}[!h]
 
@@ -1571,7 +1477,25 @@ non-linearity & 576 & 459 & 0.5729\\
 
 }
 
-\caption{Comparison of decisions made by visual tests, conventional tests and the computer vision model. The data points are fitted with logistic regression models with no intercept but an offset equals to $\text{log}(0.05/0.95)$.}\label{fig:power}
+\caption{Comparison of power of visual tests, conventional tests and the computer vision model. Marks along the x-axis at the bottom of the plot represent rejections made by each type of test. Marks at the top of the plot represent acceptances. Power curves are fitted by logistic regression models with no intercept but an offset equals to $\text{log}(0.05/0.95)$.}\label{fig:power}
+\end{figure}
+
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{paper_files/figure-latex/pcp-1} 
+
+}
+
+\caption{Parallel coordinate plots of decisions made by computer vision model, conventional tests and visual tests made by human.}\label{fig:pcp}
+\end{figure}
+
+\begin{figure}[!h]
+
+{\centering \includegraphics[width=1\linewidth]{paper_files/figure-latex/venn-1} 
+
+}
+
+\caption{Venn diagram for non-rejection decisions made by conventional tests, computer vision model, and visual tests conducted by human.}\label{fig:venn}
 \end{figure}
 
 \begin{figure}[!h]
@@ -1583,8 +1507,7 @@ non-linearity & 576 & 459 & 0.5729\\
 \caption{A weighted detection rate vs $\delta$-differnence plot.}\label{fig:delta}
 \end{figure}
 
-\hypertarget{data-examples}{%
-\subsection{Data examples}\label{data-examples}}
+\subsection{Data examples}\label{data-examples}
 
 In this section, we will utilize the trained computer vision model on
 three example datasets. These include the dataset associated with the
@@ -1594,8 +1517,7 @@ and the ``dino'' datasets from the \texttt{datasaurus} R package.
 Additionally, we will outline the workflow for employing this model with
 the \texttt{autovi} R package.
 
-\hypertarget{left-triangle}{%
-\subsubsection{Left-triangle}\label{left-triangle}}
+\subsubsection{Left-triangle}\label{left-triangle}
 
 In Section \ref{introduction}, we presented an example residual plot
 showcased in Figure \ref{fig:false-finding}, illustrating how humans
@@ -1637,7 +1559,7 @@ generated using the \texttt{summary\_plot()} method.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{checker}\SpecialCharTok{$}\FunctionTok{check}\NormalTok{(}\AttributeTok{null\_draws =}\NormalTok{ 200L, }\AttributeTok{boot\_draws =}\NormalTok{ 200L)}
+\NormalTok{checker}\SpecialCharTok{$}\FunctionTok{check}\NormalTok{(}\AttributeTok{null\_draws =} \DecValTok{200}\DataTypeTok{L}\NormalTok{, }\AttributeTok{boot\_draws =} \DecValTok{200}\DataTypeTok{L}\NormalTok{)}
 \NormalTok{checker}\SpecialCharTok{$}\FunctionTok{summary\_plot}\NormalTok{()}
 \end{Highlighting}
 \end{Shaded}
@@ -1672,8 +1594,7 @@ utilize information from null plots.
 \caption{A lineup of residual plots displaying "left-triangle" visual patterns. The actual residual plot occupies position 10, yet there are no discernible visual patterns that distinguish it from the other plots.}\label{fig:false-lineup}
 \end{figure}
 
-\hypertarget{boston-housing}{%
-\subsubsection{Boston housing}\label{boston-housing}}
+\subsubsection{Boston housing}\label{boston-housing}
 
 The Boston housing dataset, originally published by
 \citet{harrison1978hedonic}, offers insights into housing in the Boston,
@@ -1721,8 +1642,7 @@ will also be rejected.
 \caption{A lineup of residual plots for the Boston housing fitted model. The actual residual plot is at position 7. It can be easily identified as the most different plot.}\label{fig:boston-lineup}
 \end{figure}
 
-\hypertarget{datasaurus}{%
-\subsubsection{Datasaurus}\label{datasaurus}}
+\subsubsection{Datasaurus}\label{datasaurus}
 
 The computer vision model possesses the capability to detect not only
 typical issues like non-linearity, heteroskedasticity, and non-normality
@@ -1776,8 +1696,7 @@ vision model can facilitate this process.
 \caption{A lineup of residual plots for the fitted model on the "dinosaur" dataset. The actual residual plot is at position 17. It can be easily identified as the most different plot as the visual pattern is extremly artificial.}\label{fig:dino-lineup}
 \end{figure}
 
-\hypertarget{conclusion}{%
-\section{Conclusion}\label{conclusion}}
+\section{Conclusion}\label{conclusion}
 
 \begin{itemize}
 \tightlist
@@ -1843,8 +1762,7 @@ when needed.
   Future directions
 \end{itemize}
 
-\hypertarget{acknowledgements}{%
-\section*{Acknowledgements}\label{acknowledgements}}
+\section*{Acknowledgements}\label{acknowledgements}
 \addcontentsline{toc}{section}{Acknowledgements}
 
 \begin{itemize}

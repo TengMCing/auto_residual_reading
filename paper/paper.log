@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.3.24)  16 APR 2024 07:15
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.4.23)  23 APR 2024 08:44
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -142,7 +142,7 @@ File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
 )
 Package graphics Info: Driver file: pdftex.def on input line 107.
 (/Users/patrickli/Library/TinyTeX/texmf-dist/tex/latex/graphics-def/pdftex.def
-File: pdftex.def 2022/09/22 v1.2b Graphics/color driver for pdftex
+File: pdftex.def 2024/04/13 v1.2c Graphics/color driver for pdftex
 ))
 \Gin@req@height=\dimen163
 \Gin@req@width=\dimen164
@@ -696,270 +696,281 @@ pdfTeX warning (ext4): destination with the same identifier (name{figure.4}) has
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
 l.966 
-       <./paper_files/figure-latex/different-e-1.pdf>] [21
+       <./paper_files/figure-latex/different-e-1.pdf>]
+<cnn.pdf, id=449, 1046.94543pt x 469.57231pt>
+File: cnn.pdf Graphic file (type pdf)
+<use cnn.pdf>
+Package pdftex.def Info: cnn.pdf  used on input line 975.
+(pdftex.def)             Requested size: 408.0pt x 182.98915pt.
+[21
 pdfTeX warning (ext4): destination with the same identifier (name{figure.5}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.985 
+l.994 
        <./paper_files/figure-latex/different-j-x2-1.pdf>] [22
 pdfTeX warning (ext4): destination with the same identifier (name{figure.6}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1003 
+l.1012 
         <./paper_files/figure-latex/different-j-heter-1.pdf>] [23
 pdfTeX warning (ext4): destination with the same identifier (name{figure.7}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1024 ... f_{\boldsymbol{\theta}}(V_i, S_i))^2,\]
-                                                   <./paper_files/figure-latex/different-e-heter-1.pdf>] [24] [25
+l.1033 ... f_{\boldsymbol{\theta}}(V_i, S_i))^2,\]
+                                                   <./paper_files/figure-latex/different-e-heter-1.pdf>] [24
+pdfTeX warning (ext4): destination with the same identifier (name{figure.8}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1061 
+        <./cnn.pdf>] [25] [26
 pdfTeX warning (ext4): destination with the same identifier (name{table.2}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1127 
-       ] [26
+l.1180 
+       ] [27
 pdfTeX warning (ext4): destination with the same identifier (name{table.3}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1171 
+l.1219 
        ]
-<paper_files/figure-latex/model-performance-1.png, id=511, 2409.0pt x 1806.75pt>
+<paper_files/figure-latex/model-performance-1.png, id=542, 2409.0pt x 1806.75pt>
 File: paper_files/figure-latex/model-performance-1.png Graphic file (type png)
 <use paper_files/figure-latex/model-performance-1.png>
-Package pdftex.def Info: paper_files/figure-latex/model-performance-1.png  used on input line 1239.
+Package pdftex.def Info: paper_files/figure-latex/model-performance-1.png  used on input line 1248.
 (pdftex.def)             Requested size: 408.0pt x 305.98555pt.
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[27] [28
+[28
 pdfTeX warning (ext4): destination with the same identifier (name{table.4}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1285 
+l.1294 
        
-pdfTeX warning (ext4): destination with the same identifier (name{figure.8}) has been already used, duplicate ignored
+pdfTeX warning (ext4): destination with the same identifier (name{table.5}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1285 
-        <./paper_files/figure-latex/model-performance-1.png>]
-<paper_files/figure-latex/poly-index-1.pdf, id=533, 578.16pt x 433.62pt>
+l.1294 
+       ]
+<paper_files/figure-latex/poly-index-1.pdf, id=556, 578.16pt x 433.62pt>
 File: paper_files/figure-latex/poly-index-1.pdf Graphic file (type pdf)
 <use paper_files/figure-latex/poly-index-1.pdf>
-Package pdftex.def Info: paper_files/figure-latex/poly-index-1.pdf  used on input line 1303.
+Package pdftex.def Info: paper_files/figure-latex/poly-index-1.pdf  used on input line 1312.
 (pdftex.def)             Requested size: 408.0pt x 305.99988pt.
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-<paper_files/figure-latex/heter-index-1.pdf, id=534, 578.16pt x 433.62pt>
+<paper_files/figure-latex/heter-index-1.pdf, id=557, 578.16pt x 433.62pt>
 File: paper_files/figure-latex/heter-index-1.pdf Graphic file (type pdf)
 <use paper_files/figure-latex/heter-index-1.pdf>
-Package pdftex.def Info: paper_files/figure-latex/heter-index-1.pdf  used on input line 1312.
+Package pdftex.def Info: paper_files/figure-latex/heter-index-1.pdf  used on input line 1321.
 (pdftex.def)             Requested size: 408.0pt x 305.99988pt.
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 [29
-pdfTeX warning (ext4): destination with the same identifier (name{table.5}) has been already used, duplicate ignored
+pdfTeX warning (ext4): destination with the same identifier (name{figure.9}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1338 
+l.1347 
        
 pdfTeX warning (ext4): destination with the same identifier (name{table.6}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1338 
-       ] [30
-pdfTeX warning (ext4): destination with the same identifier (name{figure.9}) has been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.1376 
-        <./paper_files/figure-latex/poly-index-1.pdf>] [31
+l.1347 
+        <./paper_files/figure-latex/model-performance-1.png>] [30
 pdfTeX warning (ext4): destination with the same identifier (name{figure.10}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1384 
+l.1355 
+        <./paper_files/figure-latex/poly-index-1.pdf>] [31
+pdfTeX warning (ext4): destination with the same identifier (name{figure.11}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1385 
        
 pdfTeX warning (ext4): destination with the same identifier (name{table.7}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1384 
+l.1385 
         <./paper_files/figure-latex/heter-index-1.pdf>] [32]
-<paper_files/figure-latex/conv-mosaic-1.pdf, id=594, 578.16pt x 433.62pt>
+<paper_files/figure-latex/conv-mosaic-1.pdf, id=617, 578.16pt x 433.62pt>
 File: paper_files/figure-latex/conv-mosaic-1.pdf Graphic file (type pdf)
 <use paper_files/figure-latex/conv-mosaic-1.pdf>
-Package pdftex.def Info: paper_files/figure-latex/conv-mosaic-1.pdf  used on input line 1467.
+Package pdftex.def Info: paper_files/figure-latex/conv-mosaic-1.pdf  used on input line 1476.
 (pdftex.def)             Requested size: 408.0pt x 305.99988pt.
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-<paper_files/figure-latex/power-1.pdf, id=595, 578.16pt x 433.62pt>
+<paper_files/figure-latex/power-1.pdf, id=618, 578.16pt x 433.62pt>
 File: paper_files/figure-latex/power-1.pdf Graphic file (type pdf)
 <use paper_files/figure-latex/power-1.pdf>
-Package pdftex.def Info: paper_files/figure-latex/power-1.pdf  used on input line 1476.
+Package pdftex.def Info: paper_files/figure-latex/power-1.pdf  used on input line 1485.
 (pdftex.def)             Requested size: 408.0pt x 305.99988pt.
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-<paper_files/figure-latex/pcp-1.pdf, id=596, 578.16pt x 433.62pt>
+<paper_files/figure-latex/pcp-1.pdf, id=619, 578.16pt x 433.62pt>
 File: paper_files/figure-latex/pcp-1.pdf Graphic file (type pdf)
 <use paper_files/figure-latex/pcp-1.pdf>
-Package pdftex.def Info: paper_files/figure-latex/pcp-1.pdf  used on input line 1485.
+Package pdftex.def Info: paper_files/figure-latex/pcp-1.pdf  used on input line 1494.
 (pdftex.def)             Requested size: 408.0pt x 305.99988pt.
-<paper_files/figure-latex/venn-1.pdf, id=597, 578.16pt x 433.62pt>
+<paper_files/figure-latex/venn-1.pdf, id=620, 578.16pt x 433.62pt>
 File: paper_files/figure-latex/venn-1.pdf Graphic file (type pdf)
 <use paper_files/figure-latex/venn-1.pdf>
-Package pdftex.def Info: paper_files/figure-latex/venn-1.pdf  used on input line 1494.
+Package pdftex.def Info: paper_files/figure-latex/venn-1.pdf  used on input line 1503.
 (pdftex.def)             Requested size: 408.0pt x 305.99988pt.
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-<paper_files/figure-latex/delta-1.pdf, id=598, 578.16pt x 433.62pt>
+<paper_files/figure-latex/delta-1.pdf, id=621, 578.16pt x 433.62pt>
 File: paper_files/figure-latex/delta-1.pdf Graphic file (type pdf)
 <use paper_files/figure-latex/delta-1.pdf>
-Package pdftex.def Info: paper_files/figure-latex/delta-1.pdf  used on input line 1503.
+Package pdftex.def Info: paper_files/figure-latex/delta-1.pdf  used on input line 1512.
 (pdftex.def)             Requested size: 408.0pt x 305.99988pt.
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[33
+[33] [34
 pdfTeX warning (ext4): destination with the same identifier (name{table.8}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1534 
-       ] [34
-pdfTeX warning (ext4): destination with the same identifier (name{figure.11}) has been already used, duplicate ignored
+l.1543 
+       
+pdfTeX warning (ext4): destination with the same identifier (name{figure.12}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1541 T
-        he results of the \texttt{list\_keras\_model()} function provide a list <./paper_files/figure-latex/conv-mosaic-1.pdf>]
+l.1543 
+        <./paper_files/figure-latex/conv-mosaic-1.pdf>] [35
+pdfTeX warning (ext4): destination with the same identifier (name{figure.13}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1550 T
+        he results of the \texttt{list\_keras\_model()} function provide a list <./paper_files/figure-latex/power-1.pdf>] [36
+pdfTeX warning (ext4): destination with the same identifier (name{figure.14}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1550 T
+        he results of the \texttt{list\_keras\_model()} function provide a list <./paper_files/figure-latex/pcp-1.pdf>]
 
-Package xcolor Warning: Incompatible color definition on input line 1546.
+Package xcolor Warning: Incompatible color definition on input line 1555.
 
-LaTeX Font Info:    Trying to load font information for OML+cmtt on input line 1548.
-LaTeX Font Info:    No file OMLcmtt.fd. on input line 1548.
+LaTeX Font Info:    Trying to load font information for OML+cmtt on input line 1557.
+LaTeX Font Info:    No file OMLcmtt.fd. on input line 1557.
 
 LaTeX Font Warning: Font shape `OML/cmtt/m/n' undefined
 (Font)              using `OML/cmm/m/it' instead
-(Font)              for symbol `textless' on input line 1548.
+(Font)              for symbol `textless' on input line 1557.
 
 LaTeX Font Info:    Font shape `OT1/cmtt/bx/n' in size <11> not available
-(Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 1548.
+(Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 1557.
 
-Package xcolor Warning: Incompatible color definition on input line 1551.
-
-
-Package xcolor Warning: Incompatible color definition on input line 1551.
+Package xcolor Warning: Incompatible color definition on input line 1560.
 
 
 Package xcolor Warning: Incompatible color definition on input line 1560.
 
-[35
-pdfTeX warning (ext4): destination with the same identifier (name{figure.12}) has been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.1560 \begin{Shaded}
-                      <./paper_files/figure-latex/power-1.pdf>] [36
-pdfTeX warning (ext4): destination with the same identifier (name{figure.13}) has been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.1560 \begin{Shaded}
-                      <./paper_files/figure-latex/pcp-1.pdf>]
 
-Package xcolor Warning: Incompatible color definition on input line 1565.
-
-
-Package xcolor Warning: Incompatible color definition on input line 1565.
-
-<paper_files/figure-latex/false-check-1.pdf, id=648, 578.16pt x 433.62pt>
-File: paper_files/figure-latex/false-check-1.pdf Graphic file (type pdf)
-<use paper_files/figure-latex/false-check-1.pdf>
-Package pdftex.def Info: paper_files/figure-latex/false-check-1.pdf  used on input line 1581.
-(pdftex.def)             Requested size: 408.0pt x 305.99988pt.
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-<paper_files/figure-latex/false-lineup-1.pdf, id=649, 578.16pt x 433.62pt>
-File: paper_files/figure-latex/false-lineup-1.pdf Graphic file (type pdf)
-<use paper_files/figure-latex/false-lineup-1.pdf>
-Package pdftex.def Info: paper_files/figure-latex/false-lineup-1.pdf  used on input line 1590.
-(pdftex.def)             Requested size: 408.0pt x 305.99988pt.
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
+Package xcolor Warning: Incompatible color definition on input line 1569.
 
 [37
-pdfTeX warning (ext4): destination with the same identifier (name{figure.14}) has been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.1610 
-        <./paper_files/figure-latex/venn-1.pdf>] [38
 pdfTeX warning (ext4): destination with the same identifier (name{figure.15}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1620 
-        <./paper_files/figure-latex/delta-1.pdf>]
-<paper_files/figure-latex/boston-check-1.pdf, id=683, 578.16pt x 433.62pt>
-File: paper_files/figure-latex/boston-check-1.pdf Graphic file (type pdf)
-<use paper_files/figure-latex/boston-check-1.pdf>
-Package pdftex.def Info: paper_files/figure-latex/boston-check-1.pdf  used on input line 1629.
+l.1569 \begin{Shaded}
+                      <./paper_files/figure-latex/venn-1.pdf>]
+
+Package xcolor Warning: Incompatible color definition on input line 1574.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1574.
+
+<paper_files/figure-latex/false-check-1.pdf, id=683, 578.16pt x 433.62pt>
+File: paper_files/figure-latex/false-check-1.pdf Graphic file (type pdf)
+<use paper_files/figure-latex/false-check-1.pdf>
+Package pdftex.def Info: paper_files/figure-latex/false-check-1.pdf  used on input line 1590.
 (pdftex.def)             Requested size: 408.0pt x 305.99988pt.
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-<paper_files/figure-latex/boston-lineup-1.pdf, id=684, 578.16pt x 433.62pt>
-File: paper_files/figure-latex/boston-lineup-1.pdf Graphic file (type pdf)
-<use paper_files/figure-latex/boston-lineup-1.pdf>
-Package pdftex.def Info: paper_files/figure-latex/boston-lineup-1.pdf  used on input line 1638.
+<paper_files/figure-latex/false-lineup-1.pdf, id=684, 578.16pt x 433.62pt>
+File: paper_files/figure-latex/false-lineup-1.pdf Graphic file (type pdf)
+<use paper_files/figure-latex/false-lineup-1.pdf>
+Package pdftex.def Info: paper_files/figure-latex/false-lineup-1.pdf  used on input line 1599.
 (pdftex.def)             Requested size: 408.0pt x 305.99988pt.
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[39
+[38
 pdfTeX warning (ext4): destination with the same identifier (name{figure.16}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1662 
-        <./paper_files/figure-latex/false-check-1.pdf>] [40
+l.1619 
+        <./paper_files/figure-latex/delta-1.pdf>] [39
 pdfTeX warning (ext4): destination with the same identifier (name{figure.17}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1680 
-        <./paper_files/figure-latex/false-lineup-1.pdf>]
-<paper_files/figure-latex/dino-check-1.pdf, id=715, 578.16pt x 433.62pt>
-File: paper_files/figure-latex/dino-check-1.pdf Graphic file (type pdf)
-<use paper_files/figure-latex/dino-check-1.pdf>
-Package pdftex.def Info: paper_files/figure-latex/dino-check-1.pdf  used on input line 1683.
+l.1635 
+        <./paper_files/figure-latex/false-check-1.pdf>]
+<paper_files/figure-latex/boston-check-1.pdf, id=720, 578.16pt x 433.62pt>
+File: paper_files/figure-latex/boston-check-1.pdf Graphic file (type pdf)
+<use paper_files/figure-latex/boston-check-1.pdf>
+Package pdftex.def Info: paper_files/figure-latex/boston-check-1.pdf  used on input line 1638.
 (pdftex.def)             Requested size: 408.0pt x 305.99988pt.
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-<paper_files/figure-latex/dino-lineup-1.pdf, id=716, 578.16pt x 433.62pt>
-File: paper_files/figure-latex/dino-lineup-1.pdf Graphic file (type pdf)
-<use paper_files/figure-latex/dino-lineup-1.pdf>
-Package pdftex.def Info: paper_files/figure-latex/dino-lineup-1.pdf  used on input line 1692.
+<paper_files/figure-latex/boston-lineup-1.pdf, id=721, 578.16pt x 433.62pt>
+File: paper_files/figure-latex/boston-lineup-1.pdf Graphic file (type pdf)
+<use paper_files/figure-latex/boston-lineup-1.pdf>
+Package pdftex.def Info: paper_files/figure-latex/boston-lineup-1.pdf  used on input line 1647.
 (pdftex.def)             Requested size: 408.0pt x 305.99988pt.
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[41
+[40
 pdfTeX warning (ext4): destination with the same identifier (name{figure.18}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1721 
-        <./paper_files/figure-latex/boston-check-1.pdf>] [42
+l.1671 
+        <./paper_files/figure-latex/false-lineup-1.pdf>] [41
 pdfTeX warning (ext4): destination with the same identifier (name{figure.19}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1739 
-        <./paper_files/figure-latex/boston-lineup-1.pdf>] [43
+l.1689 
+        <./paper_files/figure-latex/boston-check-1.pdf>]
+<paper_files/figure-latex/dino-check-1.pdf, id=751, 578.16pt x 433.62pt>
+File: paper_files/figure-latex/dino-check-1.pdf Graphic file (type pdf)
+<use paper_files/figure-latex/dino-check-1.pdf>
+Package pdftex.def Info: paper_files/figure-latex/dino-check-1.pdf  used on input line 1692.
+(pdftex.def)             Requested size: 408.0pt x 305.99988pt.
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<paper_files/figure-latex/dino-lineup-1.pdf, id=752, 578.16pt x 433.62pt>
+File: paper_files/figure-latex/dino-lineup-1.pdf Graphic file (type pdf)
+<use paper_files/figure-latex/dino-lineup-1.pdf>
+Package pdftex.def Info: paper_files/figure-latex/dino-lineup-1.pdf  used on input line 1701.
+(pdftex.def)             Requested size: 408.0pt x 305.99988pt.
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+[42
 pdfTeX warning (ext4): destination with the same identifier (name{figure.20}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1758 
-        <./paper_files/figure-latex/dino-check-1.pdf>] (./paper.bbl [44
+l.1730 
+        <./paper_files/figure-latex/boston-lineup-1.pdf>] [43
 pdfTeX warning (ext4): destination with the same identifier (name{figure.21}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.9 
-     <./paper_files/figure-latex/dino-lineup-1.pdf>] [45] [46]
+l.1748 
+        <./paper_files/figure-latex/dino-check-1.pdf>] [44
+pdfTeX warning (ext4): destination with the same identifier (name{figure.22}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1767 
+        <./paper_files/figure-latex/dino-lineup-1.pdf>] (./paper.bbl [45] [46]
 Underfull \hbox (badness 2065) in paragraph at lines 116--117
 \OT1/cmr/m/n/10 2017. ``Deep con-vo-lu-tional neu-ral net-works for pair-wise causal-ity.'' \OT1/cmr/m/it/10 arXiv preprint
  []
@@ -980,18 +991,18 @@ Package rerunfilecheck Info: File `paper.out' has not changed.
 (rerunfilecheck)             Checksum: 7C1EE9A9B17B8B763DEB8C81DBA2DAD0;6994.
  ) 
 Here is how much of TeX's memory you used:
- 14270 strings out of 476064
- 228396 string characters out of 5791904
- 1941493 words of memory out of 5000000
- 35960 multiletter control sequences out of 15000+600000
+ 14283 strings out of 476064
+ 228565 string characters out of 5791646
+ 1942493 words of memory out of 5000000
+ 35973 multiletter control sequences out of 15000+600000
  572603 words of font info for 92 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 87i,14n,93p,575b,642s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 87i,14n,93p,575b,634s stack positions out of 10000i,1000n,20000p,200000b,200000s
  </Users/patrickli/Library/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm1095.600pk></Users/patrickli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></Users/patrickli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></Users/patrickli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx8.pfb></Users/patrickli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx9.pfb></Users/patrickli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmbxti10.pfb></Users/patrickli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></Users/patrickli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></Users/patrickli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></Users/patrickli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></Users/patrickli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></Users/patrickli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></Users/patrickli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmib10.pfb></Users/patrickli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmmib8.pfb></Users/patrickli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></Users/patrickli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></Users/patrickli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></Users/patrickli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></Users/patrickli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></Users/patrickli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></Users/patrickli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></Users/patrickli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></Users/patrickli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></Users/patrickli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt8.pfb></Users/patrickli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></Users/patrickli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm7.pfb>
-Output written on paper.pdf (48 pages, 4764844 bytes).
+Output written on paper.pdf (48 pages, 4797111 bytes).
 PDF statistics:
- 930 PDF objects out of 1000 (max. 8388607)
- 777 compressed objects within 8 object streams
- 169 named destinations out of 1000 (max. 500000)
- 378 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 951 PDF objects out of 1000 (max. 8388607)
+ 792 compressed objects within 8 object streams
+ 170 named destinations out of 1000 (max. 500000)
+ 383 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -464,6 +464,12 @@ Similarly, we adopted the same methodology to prepare 8000 test images for perfo
 
 ## Architecture of the computer vision model
 
+```{r out.width = "100%", fig.cap = "Diagram of the architecture of the optimized computer vision model."}
+knitr::include_graphics("cnn.pdf")
+```
+
+
+
 The architecture of the computer vision model is adapted from a well-established architecture known as VGG16, which has demonstrated high performance in image classification [@simonyan2014very].
 
 The model begins with an input layer of shape $n \times h \times w \times 3$, capable of handling $n$ RGB images. This is followed by a grayscale conversion layer utilizing the luma formula under the Rec. 601 standard, which converts the colour image to grayscale. Grayscale suffices for our task since data points are plotted in black. We experiment with three combinations of $h$ and $w$: $32 \times 32$, $64 \times 64$, and $128 \times 128$, aiming to achieve sufficiently high image resolution for the problem at hand.
@@ -1103,7 +1109,7 @@ mutate(experiment, type = ifelse(type == "polynomial", "Non-linearity", "Heteros
   geom_pcp(aes_pcp(), linewidth = 0.1) +
   geom_pcp_labels(aes_pcp()) +
   geom_pcp_boxes(aes_pcp(), boxwidth = 0.1) +
-  facet_wrap(~type) +
+  facet_wrap(~type, scales = "free_y") +
   theme_light() +
   scale_x_discrete(labels = c("Visual test", "Computer vision model", "Conventional test")) +
   labs(col = "D") +
@@ -1547,6 +1553,21 @@ result %>%
 
 <!-- There are other kinds of residual departures like autocorrelation that are not considered in this study. The primary goal of this study is to establish a new way of evaluating residual plot and conducting visual test with computer vision models. Building computer vision models for other model violations and other types of diagnostic plots could be future directions of this field.    -->
 
+# Extension to other types of regression model
+
+- Use raw residuals.
+  - D for null plots will be greater than zero.
+  - Can not assume D for actual plots are greater than D for null plots any more.
+  - Need to use a two-sided test instead of a one-sided test.
+  - It may fail completely due to the identification issue.
+- Use transformed residuals that roughly follow a multivariate normal distribution.
+  - The one-sided test will still work. 
+  - Need to ensure that the transformed actual plot will have residual distribution different from the transformed null distribution. 
+- Train a new model.
+  - KL divergence may not be the appropriate measure for the difference between the residual distributions. Could consider using a new distance measure.
+  - 
+
+
 # Conclusion
 
 - Brief discussion
@@ -1619,4 +1640,6 @@ experiment %>%
   mutate(model_reject_true = actual_ss > vss_null_95) %>%
   filter(model_reject_true != reject)
 ```
+
+
 

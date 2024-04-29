@@ -68,3 +68,6 @@ In Section \ref{introduction}, we mentioned that scagnostics consist of a set of
 For each generated residual plot, we computed four scagnostics – "Monotonic," "Sparse," "Splines," and "Striped" – using the `cassowaryr` R package [@mason2022cassowaryr]. These computed measures, along with the number of observations from the fitted model, were provided as the second input for the computer vision model. Although other scagnostics are informative, they are currently unavailable due to a fatal bug in the compiled C program of the `interp` R package [@Albrecht2023interp], which may unpredictably crash the process. For reproducibility, we excluded these scagnostics from the training data.
 
 
+## visualize the convolutional blocks
+
+

@@ -9,9 +9,10 @@
 \def\ConvReluColor{rgb:yellow,5;red,5;white,5}
 \def\PoolColor{rgb:red,1;black,0.3}
 \def\FcColor{rgb:blue,5;red,2.5;white,5}
-\def\FcReluColor{rgb:blue,5;red,5;white,4}
+\def\FcReluColor{rgb:blue,5;red,5;white,5}
 \def\SoftmaxColor{rgb:magenta,5;black,7}
-\def\SumColor{rgb:blue,5;green,15}
+\def\AuxColor{rgb:blue,5;green,15;white,5}
+\def\AuxReluColor{rgb:blue,5;green,7.5;white,5}
 
 \begin{document}
 \begin{tikzpicture}
@@ -62,34 +63,24 @@
         fill=\PoolColor,opacity=0.5,height=10,width=1,depth=10}};
 %%%%%%%%%%
 % fc6
-\pic[shift={(3,0,0)}] at (p5-east) {RightBandedBox={name=fc6,caption=FC1,%
-        xlabel={{"1",""}},zlabel=256,fill=\FcColor,bandfill=\FcReluColor,%
+\pic[shift={(3,0,0)}] at (p5-east) {Box={name=fc6,caption=Concatenation layer,%
+        xlabel={{"1",""}},zlabel=256,fill=\FcColor,%
         height=3,width=3,depth=100}};
-        
-\pic[shift={(3.5,0,15)}] at (p5-east) {Ball={name=elt1,%
-fill=\SumColor,opacity=0.6,%
-radius=2.5,logo=$+$}};
 
-\pic[shift={(3,0,20)}] at (p5-east) {Box={name=fc66,caption=Auxiliary input,%
-        xlabel={{"1",""}},zlabel=5,fill=\FcColor,%
+\pic[shift={(3,0,-11)}] at (p5-east) {Box={name=fc66,caption=Auxiliary input,%
+        xlabel={{"",""}},zlabel=5,fill=\AuxColor,%
         height=3,width=3,depth=10}};
         
 %%%%%%%%%%
 % fc7
-\pic[shift={(2,0,0)}] at (fc6-east) {RightBandedBox={name=fc7,caption=FC2,%
+\pic[shift={(2,0,0)}] at (fc6-east) {RightBandedBox={name=fc7,caption=Dense layer,%
         xlabel={{"1","dummy"}},zlabel=256,fill=\FcColor,bandfill=\FcReluColor,%
         height=3,width=3,depth=100}};
 %%%%%%%%%%
 % fc8
-\pic[shift={(1.5,0,0)}] at (fc7-east) {RightBandedBox={name=fc8,caption=FC3 + relu,%
+\pic[shift={(1.5,0,0)}] at (fc7-east) {RightBandedBox={name=fc8,caption=Output layer,%
         xlabel={{"1","dummy"}},fill=\FcColor,bandfill=\FcReluColor,%
         height=3,width=3,depth=5}};
-
-%%%%%%%%%%
-% softmax
-\pic[shift={(0,0,0)}] at (fc8-east) {Box={name=softmax,%
-        xlabel={{"","dummy"}},zlabel=1,opacity=0.8,fill=\SoftmaxColor,%
-        height=3,width=1.5,depth=5}};
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Draw Arrow Connections
@@ -102,7 +93,7 @@ radius=2.5,logo=$+$}};
 \draw [connection]  (p5-east)        -- node {\midarrow} (fc6-west);
 \draw [connection]  (fc6-east)       -- node {\midarrow} (fc7-west);
 \draw [connection]  (fc7-east)       -- node {\midarrow} (fc8-west);
-\draw [connection]  (fc66-east)      -- node {} (fc6-near);
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Draw Dotted Edges 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

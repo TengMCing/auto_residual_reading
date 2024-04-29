@@ -78,7 +78,6 @@
 \usepackage[utf8]{inputenc}
 \def\tightlist{}
 \usepackage{setspace}
-\doublespacing
 
 \usepackage{booktabs}
 \usepackage{longtable}
@@ -144,32 +143,32 @@ of the model.
 
 Generating a residual plot in most statistical software is often as
 straightforward as executing a line of code or clicking a button.
-However, accurately interpreting a residual plot can be challenging.
-Consider Figure \ref{fig:false-finding} as an example, the residuals
-display a triangular shape pointing to the left. While this might
-suggest heteroskedasticity, it is important to avoid over-interpreting
-this visual pattern. In this case, the fitted regression model is
-correctly specified, and the triangular shape is actually a result of
-the skewed distribution of the predictors, rather than indicating a flaw
-in the model.
+However, accurately interpreting a residual plot can be challenging. A
+residual plot can exhibit various visual features, but it is crucial to
+recognize that some may arise from the characteristics of predictors and
+the inherent randomness of the error, rather than indicating a violation
+of model assumptions \citep{li2023plot}. Consider Figure
+\ref{fig:false-finding} as an example, the residuals display a
+triangular shape pointing to the left. While this might suggest
+heteroskedasticity, it is important to avoid over-interpreting this
+visual pattern. In this case, the fitted regression model is correctly
+specified, and the triangular shape is actually a result of the skewed
+distribution of the predictors, rather than indicating a flaw in the
+model.
 
-A residual plot can exhibit various visual features, but it is crucial
-to recognize that some may arise from the characteristics of predictors
-and the inherent randomness of the error, rather than indicating a
-violation of model assumptions \citep{li2023plot}. The concept of visual
-inference, as proposed by \citet{buja2009statistical}, provides an
-inferential framework to assess whether residual plots indeed contain
-visual patterns inconsistent with the model assumptions. The fundamental
-idea involves testing whether the actual residual plot visually differs
-significantly from null plots, where null plots are plotted with
-residuals generated from the residual rotation distribution
-\citep{langsrud2005rotation}, which is a distribution consistent with
-the null hypothesis \(H_0\) that the linear regression model is
-correctly specified. Typically, the visual test is accomplished through
-the lineup protocol, where the real residual plot is embedded within a
-lineup alongside several null plots. If the real residual plot can be
-distinguished from the lineup, it provides evidence for rejecting
-\(H_0\).
+The concept of visual inference, as proposed by
+\citet{buja2009statistical}, provides an inferential framework to assess
+whether residual plots indeed contain visual patterns inconsistent with
+the model assumptions. The fundamental idea involves testing whether the
+true residual plot visually differs significantly from null plots, where
+null plots are plotted with residuals generated from the residual
+rotation distribution \citep{langsrud2005rotation}, which is a
+distribution consistent with the null hypothesis \(H_0\) that the linear
+regression model is correctly specified. Typically, the visual test is
+accomplished through the lineup protocol, where the real residual plot
+is embedded within a lineup alongside several null plots. If the real
+residual plot can be distinguished from the lineup, it provides evidence
+for rejecting \(H_0\).
 
 The practice of delivering a residual plot as a lineup is generally
 regarded as a valuable approach. Beyond its application in residual
@@ -206,7 +205,7 @@ These measures, including, but not limited to, ``Outlying'', ``Skinny'',
 coherence and other characteristics of the data. While this approach has
 been inspiring, there is a recognition \citep{buja2009statistical} that
 it may not capture all the necessary visual features that differentiate
-actual residual plots from null plots. A more promising alternative
+true residual plots from null plots. A more promising alternative
 entails enabling machines to learn the function for extracting visual
 features from residual plots. Essentially, this means empowering
 computers to discern the crucial visual features for residual
@@ -247,15 +246,14 @@ paper is structured as follows: \ldots{}
 
 \section{Methodology}\label{methodology}
 
-\subsection{Different possible configurations of the model
-formula}\label{different-possible-configurations-of-the-model-formula}
+\subsection{Model Formulas}\label{model-formulas}
 
 There are various configurations of the computer vision model that can
 be used to assess residual plots. We discuss these configurations below
-based on two key components of the model formula: the input and the
+focusing on two key components of the model formula: the input and the
 output format.
 
-\subsubsection{Input formats}\label{input-formats}
+\subsubsection{Input Formats}\label{input-formats}
 
 Deep learning models are in general very sensitive to the input data.
 The quality and relevance of the input data greatly influence the
@@ -302,8 +300,8 @@ a triplet or a lineup is also a possible option.
 designed for image comparison can assess whether a pair of images are
 similar or dissimilar. Applied to our specific problem, we can define
 null plots of a fitted regression model to be similar to each other,
-while considering actual residual plots to be distinct from null plots
-of any fitted regression model. A triplet constitutes a set of three
+while considering true residual plots to be distinct from null plots of
+any fitted regression model. A triplet constitutes a set of three
 images, denoted as \(image_1\), \(image_2\) and \(image_3\). It is often
 used to predict whether \(image_2\) or \(image_3\) is more similar to
 \(image_1\), proving particularly useful for establishing rankings
@@ -319,12 +317,12 @@ resolution of the input image grows rapidly, posing challenges in
 training the model. We experimented with this approach in a pilot study,
 but the performance of the trained model was sub-optimal.
 
-We did not explore all the mentioned input formats due the considerable
-costs associated with data preparation and model training. Considering
-the implementation cost and the interpretability of the model, we
-settled on the single residual plot input format.
+We did not explore all the mentioned input formats due to the
+significant costs tied to data preparation and model training. Taking
+into account the implementation cost and the need for model
+interpretability, we settled on the single residual plot input format.
 
-\subsubsection{Output formats}\label{output-formats}
+\subsubsection{Output Formats}\label{output-formats}
 
 Given that the input is a single residual plot represented as a
 fixed-resolution image, the output from the computer vision model can
@@ -343,7 +341,7 @@ amount of available training data.
 Alternatively, the output could be a meaningful and interpretable
 numerical measure useful for assessing residual plots, such as the
 strength of suspicious visual patterns reflecting the extent of model
-violations and the difficulty index for identifying whether a residual
+violations, or the difficulty index for identifying whether a residual
 plot has no issues. However, these numeric measures are often informally
 used in daily communication but are not typically formalized or
 rigorously defined. For the purpose of training a model, this numeric
@@ -355,8 +353,8 @@ the difference between the residual plot and the null plots.
 distance between images can enhance the matching accuracy in image
 search compared to a binary outcome model.
 
-\subsection{Distance from the good residual
-plots}\label{distance-from-the-good-residual-plots}
+\subsection{Distance Between Residual
+Plots}\label{distance-between-residual-plots}
 
 In a visual test, the observer will be asked to choose one or more plots
 that stand out as most distinct from others in a given lineup. To
@@ -374,18 +372,20 @@ Section \ref{introduction} could be used to construct distance metrics
 for residual plots comparison, but the functional form still needs to be
 carefully refined to accurately reflect the extent of the violations.
 
-\subsubsection{Residual distribution}\label{residual-distribution}
+\subsubsection{Residual Distribution}\label{residual-distribution}
 
 The distance measure proposed in this study takes into account the fact
 that we tried to measure how different a residual plot is from a good
 residual plot, or in other words, how different a given fitted
-regression model is from a correctly specified model. For the classical
-normal linear regression model, residuals \(\boldsymbol{e}\) are derived
-from the fitted values \(\hat{\boldsymbol{y}}\) and observed values
-\(\boldsymbol{y}\). Suppose the data generating process is known and the
-regression model is correctly specified, by the Frisch-Waugh-Lowell
-theorem \citep{frisch1933partial}, residuals \(\boldsymbol{e}\) can also
-be treated as random variables and written as a linear transformation of
+regression model is from a correctly specified model.
+
+For a classical normal linear regression model, residuals
+\(\boldsymbol{e}\) are derived from the fitted values
+\(\hat{\boldsymbol{y}}\) and observed values \(\boldsymbol{y}\). Suppose
+the data generating process is known and the regression model is
+correctly specified, by the Frisch-Waugh-Lowell theorem
+\citep{frisch1933partial}, residuals \(\boldsymbol{e}\) can also be
+treated as random variables and written as a linear transformation of
 the error \(\boldsymbol{\varepsilon}\) formulated as
 \(\boldsymbol{e} = \boldsymbol{R}\boldsymbol{\varepsilon}\), where
 \(\boldsymbol{R}=\boldsymbol{I}_n -\boldsymbol{X}(\boldsymbol{X}'\boldsymbol{X})^{-1}\boldsymbol{X}'\)
@@ -403,15 +403,15 @@ distribution, which will be denoted as \(Q\). This reference
 distribution \(Q\) summarizes what good residuals should follow given
 the design matrix \(\boldsymbol{X}\) is known and fixed.
 
-In ordinary least square, the minimization of the sum of square
-residuals implies \(\sum_{i=1}^{n} e_i = 0\), making any residual value
-to be a linear combination of the remaining \(n - 1\) residuals. This
-effectively means \(\text{rank}(\boldsymbol{R}) = n - 1 < n\) and \(Q\)
-is a degenerate multivariate distribution. To capture the
-characteristics of \(Q\), such as moments, we can simulate a large
-numbers of \(\boldsymbol{\varepsilon}\) and transform it to
-\(\boldsymbol{e}\) to get the empirical estimates. For simplicity, in
-this study, we replaced the variance-covariance matrix of residuals
+Suppose the design matrix \(\boldsymbol{X}\) has linearly independent
+columns, the trace of the hat matrix will equal to the number of columns
+in \(\boldsymbol{X}\) denoted as \(k\). As a result, the rank of
+\(\boldsymbol{R}\) is \(n - k\), and \(Q\) is a degenerate multivariate
+distribution. To capture the characteristics of \(Q\), such as moments,
+we can simulate a large numbers of \(\boldsymbol{\varepsilon}\) and
+transform it to \(\boldsymbol{e}\) to get the empirical estimates. For
+simplicity, in this study, we replaced the variance-covariance matrix of
+residuals
 \(\text{cov}(\boldsymbol{e}, \boldsymbol{e}) = \boldsymbol{R}\sigma^2\boldsymbol{R}' = \boldsymbol{R}\sigma^2\)
 with a full-rank diagonal matrix
 \(\text{diag}(\boldsymbol{R}\sigma^2)\), where \(\text{diag}(.)\) sets
@@ -423,7 +423,7 @@ Distribution \(Q\) is derived from the correctly specified model.
 However, if the model is misspecified, then the actual distribution of
 residuals denoted as \(P\), will be different from \(Q\). For example,
 if the data generating process contains variables correlated with any
-column of \(\boldsymbol{X}\) but not included in \(\boldsymbol{X}\),
+column of \(\boldsymbol{X}\) but missing from \(\boldsymbol{X}\),
 causing an omitted variable problem, \(P\) will be different from \(Q\)
 because the residual operator obtained from the fitted regression model
 will not be the same as \(\boldsymbol{R}\). Besides, if the
@@ -431,11 +431,11 @@ will not be the same as \(\boldsymbol{R}\). Besides, if the
 multivariate log-normal distribution, \(P\) will usually be skewed and
 has a long tail.
 
-\subsubsection{\texorpdfstring{Kullback-Leibler divergence of \(P\) from
-\(Q\)}{Kullback-Leibler divergence of P from Q}}\label{kullback-leibler-divergence-of-p-from-q}
+\subsubsection{\texorpdfstring{Distance of \(P\) from
+\(Q\)}{Distance of P from Q}}\label{distance-of-p-from-q}
 
 Define a proper distance between distributions is usually easier than
-define a proper distance between data plots. Given the actual residual
+define a proper distance between data plots. Given the true residual
 distribution \(Q\) and the reference residual distribution \(P\), we
 used a distance measure based on Kullback-Leibler divergence
 \citep{kullback1951information} to quantify the difference between two
@@ -448,13 +448,12 @@ D &= \log\left(1 + D_{KL}\right), \\
 D_{KL} &= \int_{\mathbb{R}^{n}}\log\frac{p(\boldsymbol{e})}{q(\boldsymbol{e})}p(\boldsymbol{e})d\boldsymbol{e},
 \end{align}
 
-\noindent where \(p(.)\) is the probability density function for
-distribution \(P\), and \(q(.)\) is the probability density function for
-distribution \(Q\).
+\noindent where \(p(.)\) and \(q(.)\) are the probability density
+functions for distribution \(P\) and distribution \(Q\) respectively.
 
 This distance measure was first proposed in \citet{li2023plot}. It was
 mainly designed for measuring the effect size of non-linearity and
-heteroskedasticity in a residual plot. \citet{li2023plot} have showed
+heteroskedasticity in a residual plot. \citet{li2023plot} have derived
 that, for a classical normal linear regression model that omits a
 necessary higher-order predictors \(\boldsymbol{Z}\), and incorrectly
 assumes
@@ -472,21 +471,20 @@ distributions, equation \ref{eq:kl-1} can be further expanded to
 
 \begin{align}
 \label{eq:kl-2}
-D_{KL} &= \frac{1}{2}\left(\log\frac{|\text{diag}(\boldsymbol{W})|}{|\text{diag}(\boldsymbol{R}\sigma^2)|} - n + \text{tr}(\text{diag}(\boldsymbol{W})^{-1}\text{diag}(\boldsymbol{R}\sigma^2)) + \boldsymbol{\mu}_z'(\text{diag}(\boldsymbol{W}))^{-1}\boldsymbol{\mu}_z\right),
+D_{KL} &= \frac{1}{2}\left(\log\frac{|\text{diag}(\boldsymbol{W})|}{|\text{diag}(\boldsymbol{R}\sigma^2)|} - n + tr(\text{diag}(\boldsymbol{W})^{-1}\text{diag}(\boldsymbol{R}\sigma^2)) + \boldsymbol{\mu}_z'(\text{diag}(\boldsymbol{W}))^{-1}\boldsymbol{\mu}_z\right),
 \end{align}
 
 \noindent where
 \(\boldsymbol{\mu}_z = \boldsymbol{R}\boldsymbol{Z}\boldsymbol{\beta}_z\),
 and \(\boldsymbol{W} = \boldsymbol{R}\boldsymbol{V}\boldsymbol{R}\). The
 assumed error variance \(\sigma^2\) is set to be
-\(\text{tr}(\boldsymbol{V})/n\), which is the expectation of the
-estimated variance.
+\(tr(\boldsymbol{V})/n\), which is the expectation of the estimated
+variance.
 
-\subsubsection{\texorpdfstring{Evaluation of Kullback-Leibler divergence
-for non-normal
-\(P\)}{Evaluation of Kullback-Leibler divergence for non-normal P}}\label{evaluation-of-kullback-leibler-divergence-for-non-normal-p}
+\subsubsection{\texorpdfstring{Non-normal
+\(P\)}{Non-normal P}}\label{non-normal-p}
 
-For non-normal error \(\boldsymbol{\varepsilon}\), the actual residual
+For non-normal error \(\boldsymbol{\varepsilon}\), the true residual
 distribution \(P\) is unlikely to be a multivariate normal distribution.
 Thus, equation \ref{eq:kl-2} given in \citet{li2023plot} will not be
 applicable to models violating the normality assumption.
@@ -558,18 +556,17 @@ and \(vec(.)\) is the vectorization operator which turns a
 \(n \times m\) matrix into a \(nm \times 1\) column vector by stacking
 the columns of the matrix on top of each other.
 
-\subsubsection{Approximation of the distance
-measure}\label{approximation-of-the-distance-measure}
+\subsection{Distance Estimation}\label{distance-estimation}
 
 In the previous sections, we have defined a distance measure given in
-equation \ref{eq:kl-0} for quantifying the difference between the actual
+equation \ref{eq:kl-0} for quantifying the difference between the true
 residual distribution \(P\) and an ideal reference distribution \(Q\).
 You may have noticed that this distance measure can only be computed
 when the data generating process is known. In reality, we often have no
 knowledge about the data generating process, otherwise we do not need to
 fit a linear regression model in the first place.
 
-We tried to train a computer vision model to approximate this distance
+We tried to train a computer vision model to estimate this distance
 measure with a residual plot. Let \(D\) be the result of equation
 \ref{eq:kl-0}, and our estimator \(\hat{D}\) is formulated as
 
@@ -579,48 +576,45 @@ measure with a residual plot. Let \(D\) be the result of equation
 \end{equation}
 
 \noindent where \(V_{h \times w}(.)\) is a plotting function that saves
-a residuals vs fitted values plot with fixed aesthetic as an image with
-\(h \times w\) pixels and three colour channels, \(f_{CV}(.)\) is a
-computer vision model which takes an \(h \times w\) image as input and
-predicts the distance in the domain \([0, +\infty)\).
+a residuals vs fitted values plot with fixed aesthetic as an RGB image
+with \(h \times w\) pixels, \(f_{CV}(.)\) is a computer vision model
+which takes an \(h \times w\) image as input and predicts the distance
+in the domain \([0, +\infty)\).
 
-With the approximated distance \(\hat{D}\), we will be able to know how
+With the estimated distance \(\hat{D}\), we will be able to know how
 different the underlying distribution of the residuals is from a good
-residual distribution. The approximated distance \(\hat{D}\) can also be
-used as an index of the model violations. It also provides information
-for the strength of the visual signal embedded in the residual plot.
+residual distribution. \(\hat{D}\) can also be used as an index of the
+model violations indicating the strength of the visual signal embedded
+in the residual plot.
 
-The approximated distance \(\hat{D}\) is not expected to be the same as
-the original distance \(D\). This is largely because information
-contained in a single residual plot is limited and it may not be able to
-summarise all the important characteristics of the residual
-distribution. For a given residual distribution \(P\), we can generate
-many different residual plots. Some of them share similar visual
-patterns, but some of them could be visually very different from the
-rest, especially for regression models with small \(n\). This suggests
-the error of the approximation will vary depends on whether the observed
-residual plot is representative or not.
+It is not expected that \(\hat{D}\) will be equal to original distance
+\(D\). This is largely because information contained in a single
+residual plot is limited and it may not be able to summarise all the
+important characteristics of the residual distribution. For a given
+residual distribution \(P\), many different residual plots can be
+simulated, where many will share similar visual patterns, but some of
+them could be visually very different from the rest, especially for
+regression models with small \(n\). This suggests the error of the
+estimation will vary depends on whether the input residual plot is
+representative or not.
 
-\subsubsection{Model Violations Index
+\subsection{Model Violations Index
 (MVI)}\label{sec:model-violations-index}
 
-In Section \ref{output-formats}, we discuss the output formats of the
-computer vision model presented in this paper. One notable advantage
-highlighted is its interpretability. The approximated distance
-\(\hat{D}\) is an estimator of the difference between the actual
-residual distribution and the reference residual distribution. This
-difference primarily arises from deviations in model assumptions. The
-magnitude of \(D\) directly reflects the degree of these deviations,
-thus making \(\hat{D}\) instrumental in forming a model violation index.
+\(\hat{D}\) is an estimator of the difference between the true residual
+distribution and the reference residual distribution. This difference
+primarily arises from deviations in model assumptions. The magnitude of
+\(D\) directly reflects the degree of these deviations, thus making
+\(\hat{D}\) instrumental in forming a model violations index.
 
-Note that the Kullback-Leibler divergence might be influenced by the
-number of random variables involved in its evaluation. Generally, a
-larger number of observations will lead to a greater distance \(D\).
-However, this does not imply that \(\hat{D}\) fails to accurately
-represent the extent of model violations. In fact, when examining
-residual plots with more observations, we often observe a stronger
-visual signal strength, as the underlying patterns are more likely to be
-revealed, except in cases of significant overlapping.
+Note that Equation \ref{eq:kl-0} might be influenced by the number of
+random variables involved in its evaluation. Generally, a larger number
+of observations will lead to a greater distance \(D\). However, this
+does not imply that \(\hat{D}\) fails to accurately represent the extent
+of model violations. In fact, when examining residual plots with more
+observations, we often observe a stronger visual signal strength, as the
+underlying patterns are more likely to be revealed, except in cases of
+significant overlapping.
 
 For a consistent data generating process, \(D\) typically increases
 logarithmically with the number of observations. This behaviour comes
@@ -638,10 +632,54 @@ Therefore, the Model Violations Index (MVI) can be proposed as
 \noindent where \(C\) is a large enough constant keeping the result
 positive.
 
-\subsection{Statistical testing based on the approximated
-distance}\label{statistical-testing-based-on-the-approximated-distance}
+Figures \ref{fig:poly-index} and \ref{fig:heter-index} display the
+residual plots for fitted models exhibiting varying degrees of
+non-linearity and heteroskedasticity. Each residual plot's MVI is
+computed using Equation \ref{eq:mvi} with \(C = 10\). When
+\(\text{MVI} > 8\), the visual patterns are notably strong and easily
+discernible by humans. In the range \(6 < \text{MVI} < 8\), the
+visibility of the visual pattern diminishes as MVI decreases.
+Conversely, when \(\text{MVI} < 6\), the visual pattern tends to become
+relatively faint and challenging to observe. Table \ref{tab:mvi}
+provides a summary of the MVI usage and it is applicable to other linear
+regression models.
 
-\subsubsection{Lineup evaluation}\label{lineup-evaluation}
+\begin{table}
+
+\caption{\label{tab:mvi}Degree of model violations or the strength of the visual signals according to the Model Violation Index (MVI). The constant $C$ is set to be 10.}
+\centering
+\begin{tabular}[t]{ll}
+\toprule
+Degree of model violations & Range ($C$ = 10)\\
+\midrule
+Strong & $\text{MVI} > 8$\\
+Moderate & $6 < \text{MVI} < 8$\\
+Weak & $\text{MVI} < 6$\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[!h]
+
+{\centering \includegraphics[width=1\linewidth]{paper_files/figure-latex/poly-index-1} 
+
+}
+
+\caption{Residual plots generated from fitted models exhibiting varying degrees of non-linearity violations. The Model violations index (MVI) is displayed atop each residual plot. The non-linearity patterns are relatively strong for $MVI > 8$, and relatively weak for $MVI < 6$.}\label{fig:poly-index}
+\end{figure}
+
+\begin{figure}[!h]
+
+{\centering \includegraphics[width=1\linewidth]{paper_files/figure-latex/heter-index-1} 
+
+}
+
+\caption{Residual plots generated from fitted models exhibiting varying degrees of heteroskedasticity violations. The Model violations index (MVI) is displayed atop each residual plot. The heteroskedasticity patterns are relatively strong for $MVI > 8$, and relatively weak for $MVI < 6$.}\label{fig:heter-index}
+\end{figure}
+
+\subsection{Statistical testing}\label{statistical-testing}
+
+\subsubsection{Lineup Evaluation}\label{lineup-evaluation}
 
 Theoretically, the distance \(D\) for a correctly specified model is
 \(0\), because \(P\) will be the same as \(Q\). However, the computer
@@ -663,25 +701,25 @@ sufficient to determine if \(H_0\) should be rejected.
 
 To address this issue while adhering to the principle of visual
 inference, we can compare the estimated distance \(\hat{D}\) to the
-approximated distances for the null plots in a lineup. Specifically, if
-a lineup comprises 20 plots, the null hypothesis \(H_0\) will be
-rejected if \(\hat{D}\) exceeds the maximum approximated distance among
-the \(m - 1\) null plots, denoted as
+estimated distances for the null plots in a lineup. Specifically, if a
+lineup comprises 20 plots, the null hypothesis \(H_0\) will be rejected
+if \(\hat{D}\) exceeds the maximum estimated distance among the
+\(m - 1\) null plots, denoted as
 \(\max\limits_{1 \leq i \leq m-1} {\hat{D}_{null}^{(i)}}\), where
-\(\hat{D}_{null}^{(i)}\) represents the approximated distance for the
+\(\hat{D}_{null}^{(i)}\) represents the estimated distance for the
 \(i\)-th null plot. This approach is equivalent to the typical lineup
 protocol requiring a 95\% significance level, where \(H_0\) is rejected
 if the data plot is identified as the most distinct plot by the sole
-participant. The approximated distance serves as a metric to quantify
-the difference between the data plot and the null plots, as intended.
+participant. The estimated distance serves as a metric to quantify the
+difference between the data plot and the null plots, as intended.
 
 For lineups consisting of more than 20 plots, the 95\% significance
 level can be maintained if the number of plots is a multiple of 20.
-Specifically, for lineups comprising \(20p\) plots, where \(p\) is a
+Specifically, for lineups comprising \(20t\) plots, where \(l\) is a
 positive integer, we reject \(H_0\) if \(\hat{D}\) exceeds 95\%
-\({\hat{D}_{null}^{(i)}}\) for \(i = 1, \ldots, 20p-1\). The p-value in
-this case is given by
-\(\frac{1}{m} + \frac{1}{m}\sum{i=1}^{m-1} I\left(\hat{D}_{null}^{(i)} > \hat{D}\right)\),
+\({\hat{D}_{null}^{(i)}}\) for \(i = 1, \ldots, 20t-1\). The \(p\)-value
+in this case is given by
+\(\frac{1}{20t} + \frac{1}{20t}\sum{i=1}^{20t-1} I\left(\hat{D}_{null}^{(i)} > \hat{D}\right)\),
 where \(I(\cdot)\) is the indicator function.
 
 Moreover, if the number of plots in a lineup, denoted by \(m\), is
@@ -694,15 +732,15 @@ utilized for decision-making purposes. The details of the sample
 quantile computation can be found in \citet{hyndman1996sample}. For
 instance, if \(\hat{D}\) is greater than or equal to the 95\% sample
 quantile, denoted as \(Q_{null}(0.95)\), we can conclude that the
-approximated distance for the actual residual plot is significantly
-different from the approximated distance for null plots with a 95\%
-significance level. Based on our experience, to obtain a stable estimate
-of the 95\% quantile, the number of null plots, \(n_{null}\), typically
-needs to be at least 100. However, if the null distribution exhibits a
-long tail, a larger number of null plots may be required. Alternatively,
-a p-value can be used to represent the probability of observing an event
-equally or more extreme than the given event under the null hypothesis
-\(H_0\), and it can be estimated by
+estimated distance for the true residual plot is significantly different
+from the estimated distance for null plots with a 95\% significance
+level. Based on our experience, to obtain a stable estimate of the 95\%
+quantile, the number of null plots, \(n_{null}\), typically needs to be
+at least 100. However, if the null distribution exhibits a long tail, a
+larger number of null plots may be required. Alternatively, a
+\(p\)-value can be used to represent the probability of observing an
+event equally or more extreme than the given event under the null
+hypothesis \(H_0\), and it can be estimated by
 \(\frac{1}{m}\sum_{i=1}^{m-1}I\left(\hat{D}_{null}^{(i)} \geq \hat{D}\right)\).
 
 If precision in sample quantiles is not the main priority, using a
@@ -712,8 +750,7 @@ It is generated by assessing numerous null plots derived from various
 simulated regression models and averaging them. Essentially, this shifts
 the computational burden from the user to the developer.
 
-\subsubsection{Bootstrapping the approximated
-distance}\label{bootstrapping-the-approximated-distance}
+\subsubsection{Bootstrapping}\label{bootstrapping}
 
 Bootstrap is often employed in linear regression when conducting
 inference for estimated parameters. It is typically done by sampling
@@ -723,7 +760,7 @@ population, the bootstrapped estimates can be used to measure the
 variability of the parameter estimate without making strong
 distributional assumptions about the data generating process.
 
-Similarly, bootstrap can be applied on the approximated distance
+Similarly, bootstrap can be applied on the estimated distance
 \(\hat{D}\). For each refitted model \(M_{boot}^{(i)}\), there will be
 an associated residual plot \(V_{boot}^{(i)}\) which can be fed into the
 computer vision model to obtain \(\hat{D}_{boot}^{(i)}\), where
@@ -746,10 +783,9 @@ requires \(n_{boot} \times n_{null}\) times of residual plot assessment.
 In practice, \(Q_{null}(0.95)\) can be used to replace
 \(Q_{boot}^{(i)}(0.95)\) in the computation.
 
-\subsection{Generation of training
-data}\label{generation-of-training-data}
+\subsection{Data Genearation}\label{data-genearation}
 
-\subsubsection{Data generating process}\label{data-generating-process}
+\subsubsection{Simulation Scheme}\label{simulation-scheme}
 
 While observational data is frequently employed in training models for
 real-world applications, the data generating process of observational
@@ -925,8 +961,7 @@ different types of model violations. Figure \ref{fig:different-j-heter}
 and \ref{fig:different-e-heter} show the visual patterns of models with
 multiple model violations.
 
-\subsubsection{Computation of
-scagnostics}\label{computation-of-scagnostics}
+\subsubsection{Scagnostics}\label{scagnostics}
 
 In Section \ref{introduction}, we mentioned that scagnostics consist of
 a set of manually designed visual feature extraction functions. While
@@ -939,14 +974,10 @@ For each generated residual plot, we computed four scagnostics --
 \texttt{cassowaryr} R package \citep{mason2022cassowaryr}. These
 computed measures, along with the number of observations from the fitted
 model, were provided as the second input for the computer vision model.
-Although other scagnostics are informative, they are currently
-unavailable due to a fatal bug in the compiled C program of the
-\texttt{interp} R package \citep{Albrecht2023interp}, which may
-unpredictably crash the process. For reproducibility, we excluded these
-scagnostics from the training data.
+While other scagnostics provide valuable insights, they come with high
+computational costs and are not suitable for quick inference.
 
-\subsubsection{Crafting a balanced training
-set}\label{crafting-a-balanced-training-set}
+\subsubsection{Balanced Dataset}\label{balanced-dataset}
 
 To train a robust computer vision model, we deliberately controlled the
 distribution of the target variable \(D\) in the training data. We
@@ -967,8 +998,7 @@ bucket. This process continued until all buckets were filled.
 Similarly, we adopted the same methodology to prepare 8000 test images
 for performance evaluation and model diagnostics.
 
-\subsection{Architecture of the computer vision
-model}\label{architecture-of-the-computer-vision-model}
+\subsection{Model Architecture}\label{model-architecture}
 
 \begin{figure}
 
@@ -1037,8 +1067,47 @@ is the \(i\)-th residual plot and \(S_i\) is the additional information
 about the \(i\)-th residual plot including four scagnostics and the
 number of observations.
 
-\subsection{Training and hyperparameter
-tuning}\label{training-and-hyperparameter-tuning}
+Based on the tuning process described in Section
+\ref{training-and-hyperparameter-tuning}, the optimized hyperparameter
+values are presented in Table \ref{tab:best-hyperparameter}. It was
+observable that a minimum of \(32\) base filters was necessary, with the
+preferable choice being \(64\) base filters for both the
+\(64 \times 64\) and \(128 \times 128\) models, mirroring the original
+VGG16 architecture. The optimized dropout rate for convolutional blocks
+hovered around \(0.4\), and incorporating batch normalization for
+convolutional blocks proved beneficial for performance.
+
+All optimized models chose to retain the additional inputs, contributing
+to the reduction of validation error. The number of units required for
+the fully-connected layer was \(256\), a relatively modest number
+compared to the VGG16 classifier, suggesting that the problem at hand
+was less complex. The optimized learning rates were smaller than the
+default value recommended by Keras, which is 0.001.
+
+\begin{table}
+
+\caption{\label{tab:best-hyperparameter}Hyperparameters values for the optimized computer vision models with different input sizes.}
+\centering
+\resizebox{\linewidth}{!}{
+\begin{tabular}[t]{llll}
+\toprule
+Hyperparameter & $32 \times 32$ & $64 \times 64$ & $128 \times 128$\\
+\midrule
+Number of base filters & 32 & 64 & 64\\
+Dropout rate for convolutional blocks & 0.4 & 0.3 & 0.4\\
+Batch normalization for convolutional blocks & true & true & true\\
+Type of global pooling & max & average & average\\
+Ignore additional inputs & false & false & false\\
+\addlinespace
+Number of units for the fully-connected layer & 256 & 256 & 256\\
+Batch normalization for the fully-connected layer & false & true & true\\
+Dropout rate for the fully-connected layer & 0.2 & 0.4 & 0.1\\
+Learning rate & 0.0003 & 0.0006 & 0.0052\\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\subsection{Model Training}\label{model-training}
 
 To achieve an optimal deep learning model, hyperparameters like the
 learning rate often need to be fine-tuned using a tuner. In our study,
@@ -1115,54 +1184,15 @@ Learning rate & {}[1e-8, 1e-1]\\
 \end{tabular}
 \end{table}
 
-\subsection{Model evaluation methods}\label{model-evaluation-methods}
+\subsection{Evaluation Methods}\label{evaluation-methods}
 
 This section remains incomplete as we may modify the ``Results'' section
 later on.
 
 \section{Results}\label{results}
 
-\subsection{Optimized hyperparameters}\label{optimized-hyperparameters}
-
-Based on the tuning process described in Section
-\ref{training-and-hyperparameter-tuning}, the optimized hyperparameter
-values are presented in Table \ref{tab:best-hyperparameter}. It was
-observable that a minimum of \(32\) base filters was necessary, with the
-preferable choice being \(64\) base filters for both the
-\(64 \times 64\) and \(128 \times 128\) models, mirroring the original
-VGG16 architecture. The optimized dropout rate for convolutional blocks
-hovered around \(0.4\), and incorporating batch normalization for
-convolutional blocks proved beneficial for performance.
-
-All optimized models chose to retain the additional inputs, contributing
-to the reduction of validation error. The number of units required for
-the fully-connected layer was \(256\), a relatively modest number
-compared to the VGG16 classifier, suggesting that the problem at hand
-was less complex. The optimized learning rates were smaller than the
-default value recommended by Keras, which is 0.001.
-
-\begin{table}
-
-\caption{\label{tab:best-hyperparameter}Hyperparameters values for the optimized computer vision models with different input sizes.}
-\centering
-\resizebox{\linewidth}{!}{
-\begin{tabular}[t]{llll}
-\toprule
-Hyperparameter & $32 \times 32$ & $64 \times 64$ & $128 \times 128$\\
-\midrule
-Number of base filters & 32 & 64 & 64\\
-Dropout rate for convolutional blocks & 0.4 & 0.3 & 0.4\\
-Batch normalization for convolutional blocks & true & true & true\\
-Type of global pooling & max & average & average\\
-Ignore additional inputs & false & false & false\\
-\addlinespace
-Number of units for the fully-connected layer & 256 & 256 & 256\\
-Batch normalization for the fully-connected layer & false & true & true\\
-Dropout rate for the fully-connected layer & 0.2 & 0.4 & 0.1\\
-Learning rate & 0.0003 & 0.0006 & 0.0052\\
-\bottomrule
-\end{tabular}}
-\end{table}
+understand what the convolutional layer is actually doing (read vgg16
+doc)
 
 \subsection{Summary of model
 performance}\label{summary-of-model-performance}
@@ -1274,57 +1304,6 @@ non-linearity + heteroskedasticity + non-normality & 7721 & 0.432 & 717 & 0.620\
 \end{tabular}}
 \end{table}
 
-\subsection{Demostration of MVI}\label{demostration-of-mvi}
-
-As described in Section \ref{sec:model-violations-index} a Model
-Violations Index (MVI) can be constructed using \(\hat{D}\). This
-section provides guidelines and examples of MVI.
-
-Figures \ref{fig:poly-index} and \ref{fig:heter-index} display the
-residual plots for fitted models exhibiting varying degrees of
-non-linearity and heteroskedasticity. Each residual plot's MVI is
-computed using Equation \ref{eq:mvi} with \(C = 10\). When
-\(\text{MVI} > 8\), the visual patterns are notably strong and easily
-discernible by humans. In the range \(6 < \text{MVI} < 8\), the
-visibility of the visual pattern diminishes as MVI decreases.
-Conversely, when \(\text{MVI} < 6\), the visual pattern tends to become
-relatively faint and challenging to observe. Table \ref{tab:mvi}
-provides a summary of the MVI usage and it is applicable to other linear
-regression models.
-
-\begin{table}
-
-\caption{\label{tab:mvi}Degree of model violations or the strength of the visual signals according to the Model Violation Index (MVI). The constant $C$ is set to be 10.}
-\centering
-\begin{tabular}[t]{ll}
-\toprule
-Degree of model violations & Range ($C$ = 10)\\
-\midrule
-Strong & $\text{MVI} > 8$\\
-Moderate & $6 < \text{MVI} < 8$\\
-Weak & $\text{MVI} < 6$\\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\begin{figure}[!h]
-
-{\centering \includegraphics[width=1\linewidth]{paper_files/figure-latex/poly-index-1} 
-
-}
-
-\caption{Residual plots generated from fitted models exhibiting varying degrees of non-linearity violations. The Model violations index (MVI) is displayed atop each residual plot. The non-linearity patterns are relatively strong for $MVI > 8$, and relatively weak for $MVI < 6$.}\label{fig:poly-index}
-\end{figure}
-
-\begin{figure}[!h]
-
-{\centering \includegraphics[width=1\linewidth]{paper_files/figure-latex/heter-index-1} 
-
-}
-
-\caption{Residual plots generated from fitted models exhibiting varying degrees of heteroskedasticity violations. The Model violations index (MVI) is displayed atop each residual plot. The heteroskedasticity patterns are relatively strong for $MVI > 8$, and relatively weak for $MVI < 6$.}\label{fig:heter-index}
-\end{figure}
-
 \subsection{Comparison with human visual inference and conventional
 tests}\label{comparison-with-human-visual-inference-and-conventional-tests}
 
@@ -1335,9 +1314,9 @@ In order to check the validity of the proposed computer vision model,
 residual plots presented in the human subject experiment conducted by
 \citet{li2023plot} will be assessed. This study has collected \(7974\)
 human responses to \(1152\) lineups. Each lineup contains one randomly
-placed actual residual plot and 19 null plots. Among the \(1152\)
-lineups, \(24\) are attention check lineups in which the visual patterns
-are designed to be extremely obvious and very different from the
+placed true residual plot and 19 null plots. Among the \(1152\) lineups,
+\(24\) are attention check lineups in which the visual patterns are
+designed to be extremely obvious and very different from the
 corresponding to null plots, \(36\) are null lineups where all the
 lineups consist of only null plots, \(279\) are lineups with uniform
 predictor distribution evaluated by \(11\) participants, and the
@@ -1370,20 +1349,20 @@ non-linearity & 0.738 & 0.770 & 0.566 & 0.246\\
 \end{tabular}
 \end{table}
 
-For each lineup used in \citet{li2023plot}, there is one actual residual
-plot and 19 null plots. While the distance \(D\) for the actual residual
+For each lineup used in \citet{li2023plot}, there is one true residual
+plot and 19 null plots. While the distance \(D\) for the true residual
 plot depends on the underlying data generating process, the distance
 \(D\) for the null plots is zero. We have used our optimized computer
-vision model to predict the approximated distance for both the actual
+vision model to predict the approximated distance for both the true
 residual plots and the null plots. To have a fair comparison, \(H_0\)
-will be rejected if the actual residual plot has the greatest
-approximated distance among all plots in a lineup. Additionally, the
-appropriate conventional tests including the Ramsey Regression Equation
+will be rejected if the true residual plot has the greatest approximated
+distance among all plots in a lineup. Additionally, the appropriate
+conventional tests including the Ramsey Regression Equation
 Specification Error Test (RESET) \citep{ramsey1969tests} for
 non-linearity and the Breusch-Pagan test \citep{breusch1979simple} for
 heteroskedasticity were applied on the same data for comparison.
 
-The performance metrics of \(\hat{D}\) for actual residual plots are
+The performance metrics of \(\hat{D}\) for true residual plots are
 outlined in Table \ref{tab:experiment-performance}. It's notable that
 all performance metrics are slightly worse than those evaluated on the
 test data. Nevertheless, the mean absolute error remains at a low level,
@@ -1445,8 +1424,8 @@ Figure \ref{fig:delta} indicates that the weighted detection rate
 increases as the \(\delta\)-difference increases, particularly when the
 \(\delta\)-difference is greater than zero. A negative
 \(\delta\)-difference suggests that there is at least one null plot in
-the lineup with a stronger visual signal than the actual residual plot.
-In some instances, the weighted detection rate is close to one, yet the
+the lineup with a stronger visual signal than the true residual plot. In
+some instances, the weighted detection rate is close to one, yet the
 \(\delta\)-difference is negative. This discrepancy implies that the
 distance measure, or the approximated distance, may not perfectly
 reflect actual human behaviour.
@@ -1538,8 +1517,8 @@ lineup for this fitted model, showcasing various degrees of
 ``left-triangle'' shape across all residual plots. This phenomenon is
 evidently caused by the skewed distribution of the fitted values.
 Notably, if the residual plot were evaluated through a visual test, it
-would not be rejected since the actual residual plot positioned at 10
-can not be distinguished from the others.
+would not be rejected since the true residual plot positioned at 10 can
+not be distinguished from the others.
 
 Moving forward, we will employ the trained computer vision model to
 assess the residual plot with the assistance of the \texttt{autovi} R
@@ -1600,7 +1579,7 @@ utilize information from null plots.
 
 }
 
-\caption{A lineup of residual plots displaying "left-triangle" visual patterns. The actual residual plot occupies position 10, yet there are no discernible visual patterns that distinguish it from the other plots.}\label{fig:false-lineup}
+\caption{A lineup of residual plots displaying "left-triangle" visual patterns. The true residual plot occupies position 10, yet there are no discernible visual patterns that distinguish it from the other plots.}\label{fig:false-lineup}
 \end{figure}
 
 \subsubsection{Boston housing}\label{boston-housing}
@@ -1629,7 +1608,7 @@ be correctly specified.
 
 Additionally, the lineup of this fitted model presented in Figure
 \ref{fig:boston-lineup} underscores that the ``U'' shape is a
-distinctive characteristic of the actual residual plot, absent in any of
+distinctive characteristic of the true residual plot, absent in any of
 the null plots. Consequently, if a visual test is conducted, \(H_0\)
 will also be rejected.
 
@@ -1648,7 +1627,7 @@ will also be rejected.
 
 }
 
-\caption{A lineup of residual plots for the Boston housing fitted model. The actual residual plot is at position 7. It can be easily identified as the most different plot.}\label{fig:boston-lineup}
+\caption{A lineup of residual plots for the Boston housing fitted model. The true residual plot is at position 7. It can be easily identified as the most different plot.}\label{fig:boston-lineup}
 \end{figure}
 
 \subsubsection{Datasaurus}\label{datasaurus}
@@ -1702,8 +1681,65 @@ vision model can facilitate this process.
 
 }
 
-\caption{A lineup of residual plots for the fitted model on the "dinosaur" dataset. The actual residual plot is at position 17. It can be easily identified as the most different plot as the visual pattern is extremly artificial.}\label{fig:dino-lineup}
+\caption{A lineup of residual plots for the fitted model on the "dinosaur" dataset. The true residual plot is at position 17. It can be easily identified as the most different plot as the visual pattern is extremly artificial.}\label{fig:dino-lineup}
 \end{figure}
+
+\section{Extension to other types of regression
+model}\label{extension-to-other-types-of-regression-model}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Use raw residuals.
+\end{enumerate}
+
+\begin{itemize}
+\tightlist
+\item
+  D (effect size) for null plots will be greater than zero.
+\item
+  Can not assume D for actual plots are greater than D for null plots
+  any more. -\textgreater{} KL null - normal, KL actual - normal
+\item
+  Need to use a two-sided test instead of a one-sided test.
+\item
+  It may fail completely due to the identification issue.
+\end{itemize}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  Use transformed residuals that roughly follow a multivariate normal
+  distribution.
+\end{enumerate}
+
+\begin{itemize}
+\tightlist
+\item
+  The one-sided test will still work.
+\item
+  Need to ensure that the transformed actual plot will have residual
+  distribution different from the transformed null distribution.
+\end{itemize}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{2}
+\tightlist
+\item
+  Train a new model.
+\end{enumerate}
+
+\begin{itemize}
+\tightlist
+\item
+  KL divergence may not be the appropriate measure for the difference
+  between the residual distributions. Could consider using a new
+  distance measure.
+\end{itemize}
 
 \section{Conclusion}\label{conclusion}
 

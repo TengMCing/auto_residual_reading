@@ -1,4 +1,4 @@
-\begin{thebibliography}{44}
+\begin{thebibliography}{43}
 \newcommand{\enquote}[1]{``#1''}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\normalfont{#1}}
@@ -42,9 +42,6 @@ Frisch, Ragnar, and Frederick~V Waugh. 1933. ``Partial time regressions as compa
 
 \bibitem[Fukushima and Miyake(1982)]{fukushima1982neocognitron}
 Fukushima, Kunihiko, and Sei Miyake. 1982. ``Neocognitron: A new algorithm for pattern recognition tolerant of deformations and shifts in position.'' \emph{Pattern recognition} 15 (6): 455--469.
-
-\bibitem[Gebhardt, Bivand, and Sinclair(2023)]{Albrecht2023interp}
-Gebhardt, Albrecht, Roger Bivand, and David Sinclair. 2023. \emph{interp: Interpolation Methods}. R package version 1.1-5,  \urlprefix\url{https://CRAN.R-project.org/package=interp}.
 
 \bibitem[Hailesilassie(2019)]{hailesilassie2019financial}
 Hailesilassie, Tameru. 2019. ``Financial Market Prediction Using Recurrence Plot and Convolutional Neural Network.''  .

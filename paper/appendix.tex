@@ -1,0 +1,200 @@
+% interactcadsample.tex
+% v1.03 - April 2017
+
+\documentclass[]{interact}
+
+\usepackage{epstopdf}% To incorporate .eps illustrations using PDFLaTeX, etc.
+\usepackage{subfigure}% Support for small, `sub' figures and tables
+%\usepackage[nolists,tablesfirst]{endfloat}% To `separate' figures and tables from text if required
+
+\usepackage{natbib}% Citation support using natbib.sty
+\bibpunct[, ]{(}{)}{;}{a}{}{,}% Citation support using natbib.sty
+\renewcommand\bibfont{\fontsize{10}{12}\selectfont}% Bibliography support using natbib.sty
+
+\theoremstyle{plain}% Theorem-like structures provided by amsthm.sty
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+\newtheorem{notation}{Notation}
+
+
+% tightlist command for lists without linebreak
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+
+
+\usepackage{lscape}
+\usepackage{hyperref}
+\usepackage[utf8]{inputenc}
+\def\tightlist{}
+\usepackage{setspace}
+\doublespacing
+
+
+\begin{document}
+
+
+\articletype{Draft paper (Incomplete)}
+
+\title{Appendix: Automated assessment of residual plots with computer
+vision models}
+
+
+\author{\name{Weihao Li$^{a}$, Dianne Cook$^{a}$, Emi Tanaka$^{b,
+c}$, Susan VanderPlas$^{d}$, Klaus Ackermann$^{a}$}
+\affil{$^{a}$Department of Econometrics and Business Statistics, Monash
+University, Clayton, VIC, Australia; $^{b}$Biological Data Science
+Institute, Australian National University, Acton, ACT,
+Australia; $^{c}$Research School of Finance, Actuarial Studies and
+Statistics, Australian National University, Acton, ACT,
+Australia; $^{d}$Department of Statistics, University of Nebraska,
+Lincoln, Nebraska, USA}
+}
+
+\thanks{CONTACT Weihao
+Li. Email: \href{mailto:weihao.li@monash.edu}{\nolinkurl{weihao.li@monash.edu}}, Dianne
+Cook. Email: \href{mailto:dicook@monash.edu}{\nolinkurl{dicook@monash.edu}}, Emi
+Tanaka. Email: \href{mailto:emi.tanaka@anu.edu.au}{\nolinkurl{emi.tanaka@anu.edu.au}}, Susan
+VanderPlas. Email: \href{mailto:susan.vanderplas@unl.edu}{\nolinkurl{susan.vanderplas@unl.edu}}, Klaus
+Ackermann. Email: \href{mailto:Klaus.Ackermann@monash.edu}{\nolinkurl{Klaus.Ackermann@monash.edu}}}
+
+\maketitle
+
+\begin{abstract}
+TBD.
+\end{abstract}
+
+\begin{keywords}
+TBD
+\end{keywords}
+
+\section{Additional details about data
+generation}\label{additional-details-about-data-generation}
+
+\subsection{Computation of
+scagnostics}\label{computation-of-scagnostics}
+
+In Section \ref{introduction}, we mentioned that scagnostics consist of
+a set of manually designed visual feature extraction functions. While
+our computer vision model will learn its own feature extraction function
+during training, leveraging additional information from scagnostics can
+enhance the model's predictive accuracy.
+
+For each generated residual plot, we computed four scagnostics --
+``Monotonic,'' ``Sparse,'' ``Splines,'' and ``Striped'' -- using the
+\texttt{cassowaryr} R package \citep{mason2022cassowaryr}. These
+computed measures, along with the number of observations from the fitted
+model, were provided as the second input for the computer vision model.
+Although other scagnostics are informative, they are currently
+unavailable due to a fatal bug in the compiled C program of the
+\texttt{interp} R package \citep{Albrecht2023interp}, which may
+unpredictably crash the process. For reproducibility, we excluded these
+scagnostics from the training data.
+
+\section{Neural Network Layers Used in the
+Study}\label{neural-network-layers-used-in-the-study}
+
+This study employs seven types of neural network layers, all of which
+are standard components frequently found in modern deep learning models.
+These layers are well-documented in textbooks like
+\citet{goodfellow2016deep}, which offer thorough explanations and
+mathematical insights. In this section, we will offer a concise overview
+of these layers, drawing primarily from the insights provided in
+\citet{goodfellow2016deep}.
+
+\subsection{Dense Layer}\label{dense-layer}
+
+The Dense layer, also known as the fully-connected layer, is the
+fundamental unit in neural networks. It conducts a matrix multiplication
+operation between the input matrix \(\boldsymbol{X}\) and a weight
+matrix \(\boldsymbol{W}\) to generate the output matrix
+\(\boldsymbol{O}\), which can be written as
+
+\[\boldsymbol{O} = \boldsymbol{X}\boldsymbol{W} + b,\]
+
+where \(b\) is the intercept.
+
+\subsection{ReLu Layer}\label{relu-layer}
+
+The ReLU layer, short for rectified linear unit, is an element-wise
+non-linear function introduced by \citet{nair2010rectified}. It sets the
+output elements to zero if the corresponding input element is negative;
+otherwise, it retains the original input. Mathematically, it can be
+expressed as:
+
+\[\boldsymbol{O}(i,j) = max\{0, \boldsymbol{X}(i,j)\},\]
+
+where \(\boldsymbol{O}(i,j)\) is the \(i\)th row and \(j\)th column
+entry of matrix \(\boldsymbol{O}\), and \(\boldsymbol{X}(i,j)\) is the
+\(i\)th row and \(j\)th column entry of matrix \(\boldsymbol{X}\).
+
+\subsection{Convolutaional Layer}\label{convolutaional-layer}
+
+In Dense layers, matrix multiplication leads to each output unit
+interacting with every input unit, whereas convolutional layers operate
+differently with sparse interactions. Here, an output unit in a
+convolutional layer is connected solely to a subset of input units, and
+the weight is shared across all input units. Achieving this involves
+using a kernel, typically a small square matrix, to conduct matrix
+multiplication across all input units. Precisely, this concept can be
+formulated as:
+
+\[O(i, j) = \sum_m\sum_nI(i - m, j - n)K(m, n),\]
+
+where \(m\) and \(n\) are the row and columns indices of the kernel
+\(K\).
+
+If there are multiple kernels used in one covolutional layer, then each
+kernel will have its own weights and the output will be a
+three-dimensional tensor, where the length of the third channel is the
+number of kernels.
+
+\subsection{Pooling Layer}\label{pooling-layer}
+
+A pooling layer substitutes the input at a specific location with a
+summary statistic derived from nearby input units. Typically, there are
+two types of pooling layers: max pooling and average pooling. Max
+pooling computes the maximum value within a rectangular neighborhood,
+while average pooling calculates their average. Pooling layers helps
+making the representation approximately invariant to minor translations
+of the input. The output matrix of a pooling layer is approximately
+\(s\) times smaller than the input matrix, where \(s\) represents the
+length of the rectangular area. This can be formulated as:
+
+\[O(i, j) = \underset{m,n}{\max} I(si + m,sj+n).\]
+
+\subsection{Global Pooling Layer}\label{global-pooling-layer}
+
+A global pooling layer condenses an input matrix into a scalar value by
+either extracting the maximum or computing the average across all
+elements. This layer acts as a crucial link between the convolutional
+structure and the subsequent dense layers in a neural network
+architecture. When convolutional layers utilize multiple kernels, the
+output becomes a three-dimensional tensor with numerous channels. In
+this scenario, the global pooling layer treats each channel
+individually, much like distinct features in a conventional classifier.
+This approach facilitates the extraction of essential features from
+complex data representations, enhancing the network's ability to learn
+meaningful patterns.
+
+\subsection{Batch Normalization Layer}\label{batch-normalization-layer}
+
+\subsection{Dropout Layer}\label{dropout-layer}
+
+\bibliographystyle{tfcad}
+\bibliography{ref.bib}
+
+
+
+
+
+\end{document}

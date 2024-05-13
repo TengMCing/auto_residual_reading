@@ -1,4 +1,4 @@
-\begin{thebibliography}{43}
+\begin{thebibliography}{42}
 \newcommand{\enquote}[1]{``#1''}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\normalfont{#1}}
@@ -111,9 +111,6 @@ Simonyan, Karen, and Andrew Zisserman. 2014. ``Very deep convolutional networks 
 
 \bibitem[Singh et~al.(2017)]{singh2017deep}
 Singh, Karamjit, Garima Gupta, Lovekesh Vig, Gautam Shroff, and Puneet Agarwal. 2017. ``Deep convolutional neural networks for pairwise causality.'' \emph{arXiv preprint arXiv:1701.00597} .
-
-\bibitem[Therneau and Atkinson(2022)]{Terry2022rpart}
-Therneau, Terry, and Beth Atkinson. 2022. \emph{rpart: Recursive Partitioning and Regression Trees}. R package version 4.1.19,  \urlprefix\url{https://CRAN.R-project.org/package=rpart}.
 
 \bibitem[Tukey and Tukey(1985)]{tukey1985computer}
 Tukey, John~W, and Paul~A Tukey. 1985. ``Computer graphics and exploratory data analysis: An introduction.'' In \emph{Proceedings of the sixth annual conference and exposition: computer graphics}, Vol.~85, 773--785.

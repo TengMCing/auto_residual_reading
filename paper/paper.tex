@@ -246,10 +246,10 @@ paper is structured as follows: \ldots{}
 
 \section{Methodology}\label{methodology}
 
-\subsection{Model Formulas}\label{model-formulas}
+\subsection{Model Specifications}\label{model-specifications}
 
-There are various configurations of the computer vision model that can
-be used to assess residual plots. We discuss these configurations below
+There are various specifications of the computer vision model that can
+be used to assess residual plots. We discuss these specifications below
 focusing on two key components of the model formula: the input and the
 output format.
 
@@ -1006,12 +1006,15 @@ for performance evaluation and model diagnostics.
 
 }
 
-\caption{Diagram of the architecture of the optimized computer vision model.}\label{fig:unnamed-chunk-2}
+\caption{Diagram of the architecture of the optimized computer vision model.}\label{fig:cnn-diag}
 \end{figure}
 
 The architecture of the computer vision model is adapted from a
 well-established architecture known as VGG16, which has demonstrated
 high performance in image classification \citep{simonyan2014very}.
+Figure \ref{fig:cnn-diag} provides a diagram of the architecture. More
+details about the neural network layers used in this study are provided
+in the Appendix.
 
 The model begins with an input layer of shape
 \(n \times h \times w \times 3\), capable of handling \(n\) RGB images.
@@ -1066,46 +1069,6 @@ loss function
 is the \(i\)-th residual plot and \(S_i\) is the additional information
 about the \(i\)-th residual plot including four scagnostics and the
 number of observations.
-
-Based on the tuning process described in Section
-\ref{training-and-hyperparameter-tuning}, the optimized hyperparameter
-values are presented in Table \ref{tab:best-hyperparameter}. It was
-observable that a minimum of \(32\) base filters was necessary, with the
-preferable choice being \(64\) base filters for both the
-\(64 \times 64\) and \(128 \times 128\) models, mirroring the original
-VGG16 architecture. The optimized dropout rate for convolutional blocks
-hovered around \(0.4\), and incorporating batch normalization for
-convolutional blocks proved beneficial for performance.
-
-All optimized models chose to retain the additional inputs, contributing
-to the reduction of validation error. The number of units required for
-the fully-connected layer was \(256\), a relatively modest number
-compared to the VGG16 classifier, suggesting that the problem at hand
-was less complex. The optimized learning rates were smaller than the
-default value recommended by Keras, which is 0.001.
-
-\begin{table}
-
-\caption{\label{tab:best-hyperparameter}Hyperparameters values for the optimized computer vision models with different input sizes.}
-\centering
-\resizebox{\linewidth}{!}{
-\begin{tabular}[t]{llll}
-\toprule
-Hyperparameter & $32 \times 32$ & $64 \times 64$ & $128 \times 128$\\
-\midrule
-Number of base filters & 32 & 64 & 64\\
-Dropout rate for convolutional blocks & 0.4 & 0.3 & 0.4\\
-Batch normalization for convolutional blocks & true & true & true\\
-Type of global pooling & max & average & average\\
-Ignore additional inputs & false & false & false\\
-\addlinespace
-Number of units for the fully-connected layer & 256 & 256 & 256\\
-Batch normalization for the fully-connected layer & false & true & true\\
-Dropout rate for the fully-connected layer & 0.2 & 0.4 & 0.1\\
-Learning rate & 0.0003 & 0.0006 & 0.0052\\
-\bottomrule
-\end{tabular}}
-\end{table}
 
 \subsection{Model Training}\label{model-training}
 
@@ -1184,18 +1147,49 @@ Learning rate & {}[1e-8, 1e-1]\\
 \end{tabular}
 \end{table}
 
-\subsection{Evaluation Methods}\label{evaluation-methods}
+Based on the tuning process described above, the optimized
+hyperparameter values are presented in Table
+\ref{tab:best-hyperparameter}. It was observable that a minimum of
+\(32\) base filters was necessary, with the preferable choice being
+\(64\) base filters for both the \(64 \times 64\) and \(128 \times 128\)
+models, mirroring the original VGG16 architecture. The optimized dropout
+rate for convolutional blocks hovered around \(0.4\), and incorporating
+batch normalization for convolutional blocks proved beneficial for
+performance.
 
-This section remains incomplete as we may modify the ``Results'' section
-later on.
+All optimized models chose to retain the additional inputs, contributing
+to the reduction of validation error. The number of units required for
+the fully-connected layer was \(256\), a relatively modest number
+compared to the VGG16 classifier, suggesting that the problem at hand
+was less complex. The optimized learning rates were smaller than the
+default value recommended by Keras, which is 0.001.
+
+\begin{table}
+
+\caption{\label{tab:best-hyperparameter}Hyperparameters values for the optimized computer vision models with different input sizes.}
+\centering
+\resizebox{\linewidth}{!}{
+\begin{tabular}[t]{llll}
+\toprule
+Hyperparameter & $32 \times 32$ & $64 \times 64$ & $128 \times 128$\\
+\midrule
+Number of base filters & 32 & 64 & 64\\
+Dropout rate for convolutional blocks & 0.4 & 0.3 & 0.4\\
+Batch normalization for convolutional blocks & true & true & true\\
+Type of global pooling & max & average & average\\
+Ignore additional inputs & false & false & false\\
+\addlinespace
+Number of units for the fully-connected layer & 256 & 256 & 256\\
+Batch normalization for the fully-connected layer & false & true & true\\
+Dropout rate for the fully-connected layer & 0.2 & 0.4 & 0.1\\
+Learning rate & 0.0003 & 0.0006 & 0.0052\\
+\bottomrule
+\end{tabular}}
+\end{table}
 
 \section{Results}\label{results}
 
-understand what the convolutional layer is actually doing (read vgg16
-doc)
-
-\subsection{Summary of model
-performance}\label{summary-of-model-performance}
+\subsection{Model Performance}\label{model-performance}
 
 The training and test performance for the optimized models with three
 different input sizes are summarized in Table \ref{tab:performance}.
@@ -1218,24 +1212,21 @@ over-prediction and under-prediction are observed.
 
 The figure highlights that most under-predictions occurred when
 \(\hat{D} < 3\), while over-predictions occurred predominantly when
-\(3 < \hat{D} < 6\). To comprehend the reasons behind these deviations,
-we fitted a regression tree using the \texttt{rpart} R package
-\citep{Terry2022rpart} on \(D - \hat{D}\) for all factors used in the
-data generating process. The results of the regression tree are provided
-in the Appendix.
-
-The regression tree revealed that most issues arose from non-linearity
-problems and the presence of a second predictor in the regression model.
-When the error distribution had a very small variance, all computer
-vision models tended to under-predict the distance. Conversely, when the
-error distribution had a large variance, all models tended to
-over-predict the distance. Furthermore, for input images representing
-null plots, it was expected that the models will over-predict the
-distance, as explained in Section \ref{lineup-evaluation}.
+\(3 < \hat{D} < 6\). For input images representing null plots, it was
+expected that the models will over-predict the distance, as explained in
+Section \ref{lineup-evaluation}. However, it can not explain the
+under-prediction issue. Therefore, we analysed the relationship between
+residuals and all the factors involved in the data generating process.
+We found that most issues actually arose from non-linearity problems and
+the presence of a second predictor in the regression model as
+illustrated in Figure \ref{fig:over-under}. When the variance for the
+error distribution was small, the optimized model tended to
+under-predict the distance. Conversely, when the error distribution had
+a large variance, the model tended to over-predict the distance.
 
 Since most of the deviation stemmed from the presence of non-linearity
-violations, to further investigate this, we split the test set and
-re-evaluated the performance, as detailed in Table
+violations, to further investigate this, we split the test set based on
+violation types and re-evaluated the performance, as detailed in Table
 \ref{tab:performance-sub}. It was evident that metrics for null plots
 were notably worse compared to other categories. Furthermore, residual
 plots solely exhibiting non-normality issues were the easiest to
@@ -1282,6 +1273,15 @@ best-performing model evaluated on the test set, namely the
 \caption{Hexagonal heatmap for residuals vs predicted distance on training and test data for three optimized models with different input sizes. The red lines are smoothing curves produced by fitting gnealized additive models. The area over the zero line in light pink indicates under-prediction, and the area under the zero line in light green indicates over-prediction.}\label{fig:model-performance}
 \end{figure}
 
+\begin{figure}[!h]
+
+{\centering \includegraphics[width=1\linewidth]{paper_files/figure-latex/over-under-1} 
+
+}
+
+\caption{Scatter plots for residuals vs $\sigma$ on test data for the $32 \times 32$ optimized model. The data is grouped by whether the regression has only non-linearity violation, and whether it includes a second predictor in the regression formula. The red lines are smoothing curves produced by fitting gnealized additive models. The area over the zero line in light pink indicates under-prediction, and the area under the zero line in light green indicates over-prediction.}\label{fig:over-under}
+\end{figure}
+
 \begin{table}
 
 \caption{\label{tab:performance-sub}The training and test performance of the $32 \times 32$ model presented with different model violations.}
@@ -1304,25 +1304,26 @@ non-linearity + heteroskedasticity + non-normality & 7721 & 0.432 & 717 & 0.620\
 \end{tabular}}
 \end{table}
 
-\subsection{Comparison with human visual inference and conventional
-tests}\label{comparison-with-human-visual-inference-and-conventional-tests}
+\subsection{Comparison with Human Visual Inference and Conventional
+Tests}\label{comparison-with-human-visual-inference-and-conventional-tests}
 
-\subsubsection{Overview of the human subject
+\subsubsection{Overview of the Human Subject
 experiment}\label{overview-of-the-human-subject-experiment}
 
 In order to check the validity of the proposed computer vision model,
 residual plots presented in the human subject experiment conducted by
-\citet{li2023plot} will be assessed. This study has collected \(7974\)
-human responses to \(1152\) lineups. Each lineup contains one randomly
-placed true residual plot and 19 null plots. Among the \(1152\) lineups,
-\(24\) are attention check lineups in which the visual patterns are
-designed to be extremely obvious and very different from the
-corresponding to null plots, \(36\) are null lineups where all the
-lineups consist of only null plots, \(279\) are lineups with uniform
-predictor distribution evaluated by \(11\) participants, and the
-remaining \(813\) are lineups with discrete, skewed or normal predictor
-distribution evaluated by \(5\) participants. Attention check lineups
-and null lineups will not be assessed in the following analysis.
+\citet{li2023plot} will be assessed.
+
+This study has collected \(7974\) human responses to \(1152\) lineups.
+Each lineup contains one randomly placed true residual plot and 19 null
+plots. Among the \(1152\) lineups, \(24\) are attention check lineups in
+which the visual patterns are designed to be extremely obvious and very
+different from the corresponding to null plots, \(36\) are null lineups
+where all the lineups consist of only null plots, \(279\) are lineups
+with uniform predictor distribution evaluated by \(11\) participants,
+and the remaining \(813\) are lineups with discrete, skewed or normal
+predictor distribution evaluated by \(5\) participants. Attention check
+lineups and null lineups will not be assessed in the following analysis.
 
 In \citet{li2023plot}, the residual plots are simulated from a data
 generating process which is a special case of Equation
@@ -1353,14 +1354,14 @@ For each lineup used in \citet{li2023plot}, there is one true residual
 plot and 19 null plots. While the distance \(D\) for the true residual
 plot depends on the underlying data generating process, the distance
 \(D\) for the null plots is zero. We have used our optimized computer
-vision model to predict the approximated distance for both the true
-residual plots and the null plots. To have a fair comparison, \(H_0\)
-will be rejected if the true residual plot has the greatest approximated
-distance among all plots in a lineup. Additionally, the appropriate
-conventional tests including the Ramsey Regression Equation
-Specification Error Test (RESET) \citep{ramsey1969tests} for
-non-linearity and the Breusch-Pagan test \citep{breusch1979simple} for
-heteroskedasticity were applied on the same data for comparison.
+vision model to estimate distance for both the true residual plots and
+the null plots. To have a fair comparison, \(H_0\) will be rejected if
+the true residual plot has the greatest approximated distance among all
+plots in a lineup. Additionally, the appropriate conventional tests
+including the Ramsey Regression Equation Specification Error Test
+(RESET) \citep{ramsey1969tests} for non-linearity and the Breusch-Pagan
+test \citep{breusch1979simple} for heteroskedasticity were applied on
+the same data for comparison.
 
 The performance metrics of \(\hat{D}\) for true residual plots are
 outlined in Table \ref{tab:experiment-performance}. It's notable that
@@ -1378,11 +1379,24 @@ heteroskedasticity and non-linearity patterns, respectively. These
 figures are higher than those calculated for visual tests conducted by
 human, indicating that the computer vision model exhibits behaviour more
 akin to the best available conventional tests. However, Figure
-\ref{fig:conv-mosaic} shows that conventional tests tend to reject
-residual plots almost exclusively when the computer vision model does,
-but they also reject plots when the computer vision model does not. This
-suggests that conventional tests are more sensitive than the computer
-vision model.
+\ref{fig:conv-mosaic} shows that the computer vision model does not
+always reject when the conventional tests reject. And a small number of
+plots will be rejected by computer vision model but not by conventional
+tests. This suggests that conventional tests are more sensitive than the
+computer vision model.
+
+Figure \ref{fig:pcp} further illustrates the decisions made by visual
+tests conducted by human, computer vision models, and conventional
+tests, using a parallel coordinate plots. It can be observed that all
+three tests will agree with each other for around 50\% of the cases.
+When visual tests conducted by human do not reject, there are
+substantial amount of cases where computer vision model also not reject
+but conventional tests reject. There are much fewer cases that do not
+reject by visual tests and conventional tests, but reject by computer
+vision models. This indicates computer vision model can behave like
+visual tests conducted by human better than conventional tests.
+Moreover, there are great proportion of cases where visual tests
+conducted by human is the only test who does not reject, .
 
 When plotting the decision against the distance, as illustrated in
 Figure \ref{fig:power}, several observations emerge. Firstly, for the
@@ -1456,7 +1470,7 @@ Violations & \#Samples & \#Agreements & Agreement rate\\
 
 }
 
-\caption{Rejection rate ($p$-value $\leq0.05$) of conventional test conditional on the computer vision model decision on non-linearity (left) and heteroskedasticity (right) lineups displayed using a mosaic plot. The conventional test rejects more frequently than the computer vision model, and (almost) only rejects when the computer vision model does.}\label{fig:conv-mosaic}
+\caption{Rejection rate ($p$-value $\leq0.05$) of computer vision models conditional on conventional tests on non-linearity (left) and heteroskedasticity (right) lineups displayed using a mosaic plot.}\label{fig:conv-mosaic}
 \end{figure}
 
 \begin{figure}[!h]
@@ -1479,15 +1493,6 @@ Violations & \#Samples & \#Agreements & Agreement rate\\
 
 \begin{figure}[!h]
 
-{\centering \includegraphics[width=1\linewidth]{paper_files/figure-latex/venn-1} 
-
-}
-
-\caption{Venn diagram for non-rejection decisions made by conventional tests, computer vision model, and visual tests conducted by human.}\label{fig:venn}
-\end{figure}
-
-\begin{figure}[!h]
-
 {\centering \includegraphics[width=1\linewidth]{paper_files/figure-latex/delta-1} 
 
 }
@@ -1495,17 +1500,35 @@ Violations & \#Samples & \#Agreements & Agreement rate\\
 \caption{A weighted detection rate vs $\delta$-differnence plot.}\label{fig:delta}
 \end{figure}
 
-\subsection{Data examples}\label{data-examples}
+\section{Examples}\label{examples}
 
 In this section, we will utilize the trained computer vision model on
 three example datasets. These include the dataset associated with the
 residual plot displaying a ``left-triangle'' shape, as displayed in
 Figure \ref{fig:false-finding}, along with the Boston housing dataset,
 and the ``dino'' datasets from the \texttt{datasaurus} R package.
+
+The first example illustrates a scenario where both the computer vision
+model and human visual inspection successfully avoid rejecting \(H_0\)
+when \(H_0\) is true, contrary to conventional tests. This underscores
+the necessity of visually examining the residual plot.
+
+In the second example, we encounter a more pronounced violation of the
+model, resulting in rejection of \(H_0\) by all three tests. This
+highlights the practicality of the computer vision model, particularly
+for less intricate tasks.
+
+The third example presents a situation where the model deviation is
+non-typical. Here, the computer vision model and human visual inspection
+reject \(H_0\), whereas conventional tests do not. This emphasizes the
+benefits of visual inspection and the unique advantage of the computer
+vision model, which, like humans, makes decisions based on visual
+discoveries.
+
 Additionally, we will outline the workflow for employing this model with
 the \texttt{autovi} R package.
 
-\subsubsection{Left-triangle}\label{left-triangle}
+\subsection{Left-triangle}\label{left-triangle}
 
 In Section \ref{introduction}, we presented an example residual plot
 showcased in Figure \ref{fig:false-finding}, illustrating how humans
@@ -1557,12 +1580,29 @@ Notably, the observed visual signal strength is considerably lower than
 the 95\% sample quantile of the null distribution. Moreover, the
 bootstrapped distribution suggests that it is highly improbable for the
 fitted model to be misspecified as the majority of bootstrapped fitted
-models will not be rejected.
+models will not be rejected. Thus, for this particular fitted model,
+both the visual test and the computer vision model will not reject
+\(H_0\). However, the Breusch-Pagan test will reject \(H_0\) because it
+can not effectively utilize information from null plots.
 
-Thus, for this particular fitted model, both the visual test and the
-computer vision model will not reject \(H_0\). However, the
-Breusch-Pagan test will reject \(H_0\) because it can not effectively
-utilize information from null plots.
+The attention map at plot B of Figure \ref{fig:false-check} suggests
+that the estimation is highly influenced by the top-right and
+bottom-right part of the residual plot, as it forms two vertices of the
+triangular shape. A principle component analysis is also performed on
+the output of the global pooling layer of the computer vision model. As
+mentioned in \citet{simonyan2014very}, a computer vision model built
+upon the convolutional blocks can be viewed as a feature extractor. For
+the \(32 \times 32\) model, there are 256 features outputted from the
+global pooling layer, which can be further used for different visual
+tasks not limited to distance prediction. To see if these features can
+be effectively used for distinguishing null plots and true residual
+plot, we linearly project them into the PC1 vs PC2 space as shown in
+Figure \ref{fig:false-check}. It can be observed that because the
+bootstrapped plots are mostly similar to the null plots, the points
+drawn in different colours are mixed together. The true residual plot is
+also covered by both the cluster of null plots and cluster of
+bootstrapped plots. This accurately reflects our understanding of Figure
+\ref{fig:false-lineup}.
 
 \begin{figure}[!h]
 
@@ -1570,7 +1610,7 @@ utilize information from null plots.
 
 }
 
-\caption{A summary of the residual plot assessment evaluted on 200 null plots and 200 bootstrapped plots. On the left, the residual plot exhibiting "left-triangle" shape is displayed. The blue area indicates the distribution of approximated distances for null plots, while the red area represents the distribution of approximated distances for bootstrapped plots. The fitted model will not be rejected since $\hat{D} < Q_{null}(0.95)$.}\label{fig:false-check}
+\caption{A summary of the residual plot assessment evaluted on 200 null plots and 200 bootstrapped plots. (A) The true residual plot exhibiting "left-triangle" shape. (B) The attention map produced by computing the gradient of the output with respect to the greyscale input.  (C) The density plot of estimated distnace for null plots and bootstrapped plots. The blue area indicates the distribution of approximated distances for null plots, while the red area represents the distribution of approximated distances for bootstrapped plots. The fitted model will not be rejected since $\hat{D} < Q_{null}(0.95)$. (D) PC2 vs PC1 plot for features extracted from the global pooling layer of the computer vision model.  }\label{fig:false-check}
 \end{figure}
 
 \begin{figure}[!h]
@@ -1582,7 +1622,7 @@ utilize information from null plots.
 \caption{A lineup of residual plots displaying "left-triangle" visual patterns. The true residual plot occupies position 10, yet there are no discernible visual patterns that distinguish it from the other plots.}\label{fig:false-lineup}
 \end{figure}
 
-\subsubsection{Boston housing}\label{boston-housing}
+\subsection{Boston housing}\label{boston-housing}
 
 The Boston housing dataset, originally published by
 \citet{harrison1978hedonic}, offers insights into housing in the Boston,
@@ -1630,7 +1670,7 @@ will also be rejected.
 \caption{A lineup of residual plots for the Boston housing fitted model. The true residual plot is at position 7. It can be easily identified as the most different plot.}\label{fig:boston-lineup}
 \end{figure}
 
-\subsubsection{Datasaurus}\label{datasaurus}
+\subsection{Datasaurus}\label{datasaurus}
 
 The computer vision model possesses the capability to detect not only
 typical issues like non-linearity, heteroskedasticity, and non-normality

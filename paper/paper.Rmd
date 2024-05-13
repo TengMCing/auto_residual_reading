@@ -107,9 +107,9 @@ ori_dat %>%
 
 # Methodology
 
-## Model Formulas
+## Model Specifications
 
-There are various configurations of the computer vision model that can be used to assess residual plots. We discuss these configurations below focusing on two key components of the model formula: the input and the output format.
+There are various specifications of the computer vision model that can be used to assess residual plots. We discuss these specifications below focusing on two key components of the model formula: the input and the output format.
 
 
 ### Input Formats
@@ -552,13 +552,13 @@ Similarly, we adopted the same methodology to prepare 8000 test images for perfo
 
 ## Model Architecture
 
-```{r out.width = "100%", fig.cap = "Diagram of the architecture of the optimized computer vision model."}
+```{r cnn-diag, out.width = "100%", fig.cap = "Diagram of the architecture of the optimized computer vision model."}
 knitr::include_graphics("cnn.pdf")
 ```
 
 
 
-The architecture of the computer vision model is adapted from a well-established architecture known as VGG16, which has demonstrated high performance in image classification [@simonyan2014very].
+The architecture of the computer vision model is adapted from a well-established architecture known as VGG16, which has demonstrated high performance in image classification [@simonyan2014very]. Figure \ref{fig:cnn-diag} provides a diagram of the architecture. More details about the neural network layers used in this study are provided in the Appendix.
 
 The model begins with an input layer of shape $n \times h \times w \times 3$, capable of handling $n$ RGB images. This is followed by a grayscale conversion layer utilizing the luma formula under the Rec. 601 standard, which converts the colour image to grayscale. Grayscale suffices for our task since data points are plotted in black. We experiment with three combinations of $h$ and $w$: $32 \times 32$, $64 \times 64$, and $128 \times 128$, aiming to achieve sufficiently high image resolution for the problem at hand.
 
@@ -573,28 +573,6 @@ The model weights $\boldsymbol{\theta}$ were randomly initialized and they were 
 $$\hat{\boldsymbol{\theta}} = \underset{\boldsymbol{\theta}}{argmin}\frac{1}{n_{train}}\sum_{i=1}^{n_{train}}(D_i - f_{\boldsymbol{\theta}}(V_i, S_i))^2,$$
 
 \noindent where $n_{train}$ is the number of training samples, $V_i$ is the $i$-th residual plot and $S_i$ is the additional information about the $i$-th residual plot including four scagnostics and the number of observations. 
-
-
-Based on the tuning process described in Section \ref{training-and-hyperparameter-tuning}, the optimized hyperparameter values are presented in Table \ref{tab:best-hyperparameter}. It was observable that a minimum of $32$ base filters was necessary, with the preferable choice being $64$ base filters for both the $64 \times 64$ and $128 \times 128$ models, mirroring the original VGG16 architecture. The optimized dropout rate for convolutional blocks hovered around $0.4$, and incorporating batch normalization for convolutional blocks proved beneficial for performance.
-
-All optimized models chose to retain the additional inputs, contributing to the reduction of validation error. The number of units required for the fully-connected layer was $256$, a relatively modest number compared to the VGG16 classifier, suggesting that the problem at hand was less complex. The optimized learning rates were smaller than the default value recommended by Keras, which is 0.001.
-
-
-```{r best-hyperparameter}
-data.frame(`Hyperparameter` = c("Number of base filters", "Dropout rate for convolutional blocks", "Batch normalization for convolutional blocks", "Type of global pooling", "Ignore additional inputs", "Number of units for the fully-connected layer", "Batch normalization for the fully-connected layer", "Dropout rate for the fully-connected layer", "Learning rate"),
-           `32` = c("32", "0.4", "true", "max", "false", "256", "false", "0.2", "0.0003"),
-           `64` = c("64", "0.3", "true", "average", "false", "256", "true", "0.4", "0.0006"),
-           `128` = c("64", "0.4", "true", "average", "false", "256", "true", "0.1", "0.0052")) %>%
-  kableExtra::kable("latex", 
-                    booktabs = TRUE, 
-                    caption = "Hyperparameters values for the optimized computer vision models with different input sizes.", 
-                    col.names = c("Hyperparameter", "$32 \\times 32$", "$64 \\times 64$", "$128 \\times 128$"),
-                    escape = FALSE) %>%
-  kableExtra::kable_styling(latex_options = c("scale_down"))
-```
-
-
-
 
 ## Model Training
 
@@ -617,25 +595,39 @@ data.frame(`Hyperparameter` = c("Number of base filters", "Dropout rate for conv
   kableExtra::kable("latex", booktabs = TRUE, caption = "Name of hyperparameters and their correspoding domain for the computer vision model.")
 ```
 
-## Evaluation Methods
+Based on the tuning process described above, the optimized hyperparameter values are presented in Table \ref{tab:best-hyperparameter}. It was observable that a minimum of $32$ base filters was necessary, with the preferable choice being $64$ base filters for both the $64 \times 64$ and $128 \times 128$ models, mirroring the original VGG16 architecture. The optimized dropout rate for convolutional blocks hovered around $0.4$, and incorporating batch normalization for convolutional blocks proved beneficial for performance.
 
-This section remains incomplete as we may modify the "Results" section later on.
+All optimized models chose to retain the additional inputs, contributing to the reduction of validation error. The number of units required for the fully-connected layer was $256$, a relatively modest number compared to the VGG16 classifier, suggesting that the problem at hand was less complex. The optimized learning rates were smaller than the default value recommended by Keras, which is 0.001.
+
+
+```{r best-hyperparameter}
+data.frame(`Hyperparameter` = c("Number of base filters", "Dropout rate for convolutional blocks", "Batch normalization for convolutional blocks", "Type of global pooling", "Ignore additional inputs", "Number of units for the fully-connected layer", "Batch normalization for the fully-connected layer", "Dropout rate for the fully-connected layer", "Learning rate"),
+           `32` = c("32", "0.4", "true", "max", "false", "256", "false", "0.2", "0.0003"),
+           `64` = c("64", "0.3", "true", "average", "false", "256", "true", "0.4", "0.0006"),
+           `128` = c("64", "0.4", "true", "average", "false", "256", "true", "0.1", "0.0052")) %>%
+  kableExtra::kable("latex", 
+                    booktabs = TRUE, 
+                    caption = "Hyperparameters values for the optimized computer vision models with different input sizes.", 
+                    col.names = c("Hyperparameter", "$32 \\times 32$", "$64 \\times 64$", "$128 \\times 128$"),
+                    escape = FALSE) %>%
+  kableExtra::kable_styling(latex_options = c("scale_down"))
+```
+
+<!-- ## Evaluation Methods -->
+
+<!-- This section remains incomplete as we may modify the "Results" section later on. -->
 
 # Results
 
-understand what the convolutional layer is actually doing (read vgg16 doc) 
-
-## Summary of model performance
+## Model Performance
 
 The training and test performance for the optimized models with three different input sizes are summarized in Table \ref{tab:performance}. Among these models, the $64 \times 64$ model and the $32 \times 32$ model consistently exhibited the best training and test performance, respectively. The mean absolute error indicated that the difference between $\hat{D}$ and $D$ was approximately $0.43$ on the test set, a negligible deviation considering the normal range of $D$ typically falls between $0$ and $7$. The high $R^2$ values also suggested that the predictions were largely linearly correlated with the target.
 
 Figure \ref{fig:model-performance} presents a hexagonal heatmap for $D - \hat{D}$ versus $\hat{D}$. The red smoothing curves, fitted by generalized additive models [@hastie2017generalized], demonstrate that all the optimized models perform admirably on both the training and test sets. No structural issues are noticeable in Figure \ref{fig:model-performance}, but some minor issues regarding over-prediction and under-prediction are observed.
 
-The figure highlights that most under-predictions occurred when $\hat{D} < 3$, while over-predictions occurred predominantly when $3 < \hat{D} < 6$. To comprehend the reasons behind these deviations, we fitted a regression tree using the `rpart` R package [@Terry2022rpart] on $D - \hat{D}$ for all factors used in the data generating process. The results of the regression tree are provided in the Appendix.
+The figure highlights that most under-predictions occurred when $\hat{D} < 3$, while over-predictions occurred predominantly when $3 < \hat{D} < 6$. For input images representing null plots, it was expected that the models will over-predict the distance, as explained in Section \ref{lineup-evaluation}. However, it can not explain the under-prediction issue. Therefore, we analysed the relationship between residuals and all the factors involved in the data generating process. We found that most issues actually arose from non-linearity problems and the presence of a second predictor in the regression model as illustrated in Figure \ref{fig:over-under}. When the variance for the error distribution was small, the optimized model tended to under-predict the distance. Conversely, when the error distribution had a large variance, the model tended to over-predict the distance.  
 
-The regression tree revealed that most issues arose from non-linearity problems and the presence of a second predictor in the regression model. When the error distribution had a very small variance, all computer vision models tended to under-predict the distance. Conversely, when the error distribution had a large variance, all models tended to over-predict the distance. Furthermore, for input images representing null plots, it was expected that the models will over-predict the distance, as explained in Section \ref{lineup-evaluation}.
-
-Since most of the deviation stemmed from the presence of non-linearity violations, to further investigate this, we split the test set and re-evaluated the performance, as detailed in Table \ref{tab:performance-sub}. It was evident that metrics for null plots were notably worse compared to other categories. Furthermore, residual plots solely exhibiting non-normality issues were the easiest to predict, with very low test root mean square error (RMSE) at around $0.3$. Residual plots with non-linearity issues were more challenging to assess than those with heteroskedasticity or non-normality issues. Assessing residual plots with heteroskedasticity was not as difficult as assessing those with non-linearity issues. When multiple violations were introduced to a residual plot, the performance metrics typically lay between the metrics for each individual violation.
+Since most of the deviation stemmed from the presence of non-linearity violations, to further investigate this, we split the test set based on violation types and re-evaluated the performance, as detailed in Table \ref{tab:performance-sub}. It was evident that metrics for null plots were notably worse compared to other categories. Furthermore, residual plots solely exhibiting non-normality issues were the easiest to predict, with very low test root mean square error (RMSE) at around $0.3$. Residual plots with non-linearity issues were more challenging to assess than those with heteroskedasticity or non-normality issues. Assessing residual plots with heteroskedasticity was not as difficult as assessing those with non-linearity issues. When multiple violations were introduced to a residual plot, the performance metrics typically lay between the metrics for each individual violation.
 
 Based on the model performance metrics, we chose to use the best-performing model evaluated on the test set, namely the $32 \times 32$ model, for the subsequent analysis.
 
@@ -723,6 +715,36 @@ model_pred %>%
 ```
 
 
+```{r over-under, fig.pos="!h", fig.cap = "Scatter plots for residuals vs $\\sigma$ on test data for the $32 \\times 32$ optimized model. The data is grouped by whether the regression has only non-linearity violation, and whether it includes a second predictor in the regression formula. The red lines are smoothing curves produced by fitting gnealized additive models. The area over the zero line in light pink indicates under-prediction, and the area under the zero line in light green indicates over-prediction.", dev = 'png', dpi = 300}
+model_pred %>%
+  filter(res == 32L) %>%
+  filter(type == "test") %>%
+  mutate(only_z = include_z & !include_heter & !include_non_normal) %>%
+  rename(`Only has non-linearity violation` = only_z, `Has second predictor` = include_x2) %>%
+  ggplot() +
+  geom_hline(yintercept = 0, alpha = 0.5) +
+  annotate("rect", 
+           ymin = min(model_pred$effect_size[model_pred$type == "test"] - model_pred$vss[model_pred$type == "test"]),
+                ymax = 0,
+                xmin = min(model_pred$e_sigma),
+                xmax = max(model_pred$e_sigma),
+            fill = "#66c2a5",
+            alpha = 0.3) +
+  annotate("rect", 
+           ymin = 0,
+                ymax = max(model_pred$effect_size[model_pred$type == "test"] - model_pred$vss[model_pred$type == "test"]),
+                xmin = min(model_pred$e_sigma),
+                xmax = max(model_pred$e_sigma),
+            fill = "#fc8d62",
+            alpha = 0.3) +
+  geom_point(aes(e_sigma, effect_size - vss), alpha = 0.2) +
+  geom_smooth(aes(e_sigma, effect_size - vss), se = FALSE, col = "#e34a33") +
+  facet_grid(`Has second predictor` ~ `Only has non-linearity violation`,
+             labeller = label_both) +
+  theme_light() +
+  ylab(expression(D - hat(D))) +
+  xlab(expression(sigma))
+```
 
 
 ```{r performance-sub}
@@ -752,11 +774,21 @@ model_pred %>%
   kableExtra::kable_styling(latex_options = c("scale_down"))
 ```
 
-## Comparison with human visual inference and conventional tests
 
-### Overview of the human subject experiment
+<!-- - check if j has an impact on residuals more carefully -->
+<!-- - the RMSE has very little to do with j if x2 is not included. And its impact is not as large as sigma. -->
 
-In order to check the validity of the proposed computer vision model, residual plots presented in the human subject experiment conducted by @li2023plot will be assessed. This study has collected $7974$ human responses to $1152$ lineups. Each lineup contains one randomly placed true residual plot and 19 null plots. Among the $1152$ lineups, $24$ are attention check lineups in which the visual patterns are designed to be extremely obvious and very different from the corresponding to null plots, $36$ are null lineups where all the lineups consist of only null plots, $279$ are lineups with uniform predictor distribution evaluated by $11$ participants, and the remaining $813$ are lineups with discrete, skewed or normal predictor distribution evaluated by $5$ participants. Attention check lineups and null lineups will not be assessed in the following analysis. 
+
+## Comparison with Human Visual Inference and Conventional Tests
+
+### Overview of the Human Subject experiment
+
+In order to check the validity of the proposed computer vision model, residual plots presented in the human subject experiment conducted by @li2023plot will be assessed.
+
+
+<!-- The experiment revealed that conventional tests are more sensitive to weak departures from model assumptions than visual test, and they often reject the null hypothesis when departures are not visibly different from null residual plots. -->
+
+This study has collected $7974$ human responses to $1152$ lineups. Each lineup contains one randomly placed true residual plot and 19 null plots. Among the $1152$ lineups, $24$ are attention check lineups in which the visual patterns are designed to be extremely obvious and very different from the corresponding to null plots, $36$ are null lineups where all the lineups consist of only null plots, $279$ are lineups with uniform predictor distribution evaluated by $11$ participants, and the remaining $813$ are lineups with discrete, skewed or normal predictor distribution evaluated by $5$ participants. Attention check lineups and null lineups will not be assessed in the following analysis. 
 
 In @li2023plot, the residual plots are simulated from a data generating process which is a special case of Equation \ref{eq:data-sim}. The main characteristic is the model violations are introduced separately, meaning non-linearity and heteroskedasticity will not co-exist in one lineup but assigned uniformly to all lineups. Additionally, non-normality and multiple predictors are not considered in the experimental design.
 
@@ -803,13 +835,16 @@ experiment %>%
                     caption = "The performance of the $32 \\times 32$ model on the data used in the human subject experiment.")
 ```
 
-For each lineup used in @li2023plot, there is one true residual plot and 19 null plots. While the distance $D$ for the true residual plot depends on the underlying data generating process, the distance $D$ for the null plots is zero. We have used our optimized computer vision model to predict the approximated distance for both the true residual plots and the null plots. To have a fair comparison, $H_0$ will be rejected if the true residual plot has the greatest approximated distance among all plots in a lineup. Additionally, the appropriate conventional tests including the Ramsey Regression Equation Specification Error Test (RESET) [@ramsey1969tests] for non-linearity and the Breusch-Pagan test  [@breusch1979simple] for heteroskedasticity were applied on the same data for comparison.
+For each lineup used in @li2023plot, there is one true residual plot and 19 null plots. While the distance $D$ for the true residual plot depends on the underlying data generating process, the distance $D$ for the null plots is zero. We have used our optimized computer vision model to estimate distance for both the true residual plots and the null plots. To have a fair comparison, $H_0$ will be rejected if the true residual plot has the greatest approximated distance among all plots in a lineup. Additionally, the appropriate conventional tests including the Ramsey Regression Equation Specification Error Test (RESET) [@ramsey1969tests] for non-linearity and the Breusch-Pagan test  [@breusch1979simple] for heteroskedasticity were applied on the same data for comparison.
 
 The performance metrics of $\hat{D}$ for true residual plots are outlined in Table \ref{tab:experiment-performance}. It's notable that all performance metrics are slightly worse than those evaluated on the test data. Nevertheless, the mean absolute error remains at a low level, and the linear correlation between the prediction and the true value remains very high. Lineups with non-linearity issues are more challenging to predict than those with heteroskedasticity issues.
 
 <!-- For null plots, a histogram of the predictions is provided in Figure \ref{fig:hist-null-human}. In most cases, $\hat{D}$ is predicted to be around $1$. As $\hat{D}$ increases, the number of predictions decreases. The 90% and 95% sample quantiles are approximately at $2$, and the 99% sample quantile is around $2.5$. These sample quantiles can serve as global critical values for determining whether a residual plot needs to be rejected. We have also computed the 95% sample quantiles by assessing 200 null plots for each fitted model used in the experiment. The difference between decisions based on these two types of critical values is minor, with decisions aligning `r experiment %>% filter(!attention_check) %>% filter(!null_lineup) %>% summarise(q = mean(model_reject == (2.03 <= vss)) * 100) %>% pull(q) %>% format(digits = 3)`% of the time. Therefore, we will be using the 95% sample quantiles obtained from each fitted model in the following analysis.  -->
 
-Table \ref{tab:human-conv-table} provides a summary of the agreement between decisions made by the computer vision model and conventional tests. The agreement rates between conventional tests and the computer vision model are 85.95% and 79.69% for residual plots containing heteroskedasticity and non-linearity patterns, respectively. These figures are higher than those calculated for visual tests conducted by human, indicating that the computer vision model exhibits behaviour more akin to the best available conventional tests. However, Figure \ref{fig:conv-mosaic} shows that conventional tests tend to reject residual plots almost exclusively when the computer vision model does, but they also reject plots when the computer vision model does not. This suggests that conventional tests are more sensitive than the computer vision model.
+Table \ref{tab:human-conv-table} provides a summary of the agreement between decisions made by the computer vision model and conventional tests. The agreement rates between conventional tests and the computer vision model are 85.95% and 79.69% for residual plots containing heteroskedasticity and non-linearity patterns, respectively. These figures are higher than those calculated for visual tests conducted by human, indicating that the computer vision model exhibits behaviour more akin to the best available conventional tests. However, Figure \ref{fig:conv-mosaic} shows that the computer vision model does not always reject when the conventional tests reject. And a small number of plots will be rejected by computer vision model but not by conventional tests.  This suggests that conventional tests are more sensitive than the computer vision model.
+
+Figure \ref{fig:pcp} further illustrates the decisions made by visual tests conducted by human, computer vision models, and conventional tests, using a parallel coordinate plots. It can be observed that all three tests will agree with each other for around 50% of the cases. When visual tests conducted by human do not reject, there are substantial amount of cases where computer vision model also not reject but conventional tests reject. There are much fewer cases that do not reject by visual tests and conventional tests, but reject by computer vision models. This indicates computer vision model can behave like visual tests conducted by human better than conventional tests. Moreover, there are great proportion of cases where visual tests conducted by human is the only test who does not reject, . 
+
 
 When plotting the decision against the distance, as illustrated in Figure \ref{fig:power}, several observations emerge. Firstly, for the computer vision model, when the distance $D > 4$, almost all residual plots are rejected. However, for visual tests conducted by humans, the threshold is higher, set at $D > 5$. And conventional tests exhibit some non-rejection cases for $D > 3$. Moreover, the computer vision model tends to have fewer rejected cases than conventional tests when $D < 2$. However, visual tests demonstrate the lowest sensitivity to residual plots with small distances. Therefore, tests based on the computer vision model are less sensitive to small deviations from model assumptions than conventional tests but more sensitive to moderate deviations. Rejection decisions are fitted by logistic regression models with no intercept terms but an offset equals to $\text{log}(0.05/0/95)$. The fitting curves for the computer vision model fall between those of conventional tests and visual tests for both non-linearity and heteroskedasticity. There is still potential to refine the computer vision model to better align its behaviour with visual tests.
 
@@ -960,11 +995,11 @@ experiment %>%
   mutate(reject = ifelse(reject, "Reject", "No")) %>%
   mutate(across(c(model_reject_20, reject), ~factor(.x, levels = c("Reject", "No")))) %>%
   ggplot() +
-  geom_mosaic(aes(x = ggmosaic::product(model_reject_20, reject), 
+  geom_mosaic(aes(x = ggmosaic::product(reject, model_reject_20), 
                   fill = model_reject_20)) +
   facet_grid(~type) +
-  xlab("Visual tests reject") +
-  ylab("Computer vision model rejects") +
+  ylab("Visual tests reject") +
+  xlab("Computer vision model rejects") +
   # labs(fill = "Visual tests reject") +
   scale_fill_brewer("", palette = "Dark2") +
   theme_bw() +
@@ -972,7 +1007,7 @@ experiment %>%
   coord_fixed()
 ```
 
-```{r conv-mosaic, fig.pos = "!h", fig.cap = "Rejection rate ($p$-value $\\leq0.05$) of conventional test conditional on the computer vision model decision on non-linearity (left) and heteroskedasticity (right) lineups displayed using a mosaic plot. The conventional test rejects more frequently than the computer vision model, and (almost) only rejects when the computer vision model does."}
+```{r conv-mosaic, fig.pos = "!h", fig.cap = "Rejection rate ($p$-value $\\leq0.05$) of computer vision models conditional on conventional tests on non-linearity (left) and heteroskedasticity (right) lineups displayed using a mosaic plot."}
 library(ggmosaic)
 
 experiment %>%
@@ -985,11 +1020,11 @@ experiment %>%
   mutate(conventional_reject = ifelse(conventional_reject, "Reject", "No")) %>%
   mutate(across(c(model_reject_20, conventional_reject), ~factor(.x, levels = c("Reject", "No")))) %>%
   ggplot() +
-  geom_mosaic(aes(x = ggmosaic::product(conventional_reject, model_reject_20), 
-                  fill = conventional_reject)) +
+  geom_mosaic(aes(x = ggmosaic::product(model_reject_20, conventional_reject), 
+                  fill = model_reject_20)) +
   facet_grid(~type) +
-  xlab("Computer vision model rejects") +
-  ylab("Conventional tests reject ") +
+  ylab("Computer vision model rejects") +
+  xlab("Conventional tests reject ") +
   # labs(fill = "Visual tests reject") +
   scale_fill_brewer("", palette = "Dark2") +
   theme_bw() +
@@ -1182,7 +1217,7 @@ mutate(experiment, type = ifelse(type == "polynomial", "Non-linearity", "Heteros
 ```
 
 
-```{r venn, fig.pos = "!h", fig.cap = "Venn diagram for non-rejection decisions made by conventional tests, computer vision model, and visual tests conducted by human."}
+```{r venn, fig.pos = "!h", fig.cap = "Venn diagram for non-rejection decisions made by conventional tests, computer vision model, and visual tests conducted by human.", eval = FALSE}
 poly_venn <- magick::image_read(here::here("paper/diagram/poly_venn_diagramm.png")) %>%
   magick::image_ggplot()
 heter_venn <- magick::image_read(here::here("paper/diagram/heter_venn_diagramm.png")) %>%
@@ -1257,12 +1292,38 @@ experiment %>%
 ```
 
 
-## Data examples
+# Examples
+
+<!-- - explain the purpose of each case here as a summary -->
+<!-- - left-triangle: conventional reject, other two do not reject -->
+<!-- - Boston: all three reject -->
+<!-- - datasaurus: conv not reject -->
+
+<!-- - we don't have one conv reject, model reject, human not -->
+
+<!-- conv: reject 1, not 0 -->
+<!-- model: reject 1, not 0 -->
+<!-- human: reject 1, not 0 -->
+
+<!-- left:       100 -->
+<!-- boston:     111 -->
+<!-- datasaurus: 011 -->
+
+<!-- example?:   001 (probably because of outliers) -->
+<!-- try "baker" dataset -->
 
 
-In this section, we will utilize the trained computer vision model on three example datasets. These include the dataset associated with the residual plot displaying a "left-triangle" shape, as displayed in Figure \ref{fig:false-finding}, along with the Boston housing dataset, and the "dino" datasets from the `datasaurus` R package. Additionally, we will outline the workflow for employing this model with the `autovi` R package.
+In this section, we will utilize the trained computer vision model on three example datasets. These include the dataset associated with the residual plot displaying a "left-triangle" shape, as displayed in Figure \ref{fig:false-finding}, along with the Boston housing dataset, and the "dino" datasets from the `datasaurus` R package. 
 
-### Left-triangle
+The first example illustrates a scenario where both the computer vision model and human visual inspection successfully avoid rejecting $H_0$ when $H_0$ is true, contrary to conventional tests. This underscores the necessity of visually examining the residual plot.
+
+In the second example, we encounter a more pronounced violation of the model, resulting in rejection of $H_0$ by all three tests. This highlights the practicality of the computer vision model, particularly for less intricate tasks.
+
+The third example presents a situation where the model deviation is non-typical. Here, the computer vision model and human visual inspection reject $H_0$, whereas conventional tests do not. This emphasizes the benefits of visual inspection and the unique advantage of the computer vision model, which, like humans, makes decisions based on visual discoveries.
+
+Additionally, we will outline the workflow for employing this model with the `autovi` R package.
+
+## Left-triangle
 
 In Section \ref{introduction}, we presented an example residual plot showcased in Figure \ref{fig:false-finding}, illustrating how humans might misinterpret the "left-triangle" shape as indicative of heteroskedasticity. Additionally, the Breusch-Pagan test yielded a rejection with a $p$-value of 0.046, despite the residuals originating from a correctly specified model. Figure \ref{fig:false-lineup} offers a lineup for this fitted model, showcasing various degrees of "left-triangle" shape across all residual plots. This phenomenon is evidently caused by the skewed distribution of the fitted values. Notably, if the residual plot were evaluated through a visual test, it would not be rejected since the true residual plot positioned at 10 can not be distinguished from the others.
 
@@ -1284,9 +1345,9 @@ checker$check(null_draws = 200L, boot_draws = 200L)
 checker$summary_plot()
 ```
 
-Figure \ref{fig:false-check} presents the results of the assessment. Notably, the observed visual signal strength is considerably lower than the 95% sample quantile of the null distribution. Moreover, the bootstrapped distribution suggests that it is highly improbable for the fitted model to be misspecified as the majority of bootstrapped fitted models will not be rejected.
+Figure \ref{fig:false-check} presents the results of the assessment. Notably, the observed visual signal strength is considerably lower than the 95% sample quantile of the null distribution. Moreover, the bootstrapped distribution suggests that it is highly improbable for the fitted model to be misspecified as the majority of bootstrapped fitted models will not be rejected. Thus, for this particular fitted model, both the visual test and the computer vision model will not reject $H_0$. However, the Breusch-Pagan test will reject $H_0$ because it can not effectively utilize information from null plots.
 
-Thus, for this particular fitted model, both the visual test and the computer vision model will not reject $H_0$. However, the Breusch-Pagan test will reject $H_0$ because it can not effectively utilize information from null plots.
+The attention map at plot B of Figure \ref{fig:false-check} suggests that the estimation is highly influenced by the top-right and bottom-right part of the residual plot, as it forms two vertices of the triangular shape. A principle component analysis is also performed on the output of the global pooling layer of the computer vision model. As mentioned in @simonyan2014very, a computer vision model built upon the convolutional blocks can be viewed as a feature extractor. For the $32 \times 32$ model, there are 256 features outputted from the global pooling layer, which can be further used for different visual tasks not limited to distance prediction. To see if these features can be effectively used for distinguishing null plots and true residual plot, we linearly project them into the PC1 vs PC2 space as shown in Figure \ref{fig:false-check}. It can be observed that because the bootstrapped plots are mostly similar to the null plots, the points drawn in different colours are mixed together. The true residual plot is also covered by both the cluster of null plots and cluster of bootstrapped plots. This accurately reflects our understanding of Figure \ref{fig:false-lineup}. 
 
 ```{r}
 set.seed(452)
@@ -1300,7 +1361,7 @@ my_vi <- autovi::auto_vi(fitted_mod = mod)
 ```{r}
 if (!file.exists(here::here("paper/data/fig1_check.rds"))) {
   my_vi$keras_mod <- keras::load_model_tf(here::here("paper/data/phn_v2_32.keras"))
-  my_vi$check(null_draws = 200L, boot_draws = 200L)
+  my_vi$check(null_draws = 200L, boot_draws = 200L, extract_feature_from_layer = "global_max_pooling2d")
   saveRDS(my_vi$check_result, here::here("paper/data/fig1_check.rds"))
 }
 
@@ -1310,20 +1371,159 @@ if (!file.exists(here::here("paper/data/fig1_check.rds"))) {
 my_vi$check_result <- readRDS(here::here("paper/data/fig1_check.rds"))
 ```
 
+```{r}
+define_gradient <- function() {
+  reticulate::py_run_string(glue::glue(
+"
+import tensorflow as tf
+import PIL
+import numpy as np
+
+def get_smooth_gradient(keras_mod, plot_path, target_size, input_auxiliary = None, noise_level = 0.1, n = 50):
+    im = PIL.Image.open(plot_path)
+    im = im.resize(target_size)
+    input_im = tf.keras.utils.img_to_array(im)
+    input_im = np.reshape(input_im, tuple([1]) + tuple(target_size) + tuple([3]))
+    if input_auxiliary is not None:
+        input_auxiliary = np.reshape(np.array(input_auxiliary), (1, 5))
+    
+    if input_auxiliary is not None:
+        input_auxiliary = tf.Variable(input_auxiliary)
+    
+    im_grad = None
+    sigma = noise_level * (np.max(input_im) - np.min(input_im))
+    
+    for i in range(n):    
+        new_input_im = input_im + np.random.normal(0, sigma, input_im.shape)
+        new_input_im = tf.Variable(new_input_im)
+        
+        with tf.GradientTape() as tape:
+            if input_auxiliary is not None:
+                pred = keras_mod([new_input_im, input_auxiliary])
+            else:
+                pred = keras_mod(new_input_im)
+        new_im_grad = tape.gradient(pred, new_input_im)
+        new_im_grad = tf.image.rgb_to_grayscale(new_im_grad)[0].numpy()
+        if im_grad is None:
+            im_grad = new_im_grad
+        else:
+            im_grad = im_grad + new_im_grad
+    
+    im_grad = im_grad / n
+    
+    input_im = tf.Variable(input_im)
+    if input_auxiliary is not None:
+        with tf.GradientTape() as tape:
+            pred = keras_mod([input_im, input_auxiliary])
+        auxiliary_grad = tape.gradient(pred, input_auxiliary)
+    if input_auxiliary is not None:
+        return (im_grad, auxiliary_grad[0].numpy())
+    else:
+        return im_grad
+        
+
+def get_raw_gradient(keras_mod, plot_path, target_size, input_auxiliary = None):
+    im = PIL.Image.open(plot_path)
+    im = im.resize(target_size)
+    input_im = tf.keras.utils.img_to_array(im)
+    input_im = np.reshape(input_im, tuple([1]) + tuple(target_size) + tuple([3]))
+    if input_auxiliary is not None:
+        input_auxiliary = np.reshape(np.array(input_auxiliary), (1, 5))
+    
+    input_im = tf.Variable(input_im)
+    if input_auxiliary is not None:
+        input_auxiliary = tf.Variable(input_auxiliary)
+    
+    with tf.GradientTape() as tape:
+        if input_auxiliary is not None:
+            pred = keras_mod([input_im, input_auxiliary])
+        else:
+            pred = keras_mod(input_im)
+    im_grad = tape.gradient(pred, input_im)
+    
+    if input_auxiliary is not None:
+        with tf.GradientTape() as tape:
+            pred = keras_mod([input_im, input_auxiliary])
+        auxiliary_grad = tape.gradient(pred, input_auxiliary)
+    
+    im_grad = tf.image.rgb_to_grayscale(im_grad)
+    if input_auxiliary is not None:
+        return (im_grad[0].numpy(), auxiliary_grad[0].numpy())
+    else:
+        return im_grad[0].numpy()
+"
+))
+}
+
+```
 
 
-```{r false-check, fig.pos = "!h", fig.cap = 'A summary of the residual plot assessment evaluted on 200 null plots and 200 bootstrapped plots. On the left, the residual plot exhibiting "left-triangle" shape is displayed. The blue area indicates the distribution of approximated distances for null plots, while the red area represents the distribution of approximated distances for bootstrapped plots. The fitted model will not be rejected since $\\hat{D} < Q_{null}(0.95)$.'}
 
-p1 <- my_vi$plot_resid()
-p2 <- my_vi$summary_plot() +
-  ggtitle("", subtitle = glue::glue("Conventional p-value = {format(HETER_MODEL$test(dat)$p_value, digits = 3)}")) +
+```{r}
+if (!file.exists(here::here("paper/data/fig1_attention_map.rds"))) {
+  define_gradient()
+  keras_mod <- keras::load_model_tf(here::here("paper/data/phn_v2_32.keras"))
+  plot_path <- my_vi$plot_resid() %>%
+  my_vi$save_plot()
+  input_auxiliary <- my_vi$auxiliary()
+
+  reticulate::py$get_smooth_gradient(keras_mod = keras_mod, 
+                                     plot_path = plot_path, 
+                                     target_size = c(32L, 32L), 
+                                     input_auxiliary = input_auxiliary,
+                                     noise_level = 0.5,
+                                     n = 1000L) -> smooth_g
+  
+  x_range <- ggplot2::ggplot_build(my_vi$plot_resid())$layout$panel_params[[1]]$x.range
+  y_range <- ggplot2::ggplot_build(my_vi$plot_resid())$layout$panel_params[[1]]$y.range
+  
+  smooth_att_map <- smooth_g[[1]] |> 
+    as.data.frame() |>
+    dplyr::mutate(row = rev(1:32)) |>
+    tidyr::pivot_longer(V1:V32, names_to = "column", values_to = "gradient") |>
+    dplyr::mutate(column = as.integer(gsub("V", "", column))) |>
+    dplyr::mutate(column = x_range[1] + column * (x_range[2] - x_range[1])/(32 - 1)) |>
+    dplyr::mutate(row = y_range[1] + row * (y_range[2] - y_range[1])/(32 - 1))
+  
+  scale_zero_one <- function(x) (x - min(x))/(max(x) - min(x))
+  
+  p <- ggplot() +
+    ggplot2::geom_raster(data = mutate(smooth_att_map, gradient = scale_zero_one(gradient)), ggplot2::aes(column, row, fill = gradient), alpha = 0.7) +
+    scale_fill_gradient(low = "black", high = "white") +
+    ggplot2::theme_void() +
+    theme(legend.position = "none")
+  
+  saveRDS(p, here::here("paper/data/fig1_attention_map.rds"))
+  
+}
+```
+
+
+```{r false-check, fig.pos = "!h", fig.cap = 'A summary of the residual plot assessment evaluted on 200 null plots and 200 bootstrapped plots. (A) The true residual plot exhibiting "left-triangle" shape. (B) The attention map produced by computing the gradient of the output with respect to the greyscale input.  (C) The density plot of estimated distnace for null plots and bootstrapped plots. The blue area indicates the distribution of approximated distances for null plots, while the red area represents the distribution of approximated distances for bootstrapped plots. The fitted model will not be rejected since $\\hat{D} < Q_{null}(0.95)$. (D) PC2 vs PC1 plot for features extracted from the global pooling layer of the computer vision model.  '}
+p1 <- my_vi$plot_resid(theme = theme_light()) + ggtitle("(A) Residual plot") 
+p2 <- readRDS(here::here("paper/data/fig1_attention_map.rds")) + ggtitle("(B) Attention map")
+p3 <- my_vi$summary_plot() +
+  ggtitle("(C) Density plot of estimated D", subtitle = glue::glue("Conventional p-value = {format(HETER_MODEL$test(dat)$p_value, digits = 3)}")) +
   theme(legend.position = "bottom", legend.box = "vertical") +
   labs(linetype = "") +
   xlab(expression(hat(D))) +
   scale_linetype(labels = c("95% quantile of the null distribution", expression(hat(D))))
-  
+p4 <- my_vi$feature_pc() %>%
+  mutate(type = ifelse(type == "boot", "Boot", type)) %>%
+  mutate(type = ifelse(type == "null", "Null", type)) %>%
+  ggplot() +
+  geom_point(data = ~filter(.x, type != "observed"), aes(PC1, PC2, col = type, shape = "Simulated"), size = 2, alpha = 0.3) +
+  geom_point(data = ~filter(.x, type == "observed"), aes(PC1, PC2, shape = "Observed"), size = 4, col = "black", fill = "black") +
+  theme_light() +
+  scale_color_brewer(palette = "Dark2") +
+  scale_shape_manual(values = c("Simulated" = 19, "Observed" = 17)) +
+  xlab("PC1") +
+  ylab("PC2") +
+  labs(col = "", shape = "") +
+  theme(legend.position = "bottom", legend.box="vertical") +
+  ggtitle("(D) PCA for extracted features")
 
-patchwork::wrap_plots(p1, p2)
+patchwork::wrap_plots(p1, p2, p3, p4, nrow = 2, widths = c(1, 1), heights = c(1, 1))
 ```
 
 ```{r false-lineup, fig.pos = "!h", fig.cap = 'A lineup of residual plots displaying "left-triangle" visual patterns. The true residual plot occupies position 10, yet there are no discernible visual patterns that distinguish it from the other plots.'}
@@ -1343,8 +1543,7 @@ result %>%
                        theme = theme_light())
 ```
 
-
-### Boston housing
+## Boston housing
 
 The Boston housing dataset, originally published by @harrison1978hedonic, offers insights into housing in the Boston, Massachusetts area. For illustration purposes, we will utilize a reduced version from Kaggle, comprising 489 rows and 4 columns: average number of rooms per dwelling (RM), percentage of lower status of the population (LSTAT), pupil-teacher ratio by town (PTRATIO), and Median value of owner-occupied homes in $1000's (MEDV). In our analysis, MEDV will serve as the response variable, while the other columns will function as predictors in a linear regression model. Our primary focus is to detect non-linearity, because the relationships between RM and MEDV or LSTAT and MEDV are non-linear.
 
@@ -1354,7 +1553,6 @@ Additionally, the lineup of this fitted model presented in Figure \ref{fig:bosto
 
 
 ```{r}
-
 housing <- read_csv(here::here("paper/data/housing.csv"))
 mod <- lm(MEDV ~ ., data = housing)
 
@@ -1364,7 +1562,7 @@ my_vi <- autovi::auto_vi(fitted_mod = mod)
 ```{r}
 if (!file.exists(here::here("paper/data/boston_check.rds"))) {
   my_vi$keras_mod <- keras::load_model_tf(here::here("paper/data/phn_v2_32.keras"))
-  my_vi$check(null_draws = 200L, boot_draws = 200L)
+  my_vi$check(null_draws = 200L, boot_draws = 200L, extract_feature_from_layer = "global_max_pooling2d")
   saveRDS(my_vi$check_result, here::here("paper/data/boston_check.rds"))
 }
 
@@ -1375,16 +1573,71 @@ my_vi$check_result <- readRDS(here::here("paper/data/boston_check.rds"))
 ```
 
 
+```{r}
+if (!file.exists(here::here("paper/data/boston_attention_map.rds"))) {
+  define_gradient()
+  keras_mod <- keras::load_model_tf(here::here("paper/data/phn_v2_32.keras"))
+  plot_path <- my_vi$plot_resid() %>%
+  my_vi$save_plot()
+  input_auxiliary <- my_vi$auxiliary()
+
+  reticulate::py$get_smooth_gradient(keras_mod = keras_mod, 
+                                     plot_path = plot_path, 
+                                     target_size = c(32L, 32L), 
+                                     input_auxiliary = input_auxiliary,
+                                     noise_level = 0.5,
+                                     n = 1000L) -> smooth_g
+  
+  x_range <- ggplot2::ggplot_build(my_vi$plot_resid())$layout$panel_params[[1]]$x.range
+  y_range <- ggplot2::ggplot_build(my_vi$plot_resid())$layout$panel_params[[1]]$y.range
+  
+  smooth_att_map <- smooth_g[[1]] |> 
+    as.data.frame() |>
+    dplyr::mutate(row = rev(1:32)) |>
+    tidyr::pivot_longer(V1:V32, names_to = "column", values_to = "gradient") |>
+    dplyr::mutate(column = as.integer(gsub("V", "", column))) |>
+    dplyr::mutate(column = x_range[1] + column * (x_range[2] - x_range[1])/(32 - 1)) |>
+    dplyr::mutate(row = y_range[1] + row * (y_range[2] - y_range[1])/(32 - 1))
+  
+  scale_zero_one <- function(x) (x - min(x))/(max(x) - min(x))
+  
+  p <- ggplot() +
+    ggplot2::geom_raster(data = mutate(smooth_att_map, gradient = scale_zero_one(gradient)), ggplot2::aes(column, row, fill = gradient), alpha = 0.7) +
+    scale_fill_gradient(low = "black", high = "white") +
+    ggplot2::theme_void() +
+    theme(legend.position = "none")
+  
+  saveRDS(p, here::here("paper/data/boston_attention_map.rds"))
+  
+}
+```
+
+
 ```{r boston-check, fig.pos = "!h", fig.cap = 'A summary of the residual plot assessment evaluted on 200 null plots and 200 bootstrapped plots. On the left, the residual plot of the Boston housing fitted model is displayed. The blue area indicates the distribution of approximated distances for null plots, while the red area represents the distribution of approximated distances for bootstrapped plots. The fitted model will be rejected since $\\hat{D} >= Q_{null}(0.95)$.'}
-p1 <- my_vi$plot_resid()
-p2 <- my_vi$summary_plot() +
-  ggtitle("", subtitle = glue::glue("Conventional p-value = {format(lmtest::resettest(mod)$p.value, digits = 3)}")) +
+p1 <- my_vi$plot_resid(theme = theme_light()) + ggtitle("(A) Residual plot") 
+p2 <- readRDS(here::here("paper/data/boston_attention_map.rds")) + ggtitle("(B) Attention map")
+p3 <- my_vi$summary_plot() +
+  ggtitle("(C) Density plot of estimated D", subtitle = glue::glue("Conventional p-value = {format(lmtest::resettest(mod)$p.value, digits = 3)}")) +
   theme(legend.position = "bottom", legend.box = "vertical") +
   labs(linetype = "") +
   xlab(expression(hat(D))) +
   scale_linetype(labels = c("95% quantile of the null distribution", expression(hat(D))))
+p4 <- my_vi$feature_pc() %>%
+  mutate(type = ifelse(type == "boot", "Boot", type)) %>%
+  mutate(type = ifelse(type == "null", "Null", type)) %>%
+  ggplot() +
+  geom_point(data = ~filter(.x, type != "observed"), aes(PC1, PC2, col = type, shape = "Simulated"), size = 2, alpha = 0.3) +
+  geom_point(data = ~filter(.x, type == "observed"), aes(PC1, PC2, shape = "Observed"), size = 4, col = "black", fill = "black") +
+  theme_light() +
+  scale_color_brewer(palette = "Dark2") +
+  scale_shape_manual(values = c("Simulated" = 19, "Observed" = 17)) +
+  xlab("PC1") +
+  ylab("PC2") +
+  labs(col = "", shape = "") +
+  theme(legend.position = "bottom", legend.box="vertical") +
+  ggtitle("(D) PCA for extracted features")
 
-patchwork::wrap_plots(p1, p2)
+patchwork::wrap_plots(p1, p2, p3, p4, nrow = 2, widths = c(1, 1), heights = c(1, 1))
 ```
 
 ```{r boston-lineup, fig.pos = "!h", fig.cap = 'A lineup of residual plots for the Boston housing fitted model. The true residual plot is at position 7. It can be easily identified as the most different plot.'}
@@ -1404,70 +1657,10 @@ result %>%
                        theme = theme_light())
 ```
 
-```{r eval = FALSE}
-plot_path <- my_vi$plot_resid() %>%
-  my_vi$save_plot()
-input_auxiliary <- my_vi$auxiliary()
 
 
-reticulate::py$get_raw_gradient(keras_mod = keras_mod, 
-                                plot_path = plot_path, 
-                                target_size = c(32L, 32L), 
-                                input_auxiliary = input_auxiliary) -> raw_g
 
-reticulate::py$get_smooth_gradient(keras_mod = keras_mod, 
-                                   plot_path = plot_path, 
-                                   target_size = c(32L, 32L), 
-                                   input_auxiliary = input_auxiliary,
-                                   noise_level = 0.45,
-                                   n = 200L) -> smooth_g
-
-x_range <- ggplot2::ggplot_build(my_vi$plot_resid())$layout$panel_params[[1]]$x.range
-y_range <- ggplot2::ggplot_build(my_vi$plot_resid())$layout$panel_params[[1]]$y.range
-
-raw_att_map <- raw_g[[1]] |> 
-  as.data.frame() |>
-  dplyr::mutate(row = rev(1:32)) |>
-  tidyr::pivot_longer(V1:V32, names_to = "column", values_to = "gradient") |>
-  dplyr::mutate(column = as.integer(gsub("V", "", column))) |>
-  dplyr::mutate(column = x_range[1] + column * (x_range[2] - x_range[1])/(32 - 1)) |>
-  dplyr::mutate(row = y_range[1] + row * (y_range[2] - y_range[1])/(32 - 1))
-
-
-my_vi$plot_resid() +
-  ggplot() +
-  ggplot2::geom_raster(data = raw_att_map, ggplot2::aes(column, row, fill = gradient), alpha = 0.7) +
-  scale_fill_gradient(low = "black", high = "white") +
-  # viridis::scale_fill_viridis(option = "D") +
-  ggplot2::theme_void() +
-  ggplot2::ggtitle(paste0(gsub("measure_", "", names(input_auxiliary)), ": ", format(raw_g[[2]], digits = 2), 
-                          collapse = ", ")) -> p1
-
-
-smooth_att_map <- smooth_g[[1]] |> 
-  as.data.frame() |>
-  dplyr::mutate(row = rev(1:32)) |>
-  tidyr::pivot_longer(V1:V32, names_to = "column", values_to = "gradient") |>
-  dplyr::mutate(column = as.integer(gsub("V", "", column))) |>
-  dplyr::mutate(column = x_range[1] + column * (x_range[2] - x_range[1])/(32 - 1)) |>
-  dplyr::mutate(row = y_range[1] + row * (y_range[2] - y_range[1])/(32 - 1))
-
-scale_zero_one <- function(x) (x - min(x))/(max(x) - min(x))
-
-# my_vi$plot_resid() +
-  ggplot() +
-  ggplot2::geom_raster(data = mutate(smooth_att_map, gradient = scale_zero_one(gradient)), ggplot2::aes(column, row, fill = gradient), alpha = 0.7) +
-  scale_fill_gradient(low = "black", high = "white") +
-  # viridis::scale_fill_viridis(option = "D") +
-  ggplot2::theme_void() +
-  ggplot2::ggtitle(paste0(gsub("measure_", "", names(input_auxiliary)), ": ", format(raw_g[[2]], digits = 2), 
-                          collapse = ", ")) -> p2
-
-p1 + p2
-```
-
-
-### Datasaurus
+## Datasaurus
 
 The computer vision model possesses the capability to detect not only typical issues like non-linearity, heteroskedasticity, and non-normality but also artifact visual patterns resembling real-world objects, as long as they do not appear in null plots. These visual patterns can be challenging to categorize in terms of model violations. Therefore, we will employ the RESET test, the Breusch-Pagan test, and the Shapiro-Wilk test [@shapiro1965analysis] for comparison.
 
@@ -1488,7 +1681,7 @@ my_vi <- autovi::auto_vi(fitted_mod = mod)
 ```{r}
 if (!file.exists(here::here("paper/data/dino_check.rds"))) {
   my_vi$keras_mod <- keras::load_model_tf(here::here("paper/data/phn_v2_32.keras"))
-  my_vi$check(null_draws = 200L, boot_draws = 200L)
+  my_vi$check(null_draws = 200L, boot_draws = 200L, extract_feature_from_layer = "global_max_pooling2d")
   saveRDS(my_vi$check_result, here::here("paper/data/dino_check.rds"))
 }
 ```
@@ -1497,16 +1690,71 @@ if (!file.exists(here::here("paper/data/dino_check.rds"))) {
 my_vi$check_result <- readRDS(here::here("paper/data/dino_check.rds"))
 ```
 
+```{r}
+if (!file.exists(here::here("paper/data/dino_attention_map.rds"))) {
+  define_gradient()
+  keras_mod <- keras::load_model_tf(here::here("paper/data/phn_v2_32.keras"))
+  plot_path <- my_vi$plot_resid() %>%
+  my_vi$save_plot()
+  input_auxiliary <- my_vi$auxiliary()
+
+  reticulate::py$get_smooth_gradient(keras_mod = keras_mod, 
+                                     plot_path = plot_path, 
+                                     target_size = c(32L, 32L), 
+                                     input_auxiliary = input_auxiliary,
+                                     noise_level = 0.5,
+                                     n = 1000L) -> smooth_g
+  
+  x_range <- ggplot2::ggplot_build(my_vi$plot_resid())$layout$panel_params[[1]]$x.range
+  y_range <- ggplot2::ggplot_build(my_vi$plot_resid())$layout$panel_params[[1]]$y.range
+  
+  smooth_att_map <- smooth_g[[1]] |> 
+    as.data.frame() |>
+    dplyr::mutate(row = rev(1:32)) |>
+    tidyr::pivot_longer(V1:V32, names_to = "column", values_to = "gradient") |>
+    dplyr::mutate(column = as.integer(gsub("V", "", column))) |>
+    dplyr::mutate(column = x_range[1] + column * (x_range[2] - x_range[1])/(32 - 1)) |>
+    dplyr::mutate(row = y_range[1] + row * (y_range[2] - y_range[1])/(32 - 1))
+  
+  scale_zero_one <- function(x) (x - min(x))/(max(x) - min(x))
+  
+  p <- ggplot() +
+    ggplot2::geom_raster(data = mutate(smooth_att_map, gradient = scale_zero_one(gradient)), ggplot2::aes(column, row, fill = gradient), alpha = 0.7) +
+    scale_fill_gradient(low = "black", high = "white") +
+    ggplot2::theme_void() +
+    theme(legend.position = "none")
+  
+  saveRDS(p, here::here("paper/data/dino_attention_map.rds"))
+  
+}
+```
+
 ```{r dino-check, fig.pos = "!h", fig.cap = 'A summary of the residual plot assessment evaluted on 200 null plots and 200 bootstrapped plots. On the left, the residual plot exhitbiting a "dinosaur" shape is displayed. The blue area indicates the distribution of approximated distances for null plots, while the red area represents the distribution of approximated distances for bootstrapped plots. The fitted model will be rejected since $\\hat{D} >= Q_{null}(0.95)$.'}
-p1 <- my_vi$plot_resid()
-p2 <- my_vi$summary_plot() +
-  ggtitle("", subtitle = glue::glue("RESET test p-value = {format(lmtest::resettest(mod)$p.value, digits = 3)}\n Breusch-Pagan test p-value = {format(lmtest::bptest(mod)$p.value, digits = 3)} \n Shapiro-Wilk test p-value = {format(shapiro.test(mod$residuals)$p.value, digits = 3)}")) +
+
+p1 <- my_vi$plot_resid(theme = theme_light()) + ggtitle("(A) Residual plot")
+p2 <- readRDS(here::here("paper/data/dino_attention_map.rds")) + ggtitle("(B) Attention map")
+p3 <- my_vi$summary_plot() +
+  ggtitle("(C) Density plot of estimated D", subtitle = glue::glue("RESET test p-value = {format(lmtest::resettest(mod)$p.value, digits = 3)}\n Breusch-Pagan test p-value = {format(lmtest::bptest(mod)$p.value, digits = 3)} \n Shapiro-Wilk test p-value = {format(shapiro.test(mod$residuals)$p.value, digits = 3)}")) +
   theme(legend.position = "bottom", legend.box = "vertical") +
   labs(linetype = "") +
   xlab(expression(hat(D))) +
   scale_linetype(labels = c("95% quantile of the null distribution", expression(hat(D))))
+p4 <- my_vi$feature_pc() %>%
+  mutate(type = ifelse(type == "boot", "Boot", type)) %>%
+  mutate(type = ifelse(type == "null", "Null", type)) %>%
+  ggplot() +
+  geom_point(data = ~filter(.x, type != "observed"), aes(PC1, PC2, col = type, shape = "Simulated"), size = 2, alpha = 0.3) +
+  geom_point(data = ~filter(.x, type == "observed"), aes(PC1, PC2, shape = "Observed"), size = 4, col = "black", fill = "black") +
+  theme_light() +
+  scale_color_brewer(palette = "Dark2") +
+  scale_shape_manual(values = c("Simulated" = 19, "Observed" = 17)) +
+  xlab("PC1") +
+  ylab("PC2") +
+  labs(col = "", shape = "") +
+  theme(legend.position = "bottom", legend.box="vertical") +
+  ggtitle("(D) PCA for extracted features")
 
-patchwork::wrap_plots(p1, p2)
+patchwork::wrap_plots(p1, p2, p3, p4, nrow = 2, widths = c(1, 1), heights = c(1, 1))
 ```
 
 ```{r dino-lineup, fig.pos = "!h", fig.cap = 'A lineup of residual plots for the fitted model on the "dinosaur" dataset. The true residual plot is at position 17. It can be easily identified as the most different plot as the visual pattern is extremly artificial.'}
@@ -1525,7 +1773,6 @@ result %>%
                        remove_axis = TRUE,
                        theme = theme_light())
 ```
-
 
 <!-- ## When the model works -->
 

@@ -1,4 +1,4 @@
-\begin{thebibliography}{42}
+\begin{thebibliography}{57}
 \newcommand{\enquote}[1]{``#1''}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\normalfont{#1}}
@@ -6,6 +6,12 @@
 
 \bibitem[Abadi et~al.(2016)]{abadi2016tensorflow}
 Abadi, Mart{\'\i}n, Ashish Agarwal, Paul Barham, Eugene Brevdo, Zhifeng Chen, Craig Citro, Greg~S Corrado, et~al. 2016. ``Tensorflow: Large-scale machine learning on heterogeneous distributed systems.'' \emph{arXiv preprint arXiv:1603.04467} .
+
+\bibitem[Allaire and Chollet(2023)]{keras}
+Allaire, JJ, and François Chollet. 2023. \emph{keras: R Interface to 'Keras'}. R package version 2.13.0,  \urlprefix\url{https://CRAN.R-project.org/package=keras}.
+
+\bibitem[Allaire et~al.(2022)]{rticles}
+Allaire, JJ, Yihui Xie, Christophe Dervieux, {R Foundation}, Hadley Wickham, {Journal of Statistical Software}, Ramnath Vaidyanathan, et~al. 2022. \emph{rticles: Article formats for R Markdown}. R package version 0.24,  \urlprefix\url{https://CRAN.R-project.org/package=rticles}.
 
 \bibitem[Belsley, Kuh, and Welsch(1980)]{belsley1980regression}
 Belsley, David~A, Edwin Kuh, and Roy~E Welsch. 1980. \emph{Regression diagnostics: Identifying influential data and sources of collinearity}. John Wiley \& Sons.
@@ -21,6 +27,9 @@ Buja, Andreas, Dianne Cook, Heike Hofmann, Michael Lawrence, Eun-Kyung Lee, Debo
 
 \bibitem[Chen, Su, and Yang(2020)]{chen2020convolutional}
 Chen, Yun, Shijie Su, and Hui Yang. 2020. ``Convolutional neural network analysis of recurrence plots for anomaly detection.'' \emph{International Journal of Bifurcation and Chaos} 30 (01): 2050002.
+
+\bibitem[Chollet et~al.(2015)]{chollet2015keras}
+Chollet, Fran\c{c}ois, et~al. 2015. ``Keras.'' \url{https://keras.io}.
 
 \bibitem[Chopra, Hadsell, and LeCun(2005)]{chopra2005learning}
 Chopra, Sumit, Raia Hadsell, and Yann LeCun. 2005. ``Learning a similarity metric discriminatively, with application to face verification.'' In \emph{2005 IEEE computer society conference on computer vision and pattern recognition (CVPR'05)}, Vol.~1, 539--546. IEEE.
@@ -43,6 +52,9 @@ Frisch, Ragnar, and Frederick~V Waugh. 1933. ``Partial time regressions as compa
 \bibitem[Fukushima and Miyake(1982)]{fukushima1982neocognitron}
 Fukushima, Kunihiko, and Sei Miyake. 1982. ``Neocognitron: A new algorithm for pattern recognition tolerant of deformations and shifts in position.'' \emph{Pattern recognition} 15 (6): 455--469.
 
+\bibitem[Goscinski et~al.(2014)]{goscinski2014multi}
+Goscinski, Wojtek~J, Paul McIntosh, Ulrich Felzmann, Anton Maksimenko, Christopher~J Hall, Timur Gureyev, Darren Thompson, et~al. 2014. ``The multi-modal Australian ScienceS Imaging and Visualization Environment (MASSIVE) high performance computing infrastructure: applications in neuroscience and neuroinformatics research.'' \emph{Frontiers in Neuroinformatics} 8: 30.
+
 \bibitem[Hailesilassie(2019)]{hailesilassie2019financial}
 Hailesilassie, Tameru. 2019. ``Financial Market Prediction Using Recurrence Plot and Convolutional Neural Network.''  .
 
@@ -58,8 +70,17 @@ Hatami, Nima, Yann Gavet, and Johan Debayle. 2018. ``Classification of time-seri
 \bibitem[Hermite(1864)]{hermite1864nouveau}
 Hermite, M. 1864. \emph{Sur un nouveau d{\'e}veloppement en s{\'e}rie des fonctions}. Imprimerie de Gauthier-Villars.
 
+\bibitem[Hofmann, VanderPlas, and Ge(2022)]{ggpcp}
+Hofmann, Heike, Susan VanderPlas, and Yawei Ge. 2022. \emph{ggpcp: Parallel Coordinate Plots in the 'ggplot2' Framework}. R package version 0.2.0,  \urlprefix\url{https://CRAN.R-project.org/package=ggpcp}.
+
 \bibitem[Hyndman and Fan(1996)]{hyndman1996sample}
 Hyndman, Rob~J, and Yanan Fan. 1996. ``Sample quantiles in statistical packages.'' \emph{The American Statistician} 50 (4): 361--365.
+
+\bibitem[Jeppson, Hofmann, and Cook(2021)]{ggmosaic}
+Jeppson, Haley, Heike Hofmann, and Di~Cook. 2021. \emph{ggmosaic: Mosaic plots in the 'ggplot2' framework}. R package version 0.3.3,  \urlprefix\url{https://CRAN.R-project.org/package=ggmosaic}.
+
+\bibitem[Kahle(2013)]{mpoly}
+Kahle, David. 2013. ``mpoly: Multivariate Polynomials in {R}.'' \emph{The R Journal} 5 (1): 162--170.
 
 \bibitem[Krishnan and Hofmann(2021)]{krishnan2021hierarchical}
 Krishnan, Ganesh, and Heike Hofmann. 2021. ``Hierarchical Decision Ensembles-An inferential framework for uncertain Human-AI collaboration in forensic examinations.'' \emph{arXiv preprint arXiv:2111.01131} .
@@ -72,6 +93,9 @@ Langsrud, {\O}yvind. 2005. ``Rotation tests.'' \emph{Statistics and computing} 1
 
 \bibitem[Lee and Chen(2015)]{lee2015image}
 Lee, Howard, and Yi-Ping~Phoebe Chen. 2015. ``Image based computer aided diagnosis system for cancer detection.'' \emph{Expert Systems with Applications} 42 (12): 5356--5365.
+
+\bibitem[Li(2024)]{bandicoot}
+Li, Weihao. 2024. ``bandicoot: Light-Weight Python-Like Object-Oriented System.''  \urlprefix\url{https://CRAN.R-project.org/package=bandicoot}.
 
 \bibitem[Li et~al.(2023)]{li2023plot}
 Li, Weihao, Dianne Cook, Emi Tanaka, and Susan VanderPlas. 2023. ``A Plot is Worth a Thousand Tests: Assessing Residual Diagnostics with the Lineup Protocol.'' \emph{arXiv preprint arXiv:2308.05964} .
@@ -88,11 +112,17 @@ Loy, Adam, and Heike Hofmann. 2015. ``Are you normal? The problem of confounded 
 \bibitem[Mason et~al.(2022)]{mason2022cassowaryr}
 Mason, Harriet, Stuart Lee, Ursula Laa, and Dianne Cook. 2022. \emph{cassowaryr: Compute Scagnostics on Pairs of Numeric Variables in a Data Set}. R package version 2.0.0,  \urlprefix\url{https://CRAN.R-project.org/package=cassowary}.
 
+\bibitem[Müller(2020)]{here}
+Müller, Kirill. 2020. \emph{here: A simpler way to find your files}. R package version 1.0.1,  \urlprefix\url{https://CRAN.R-project.org/package=here}.
+
 \bibitem[Ojeda, Solano, and Peramo(2020)]{ojeda2020multivariate}
 Ojeda, Sun Arthur~A, Geoffrey~A Solano, and Elmer~C Peramo. 2020. ``Multivariate time series imaging for short-term precipitation forecasting using convolutional neural networks.'' In \emph{2020 International Conference on Artificial Intelligence in Information and Communication (ICAIIC)}, 33--38. IEEE.
 
 \bibitem[O'Malley et~al.(2019)]{omalley2019kerastuner}
 O'Malley, Tom, Elie Bursztein, James Long, Fran\c{c}ois Chollet, Haifeng Jin, Luca Invernizzi, et~al. 2019. ``Keras {Tuner}.'' \url{https://github.com/keras-team/keras-tuner}.
+
+\bibitem[Pedersen(2022)]{patchwork}
+Pedersen, Thomas~Lin. 2022. \emph{patchwork: The composer of plots}. R package version 1.1.2,  \urlprefix\url{https://CRAN.R-project.org/package=patchwork}.
 
 \bibitem[Ramsey(1969)]{ramsey1969tests}
 Ramsey, James~Bernard. 1969. ``Tests for specification errors in classical linear least-squares regression analysis.'' \emph{Journal of the Royal Statistical Society: Series B (Methodological)} 31 (2): 350--371.
@@ -121,13 +151,28 @@ Vo, Nam~N, and James Hays. 2016. ``Localizing and orienting street views using o
 \bibitem[Wang et~al.(2004)]{wang2004image}
 Wang, Zhou, Alan~C Bovik, Hamid~R Sheikh, and Eero~P Simoncelli. 2004. ``Image quality assessment: from error visibility to structural similarity.'' \emph{IEEE transactions on image processing} 13 (4): 600--612.
 
+\bibitem[Wickham et~al.(2019)]{tidyverse}
+Wickham, Hadley, Mara Averick, Jennifer Bryan, Winston Chang, Lucy~D'Agostino McGowan, Romain François, Garrett Grolemund, et~al. 2019. ``Welcome to the {tidyverse}.'' \emph{Journal of Open Source Software} 4 (43): 1686.
+
 \bibitem[Widen et~al.(2016)]{widen2016graphical}
 Widen, Holly~M, James~B Elsner, Stephanie Pau, and Christopher~K Uejio. 2016. ``Graphical inference in geographical research.'' \emph{Geographical Analysis} 48 (2): 115--131.
 
 \bibitem[Wilkinson, Anand, and Grossman(2005)]{wilkinson2005graph}
 Wilkinson, Leland, Anushka Anand, and Robert Grossman. 2005. ``Graph-theoretic scagnostics.'' In \emph{Information Visualization, IEEE Symposium on}, 21--21. IEEE Computer Society.
 
+\bibitem[Xie(2014)]{knitr}
+Xie, Yihui. 2014. ``knitr: A comprehensive tool for reproducible research in {R}.'' In \emph{Implementing reproducible computational research},  edited by Victoria Stodden, Friedrich Leisch, and Roger~D. Peng. Chapman and Hall/CRC. ISBN 978-1466561595,  \urlprefix\url{http://www.crcpress.com/product/isbn/9781466561595}.
+
+\bibitem[Xie, Dervieux, and Riederer(2020)]{rmarkdown}
+Xie, Yihui, Christophe Dervieux, and Emily Riederer. 2020. \emph{R Markdown cookbook}. Boca Raton, Florida: Chapman and Hall/CRC. ISBN 9780367563837,  \urlprefix\url{https://bookdown.org/yihui/rmarkdown-cookbook}.
+
+\bibitem[Zeileis and Hothorn(2002)]{lmtest}
+Zeileis, Achim, and Torsten Hothorn. 2002. ``Diagnostic checking in regression relationships.'' \emph{R News} 2 (3): 7--10.
+
 \bibitem[Zhang et~al.(2020)]{zhang2020encoding}
 Zhang, Ye, Yi~Hou, Shilin Zhou, and Kewei Ouyang. 2020. ``Encoding time series as multi-scale signed recurrence plots for classification using fully convolutional networks.'' \emph{Sensors} 20 (14): 3818.
+
+\bibitem[Zhu(2021)]{kableextra}
+Zhu, Hao. 2021. \emph{kableExtra: Construct complex table with kable and pipe syntax}. R package version 1.3.4,  \urlprefix\url{https://CRAN.R-project.org/package=kableExtra}.
 
 \end{thebibliography}

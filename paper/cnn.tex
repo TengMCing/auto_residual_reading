@@ -8,6 +8,7 @@
 \def\ConvColor{rgb:yellow,5;red,2.5;white,5}
 \def\ConvReluColor{rgb:yellow,5;red,5;white,5}
 \def\PoolColor{rgb:red,1;black,0.3}
+\def\ConColor{rgb:black,1;white,1}
 \def\FcColor{rgb:blue,5;red,2.5;white,5}
 \def\FcReluColor{rgb:blue,5;red,5;white,5}
 \def\SoftmaxColor{rgb:magenta,5;black,7}
@@ -64,7 +65,7 @@
 %%%%%%%%%%
 % fc6
 \pic[shift={(3,0,0)}] at (p5-east) {Box={name=fc6,caption=Concatenation layer,%
-        xlabel={{"1",""}},zlabel=256,fill=\FcColor,%
+        xlabel={{"1",""}},zlabel=256,fill=\ConColor,%
         height=3,width=3,depth=100}};
 
 \pic[shift={(3,0,-11)}] at (p5-east) {Box={name=fc66,caption=Auxiliary input,%

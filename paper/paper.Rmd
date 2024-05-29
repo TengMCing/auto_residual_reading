@@ -70,6 +70,10 @@ library(glue)
 set.seed(10086)
 ```
 
+```{r}
+# check if package installed, version
+```
+
 
 # Introduction
 
@@ -896,32 +900,6 @@ bind_rows(
   kableExtra::pack_rows("Compared with visual tests conducted by human", 3, 4)
 ```
 
-
-```{r human-mosaic, fig.pos = "!h", fig.cap = "Rejection rate ($p$-value $\\leq0.05$) of visual test conditional on the computer vision model decision on non-linearity (left) and heteroskedasticity (right) lineups displayed using a mosaic plot. The visual test rejects less frequently than the computer vision model, and (almost) only rejects when the computer vision model does.", eval = FALSE}
-library(ggmosaic)
-
-experiment %>%
-  filter(!attention_check) %>%
-  filter(!null_lineup) %>%
-  mutate(type = ifelse(type == "polynomial", "non-linearity", type)) %>%
-  mutate(type = ifelse(type == "non-linearity", "Non-linearity", "Heteroskedasticity")) %>%
-  mutate(type = factor(type, levels = c("Non-linearity", "Heteroskedasticity"))) %>%
-  mutate(model_reject_20 = ifelse(model_reject_20, "Reject", "No")) %>%
-  mutate(reject = ifelse(reject, "Reject", "No")) %>%
-  mutate(across(c(model_reject_20, reject), ~factor(.x, levels = c("Reject", "No")))) %>%
-  ggplot() +
-  geom_mosaic(aes(x = ggmosaic::product(reject, model_reject_20), 
-                  fill = model_reject_20)) +
-  facet_grid(~type) +
-  ylab("Visual tests reject") +
-  xlab("Computer vision model rejects") +
-  # labs(fill = "Visual tests reject") +
-  scale_fill_brewer("", palette = "Dark2") +
-  theme_bw() +
-  theme(legend.position = "none") +
-  coord_fixed()
-```
-
 ```{r conv-mosaic, fig.pos = "!h", fig.cap = "Rejection rate ($p$-value $\\leq0.05$) of computer vision models conditional on conventional tests on non-linearity (left) and heteroskedasticity (right) lineups displayed using a mosaic plot."}
 library(ggmosaic)
 
@@ -941,7 +919,7 @@ experiment %>%
   ylab("Computer vision model rejects") +
   xlab("Conventional tests reject ") +
   # labs(fill = "Visual tests reject") +
-  scale_fill_brewer("", palette = "Dark2") +
+  scale_fill_manual(values = c("#40B0A6", "#E1BE6A")) + 
   theme_bw() +
   theme(legend.position = "none") +
   coord_fixed()

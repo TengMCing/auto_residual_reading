@@ -60,7 +60,7 @@ knitr::opts_chunk$set(
 
 ```{r}
 # Visual inference models and p-value calculation
-# remotes::install_github("TengMCing/visage)
+# remotes::install_github("TengMCing/visage")
 
 library(tidyverse)
 library(visage)
